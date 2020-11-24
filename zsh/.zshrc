@@ -1,3 +1,6 @@
+# ====== Path Adjustments =====
+export PATH="$HOME/.bin:$PATH"
+
 
 # ===== powerline-10k =====
 
@@ -46,8 +49,8 @@ bindkey "^[[B" down-line-or-beginning-search # Down
 function  zoom () { open "zoommtg://zoom.us/join?confno={"6205222698":#(M)"personal"}" }
 alias wifi='osx-wifi-cli'
 alias at='alacritty-themes'
-alias homework='cd ~/Documents/School/CSCI-H\ 343/DistriSubmission/'
 alias top='vtop --theme certs'
 alias chrome="/Applications/Google\\ \\Chrome.app/Contents/MacOS/Google\\ \\Chrome"
 alias netflix="chrome --app=https://netflix.com"
-
+alias rdot="sh ~/.dotfiles/stow_dir.sh"
+alias ls="ls -G"

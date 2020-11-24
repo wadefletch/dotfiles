@@ -1,5 +1,3 @@
-for app in ./*; do
-    if [ -d "$app" ]; then
-        stow -v -R  ${app##*/}
-    fi
-done
+STOW_DIR=~/.dotfiles/
+
+stow --dir=$STOW_DIR --target=$HOME --stow $STOW_DIR --verbose --restow
