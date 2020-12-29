@@ -1,8 +1,21 @@
+# LaTeX
+
 snippet beg "begin{} / end{}" bA
 \begin{$1}
 	$0
 \end{$1}
 endsnippet
+
+snippet aln "aligned" bA
+\[
+\begin{aligned}
+	$1
+\end{aligned}
+\]
+endsnippet
+
+
+# Text
 
 snippet bf "Bold"
 \textbf{$1} $0
@@ -16,7 +29,53 @@ snippet und "Underline"
 \underline{$1} $0
 endsnippet
 
-snippet ques "Question"
-\question $1
+
+# Math
+
+snippet text "Text"
+\textrm{$1} $0
+endsnippet
+
+snippet mi "Math"
+$${1}$`!p
+if t[2] and t[2][0] not in [',', '.', '?', '-', ' ']:
+    snip.rv = ' '
+else:
+    snip.rv = ''
+`$2
+endsnippet
+
+snippet mb "Math"
+\[
+	$1
+\] $0
+endsnippet
+
+
+# Exam Class Helpers
+
+snippet ques "Question" b
+\question $0
 \vspace*{3cm}
+endsnippet
+
+snippet sol "Solution" b
+\begin{solutionorbox}[4cm]
+	$0
+\end{solutionorbox}
+endsnippet
+
+
+# Finance
+
+snippet bs "Balance Sheet"
+Balance Sheet 
+endsnippet
+
+snippet is "Income Statement"
+Income Statement 
+endsnippet
+
+snippet cfs "Cash Flow Statement"
+Cash Flow Statement 
 endsnippet

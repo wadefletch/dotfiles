@@ -12,7 +12,7 @@ set shiftwidth=4
 set tabstop=4
 set autoindent "Auto indent
 set si "Smart indent
-
+set breakindent 
 
 " Syntax highlighting
 syntax enable
@@ -30,6 +30,7 @@ inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
 
 " Statusline
 set laststatus=2
+set noshowmode
 
 
 " Install vim-plug if it doesn't already exist
@@ -44,33 +45,55 @@ endif
 set backspace=indent,eol,start
 
 
+" Remove swapfiles
+set noswapfile
+
+
+" Custom commands
+command Snips tabnew ~/.dotfiles/vim/.vim/UltiSnips/tex.snippets
+
 
 " Install plugins
 call plug#begin('~/.vim/plugged')
 
 Plug 'airblade/vim-gitgutter'
-Plug 'itchyny/lightline.vim'
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'mattn/emmet-vim'
 Plug 'scrooloose/nerdtree'
-Plug 'terryma/vim-multiple-cursors'
-Plug 'tpope/vim-surround'
 Plug 'w0rp/ale'
-
+Plug 'arcticicestudio/nord-vim'
+Plug 'itchyny/lightline.vim'
 Plug 'lervag/vimtex'
-    let g:tex_flavor='latex'
-    let g:vimtex_view_method = 'skim'
-    let g:vimtex_quickfix_mode=0
-
 Plug 'sirver/ultisnips'
-    let g:UltiSnipsExpandTrigger = '<tab>'
-    let g:UltiSnipsJumpForwardTrigger = '<tab>'
-    let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
-
-Plug 'KeitaNakamura/tex-conceal.vim'
-    set conceallevel=1
-    let g:tex_conceal='abdmg'
-    hi Conceal ctermbg=none
 
 call plug#end()
+
+
+" UltiSnips config
+let g:UltiSnipsExpandTrigger = '<tab>'
+let g:UltiSnipsJumpForwardTrigger = '<tab>'
+let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
+
+" vimtex config
+let g:tex_flavor='latex'
+let g:vimtex_view_method = 'skim'
+let g:vimtex_quickfix_mode=0
+
+" nord-vim config
+colorscheme nord
+let g:nord_cursor_line_number_background = 1
+let g:nord_uniform_status_lines = 1
+let g:nord_bold_vertical_split_line = 1
+let g:nord_uniform_diff_background = 1
+let g:nord_italic = 1
+let g:nord_italic_comments = 1
+let g:nord_underline = 1
+hi Comment ctermfg=5
+
+" lightline config
+let g:lightline = {
+    \ 'colorscheme': 'nord',
+    \ 'separator': { 'left': '', 'right': '' },
+    \ 'subseparator': { 'left': '', 'right': '' },
+\ }
