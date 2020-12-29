@@ -1,4 +1,4 @@
-# ====== Path Adjustments =====
+#====== Path Adjustments =====
 export PATH="$HOME/.bin:$PATH"
 
 
@@ -33,6 +33,9 @@ export NVM_DIR="$HOME/.nvm"
   [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && . "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
 
+# ===== fzf =====
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
 
 # ===== Historical Completion =====
 autoload -U up-line-or-beginning-search
@@ -46,11 +49,16 @@ bindkey "^[[B" down-line-or-beginning-search # Down
 
 # ===== Fun Commands of My Own Addition =====
 
-function  zoom () { open "zoommtg://zoom.us/join?confno={"6205222698":#(M)"personal"}" }
+alias top='vtop --theme nord'
+
+function zoom () { open "zoommtg://zoom.us/join?confno={"6205222698":#(M)"personal"}" }
 alias wifi='osx-wifi-cli'
-alias at='alacritty-themes'
-alias top='vtop --theme certs'
 alias chrome="/Applications/Google\\ \\Chrome.app/Contents/MacOS/Google\\ \\Chrome"
 alias netflix="chrome --app=https://netflix.com"
-alias rdot="sh ~/.dotfiles/stow_dir.sh"
-alias ls="ls -G"
+function ideas () { echo "$@" >> ~/Documents/ideas.lst }
+alias dm="dark-mode" # https://github.com/sindresorhus/dark-mode-cli 
+alias btc="curl -s https://api.coindesk.com/v1/bpi/currentprice/usd.json | grep -o \'rate\":\"[^\"]*\' | cut -d\\\" -f3"
+
+alias vimrc="sudo vim ~/.dotfiles/vim/.vimrc"
+alias zshrc="sudo vim ~/.dotfiles/zsh/.zshrc"
+alias skhdrc="sudo vim ~/.dotfiles/skhd/.skhdrc"
