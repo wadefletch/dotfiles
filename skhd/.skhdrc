@@ -19,10 +19,10 @@ shift + ctrl + alt - up : yabai -m window --warp north
 shift + ctrl + alt - right : yabai -m window --warp east
  
 # balance size of windows
-shift + alt - 0 : yabai -m space --balance
+shift + ctrl - 0 : yabai -m space --balance
 
 # rotate tree
-ctrl - r : yabai -m space --rotate 90
+# ctrl - r : yabai -m space --rotate 90
 
 # float / unfloat window
 shift + ctrl - space : yabai -m window --toggle float
@@ -56,3 +56,6 @@ ctrl - 8 : yabai -m space --foucs 8
 # create and destroy space
 ctrl - 0x1E : yabai -m space --create && yabai -m space --focus next
 ctrl - 0x3B : yabai -m space --destroy
+
+# open displays settings pane
+shift + ctrl - d : open -b com.apple.systempreferences /System/Library/PreferencePanes/Displays.prefPane
