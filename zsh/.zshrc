@@ -17,17 +17,13 @@ source /usr/local/opt/powerlevel10k/powerlevel10k.zsh-theme
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 
-
 # ===== pyenv =====
-
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
 fi
 
 
-
 # ===== NVM =====
-
 export NVM_DIR="$HOME/.nvm"
   [ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
   [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && . "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
@@ -46,18 +42,19 @@ bindkey "^[[A" up-line-or-beginning-search # Up
 bindkey "^[[B" down-line-or-beginning-search # Down
 
 
+# ===== zsh-autosuggestions =====
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+
 
 # ===== Fun Commands of My Own Addition =====
 
 alias top='vtop --theme nord'
+alias spotify='ncspot'
 
-function zoom () { open "zoommtg://zoom.us/join?confno={"6205222698":#(M)"personal"}" }
 alias wifi='osx-wifi-cli'
 alias chrome="/Applications/Google\\ \\Chrome.app/Contents/MacOS/Google\\ \\Chrome"
 alias netflix="chrome --app=https://netflix.com"
-function ideas () { echo "$@" >> ~/Documents/ideas.lst }
 alias dm="dark-mode" # https://github.com/sindresorhus/dark-mode-cli 
-alias btc="curl -s https://api.coindesk.com/v1/bpi/currentprice/usd.json | grep -o \'rate\":\"[^\"]*\' | cut -d\\\" -f3"
 
 alias vimrc="sudo vim ~/.dotfiles/vim/.vimrc"
 alias zshrc="sudo vim ~/.dotfiles/zsh/.zshrc"
