@@ -57,6 +57,7 @@ desktop.ini
 .iml
 *.sublime-workspace
 
-# =====================
+# Package utilities #
+#####################
 node_modules/*
 venv/*
