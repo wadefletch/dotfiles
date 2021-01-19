@@ -3,9 +3,11 @@ tap 'homebrew/cask'
 tap 'homebrew/cask-fonts'
 tap 'heroku/brew'
 tap 'koekeishiya/formulae'
+tap 'romkatv/powerlevel10k'
 
-# Shells
+# Terminal
 brew 'zsh'
+brew 'powerlevel10k'
 
 # GNU utilities (those that come with macOS are outdated)
 brew 'coreutils'

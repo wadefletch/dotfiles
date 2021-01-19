@@ -54,8 +54,10 @@ alias spotify='ncspot'
 alias wifi='osx-wifi-cli'
 alias chrome="/Applications/Google\\ \\Chrome.app/Contents/MacOS/Google\\ \\Chrome"
 alias netflix="chrome --app=https://netflix.com"
-alias dm="dark-mode" # https://github.com/sindresorhus/dark-mode-cli 
+alias dm="dark-mode"
 
 alias vimrc="sudo vim ~/.dotfiles/vim/.vimrc"
 alias zshrc="sudo vim ~/.dotfiles/zsh/.zshrc"
 alias skhdrc="sudo vim ~/.dotfiles/skhd/.skhdrc"
+alias yabairc="sudo vim ~/.dotfiles/yabai/.yabairc"
+

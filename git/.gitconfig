@@ -1,3 +1,5 @@
 [user]
     name = Wade Fletcher
     email = wbfletch@gmail.com
+[core]
+	excludesfile = /Users/wadefletcher/.gitignore_global

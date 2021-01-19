@@ -1,0 +1,80 @@
+{
+    "[javascript]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
+    "[javascriptreact]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[python]": {
+        "editor.wordBasedSuggestions": false
+    },
+    "C_Cpp.formatting": "vcFormat",
+    "css.validate": true,
+    "editor.acceptSuggestionOnEnter": "off",
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true,
+        "source.organizeImports": true
+    },
+    "editor.cursorStyle": "block",
+    /* "editor.fontFamily": "Iosevka Extended", */
+    "editor.fontFamily": "Fira Code",
+    "editors.fontWeight": "200",
+    "editor.fontLigatures": true,
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "editor.minimap.enabled": false,
+    "editor.suggestSelection": "first",
+    "editor.trimAutoWhitespace": false,
+    "editor.wordWrap": "on",
+    "emmet.includeLanguages": {
+        "javascript": "javascriptreact",
+        "postcss": "css"
+    },
+    "emmet.triggerExpansionOnTab": true,
+    "eslint.format.enable": true,
+    "eslint.validate": [
+        "javascript",
+        "javascriptreact"
+    ],
+    "explorer.sortOrder": "type",
+    "files.associations": {
+        "*.mdx": "markdown",
+        "*.svg": "html"
+    },
+    "files.exclude": {
+        ".vscode": true,
+        "**/__pycache__": true,
+        "**/.idea": true,
+        "**/.next": true
+    },
+    "javascript.updateImportsOnFileMove.enabled": "always",
+    "python.defaultInterpreterPath": "~/.pyenv/shims/python",
+    "python.formatting.provider": "black",
+    "python.languageServer": "Pylance",
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "search.exclude": {
+        "**/.idea": true,
+        "**/.next": true,
+        "**/*.code-search": true,
+        "**/bower_components": true,
+        "**/node_modules": true
+    },
+    "tabnine.experimentalAutoImports": true,
+    "tailwindCSS.includeLanguages": {
+        "html": "HTML",
+        "javascript": "javascript"
+    },
+    "terminal.integrated.shell.osx": "/bin/zsh",
+    "window.zoomLevel": 1,
+    "workbench.colorTheme": "Tokyo Night Storm",
+    "workbench.iconTheme": "chalice-icon-theme",
+    "workbench.tree.indent": 22,
+    "powermode.enabled": true
+}

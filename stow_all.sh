@@ -1,0 +1,12 @@
+stow alacritty
+stow git
+stow latexmk
+stow p10k
+stow pianobar
+stow ranger
+stow skhd
+stow task
+stow vim
+stow vscode
+stow yabai
+stow zsh
