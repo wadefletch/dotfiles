@@ -48,6 +48,8 @@ source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # ===== Fun Commands of My Own Addition =====
 
+alias rm='trash'
+
 alias top='vtop --theme nord'
 alias spotify='ncspot'
 

@@ -1,9 +1,9 @@
 {
     "[javascript]": {
-        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[javascriptreact]": {
-        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+        "editor.defaultFormatter": "dbaumer.eslint-vscode"
     },
     "[json]": {
         "editor.defaultFormatter": "vscode.json-language-features"
@@ -18,13 +18,12 @@
     "css.validate": true,
     "editor.acceptSuggestionOnEnter": "off",
     "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true,
+        "source.fixAll": true,
         "source.organizeImports": true
     },
     "editor.cursorStyle": "block",
-    /* "editor.fontFamily": "Iosevka Extended", */
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.fontFamily": "Fira Code",
-    "editors.fontWeight": "200",
     "editor.fontLigatures": true,
     "editor.formatOnSave": true,
     "editor.formatOnType": true,
@@ -48,12 +47,12 @@
         "*.svg": "html"
     },
     "files.exclude": {
-        ".vscode": true,
         "**/__pycache__": true,
         "**/.idea": true,
         "**/.next": true
     },
     "javascript.updateImportsOnFileMove.enabled": "always",
+    "javascript.preferences.importModuleSpecifier": "non-relative",
     "python.defaultInterpreterPath": "~/.pyenv/shims/python",
     "python.formatting.provider": "black",
     "python.languageServer": "Pylance",
@@ -73,8 +72,10 @@
     },
     "terminal.integrated.shell.osx": "/bin/zsh",
     "window.zoomLevel": 1,
-    "workbench.colorTheme": "Tokyo Night Storm",
+    "workbench.colorTheme": "One Dark Pro",
     "workbench.iconTheme": "chalice-icon-theme",
     "workbench.tree.indent": 22,
-    "powermode.enabled": true
+    "prettier.jsxSingleQuote": true,
+    "prettier.singleQuote": true,
+    "prettier.printWidth": 999
 }

@@ -1,32 +1,21 @@
-" Wade Fletcher's .vimrc
+" TEMP Disable arrow keys
+noremap <Up> <Nop>
+noremap <Down> <Nop>
+noremap <Left> <Nop>
+noremap <Right> <Nop>
 
 " Line numbers
 set number
-highlight LineNr ctermfg=darkgrey
 
-" Indentation
-set expandtab
-set smarttab
-set shiftwidth=4
-set tabstop=4
-set autoindent "Auto indent
-set si "Smart indent
-set breakindent 
+" Custom commands
+command Snips tabnew ~/.dotfiles/vim/.vim/UltiSnips/tex.snippets
 
-" Syntax highlighting
-syntax enable
+" Use 'True Color'
+set termguicolors
+set t_Co=256
 
-" Line wrapping
-set wrap
-
-" Spell checking
-setlocal spell
-set spelllang=en_us
-inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
-
-" Statusline
-set laststatus=2
-set noshowmode
+" Polyglot config
+set nocompatible
 
 " Install vim-plug if it doesn't already exist
 if empty(glob('~/.vim/autoload/plug.vim'))
@@ -35,29 +24,34 @@ if empty(glob('~/.vim/autoload/plug.vim'))
     autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
-" More powerful backspace
-set backspace=indent,eol,start
-
-" Remove swapfiles
-set noswapfile
-
-" Custom commands
-command Snips tabnew ~/.dotfiles/vim/.vim/UltiSnips/tex.snippets
-
 " Install plugins
 call plug#begin('~/.vim/plugged')
 
 Plug 'airblade/vim-gitgutter'
-Plug 'junegunn/fzf'
-Plug 'junegunn/fzf.vim'
 Plug 'mattn/emmet-vim'
 Plug 'scrooloose/nerdtree'
-Plug 'w0rp/ale'
-Plug 'itchyny/lightline.vim'
 Plug 'lervag/vimtex'
 Plug 'sirver/ultisnips'
+Plug 'joshdick/onedark.vim'
+Plug 'vim-airline/vim-airline'
+Plug 'sheerun/vim-polyglot'
+Plug 'ervandew/supertab'
+Plug 'vim-pandoc/vim-pandoc'
+Plug 'vim-pandoc/vim-pandoc-syntax'
+Plug 'godlygeek/tabular'
 
 call plug#end()
+
+" onedark.vim Theme config
+set background=dark
+let g:onedark_terminal_italics = 1
+colorscheme onedark
+hi Normal guibg=NONE ctermbg=NONE
+
+" Airline Config
+set laststatus=2
+set noshowmode
+let g:airline_theme='onedark'
 
 " UltiSnips config
 let g:UltiSnipsExpandTrigger = '<tab>'
@@ -69,11 +63,19 @@ let g:tex_flavor='latex'
 let g:vimtex_view_method = 'skim'
 let g:vimtex_quickfix_mode=0
 
-" Spellchecking only in Insert mode
-autocmd InsertEnter * setlocal spell
-autocmd InsertLeave * setlocal nospell
+" NERDTree config
+" Start NERDTree when Vim starts with a directory argument.
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists('s:std_in') | execute 'NERDTree' argv()[0] | wincmd p | enew | execute 'cd '.argv()[0] | endif
 
-" Make escape work without delay 
-set ttimeout
-set ttimeoutlen=0
+" Exit Vim if NERDTree is the only window left.
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
 
+" Close the NERDTree if that's the only buffer
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+" Mirror the NERDTree before showing it. This makes it the same on all tabs.
+nnoremap <C-n> :NERDTreeMirror<CR>:NERDTreeFocus<CR>
+
+" Open the existing NERDTree on each new tab.
+autocmd BufWinEnter * silent NERDTreeMirror
