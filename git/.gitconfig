@@ -1,0 +1,9 @@
+[user]
+	name = Wade Fletcher
+	email = wbfletch@gmail.com
+[core]
+	editor = nvim
+[init]
+	defaultBranch = main
+[push]
+	autoSetupRemote = true
