@@ -4,7 +4,7 @@
 # ========== Path Adjustments ==========
 export PATH="/usr/local/sbin:$PATH" # homebrew
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH" # yarn
-export PAth="$HOME/.pyenv/bin:$PATH" # pyenv
+export PATH="$HOME/.pyenv/bin:$PATH" # pyenv
 
 # ============== Aliases ===============
 # Config File Shortcuts
@@ -19,3 +19,18 @@ case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
+
+# ============== Prompt ================
+function git_branch_name() {
+  branch=$(git symbolic-ref HEAD 2> /dev/null | awk 'BEGIN{FS="/"} {print $NF}')
+  if [[ $branch == "" ]];
+  then
+    :
+  else
+    echo '('$branch') '
+  fi
+}
+
+setopt prompt_subst
+
+prompt='%2/ $(git_branch_name)λ '
