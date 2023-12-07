@@ -10,6 +10,7 @@ export PATH="$HOME/.pyenv/bin:$PATH" # pyenv
 # Config File Shortcuts
 alias zshrc="nvim ~/.dotfiles/zsh/.zshrc"
 alias skhdrc="nvim ~/.dotfiles/skhd/.skhdrc"
+alias yabairc="nvim ~/.dotfiles/yabai/.yabairc"
 alias alacrittyrc="nvim ~/.dotfiles/alacritty/.alacritty.yml"
 alias nvimconf="cd ~/.dotfiles/nvim/.config/nvim/ && nvim init.lua"
 
