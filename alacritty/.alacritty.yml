@@ -7,35 +7,53 @@ window:
     y: 20
   decorations: "buttonless"
 
+resize_increments: true
+
+font:
+  size: 13.0
+  normal:
+    family: BlexMono Nerd Font
+    style: Regular
+  bold:
+    family: BlexMono Nerd Font
+    style: Bold
+  italic:
+    family: BlexMono Nerd Font
+    style: Italic
+
 mouse:
   hide_when_typing: true
 
+# (Github Dark) Colors for Alacritty
 colors:
   # Default colors
   primary:
-    background: '#202734'
-    foreground: '#CBCCC6'
+    background: '0x0d1117'
+    foreground: '0xb3b1ad'
 
   # Normal colors
   normal:
-    black: '#191E2A'
-    red: '#FF3333'
-    green: '#BAE67E'
-    yellow: '#FFA759'
-    blue: '#73D0FF'
-    magenta: '#FFD580'
-    cyan: '#95E6CB'
-    white: '#C7C7C7'
+    black: '0x484f58'
+    red: '0xff7b72'
+    green: '0x3fb950'
+    yellow: '0xd29922'
+    blue: '0x58a6ff'
+    magenta: '0xbc8cff'
+    cyan: '0x39c5cf'
+    white: '0xb3b1ad'
 
   # Bright colors
   bright:
-    black: '#686868'
-    red: '#F27983'
-    green: '#A6CC70'
-    yellow: '#FFCC66'
-    blue: '#5CCFE6'
-    magenta: '#FFEE99'
-    cyan: '#95E6CB'
-    white: '#FFFFFF'
+    black: '0x6e7681'
+    red: '0xffa198'
+    green: '0x56d364'
+    yellow: '0xe3b341'
+    blue: '0x79c0ff'
+    magenta: '0xd2a8ff'
+    cyan: '0x39c5cf'
+    white: '0xb3b1ad'
 
-theme: Ayu-Mirage
+  indexed_colors:
+    - { index: 16, color: '0xd18616' }
+    - { index: 17, color: '0xffa198' }
+theme: github_dark_default
