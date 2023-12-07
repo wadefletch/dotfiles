@@ -20,6 +20,9 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 
+# ============== Pyenv =================
+eval "$(pyenv init -)"
+
 # ============== Prompt ================
 function git_branch_name() {
   branch=$(git symbolic-ref HEAD 2> /dev/null | awk 'BEGIN{FS="/"} {print $NF}')
