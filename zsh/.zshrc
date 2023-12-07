@@ -11,7 +11,7 @@ export PATH="$HOME/.pyenv/bin:$PATH" # pyenv
 alias zshrc="nvim ~/.dotfiles/zsh/.zshrc"
 alias skhdrc="nvim ~/.dotfiles/skhd/.skhdrc"
 alias alacrittyrc="nvim ~/.dotfiles/alacritty/.alacritty.yml"
-alias nvimconf="cd ~/.dotfiles/nvim/.config/nvim/ && nvim ."
+alias nvimconf="cd ~/.dotfiles/nvim/.config/nvim/ && nvim init.lua"
 
 # ============== PNPM ==================
 export PNPM_HOME="/Users/wadefletcher/Library/pnpm"
