@@ -38,19 +38,50 @@ vim.opt.colorcolumn = "80,120"
 -- sync clipboard between os and neovim
 vim.opt.clipboard = "unnamedplus"
 
--- colors?
+-- enable highlight groups
 vim.opt.termguicolors = true
+
+-- disable netrw
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
+-- disable mode (lualine instead)
+vim.opt.showmode = false
 -- ========================================================================= --
 
 -- ================================ PLUGINS ================================ --
 -- configure plugins
 require("lazy").setup({
+	-- autopairs
+	{
+		"echasnovski/mini.pairs",
+		version = "*",
+		config = function()
+			require("mini.pairs").setup({
+				disable_filetype = { "TelescopePrompt" },
+			})
+		end,
+	},
+
+	-- terminal
+	{
+		"akinsho/toggleterm.nvim",
+		version = "*",
+		config = true,
+	},
+
 	-- git
 	{ "tpope/vim-fugitive" },
 	{ "tpope/vim-rhubarb" },
 
 	-- github copilot
-	{ "github/copilot.vim" },
+	{
+		"github/copilot.vim",
+		init = function()
+			vim.g.copilot_filetypes = { markdown = true }
+		end,
+	},
+	{ "ofseed/copilot-status.nvim" },
 
 	-- diagnostics
 	{
@@ -58,14 +89,79 @@ require("lazy").setup({
 		opts = { icons = false },
 	},
 
+	-- folding
+	{ -- UFO
+		"kevinhwang91/nvim-ufo",
+		dependencies = "kevinhwang91/promise-async",
+		event = "BufReadPost", -- needed for folds to load in time
+		keys = {
+			{
+				"zr",
+				function()
+					require("ufo").openAllFolds()
+				end,
+				desc = "Open All Folds",
+			},
+			{
+				"zm",
+				function()
+					require("ufo").closeAllFolds()
+				end,
+				desc = "Close All Folds",
+			},
+		},
+		init = function()
+			vim.opt.foldlevel = 99
+			vim.opt.foldlevelstart = 99
+		end,
+		opts = {
+			provider_selector = function(_, ft, _)
+				local lspWithOutFolding = { "markdown", "sh", "css", "html", "python" }
+				if vim.tbl_contains(lspWithOutFolding, ft) then
+					return { "treesitter", "indent" }
+				end
+				return { "lsp", "indent" }
+			end,
+		},
+	},
+
 	-- colorscheme
 	{
-		"Shatur/neovim-ayu",
+		"projekt0n/github-nvim-theme",
 		lazy = false,
 		priority = 1000,
 		config = function()
-			vim.cmd.colorscheme("ayu-mirage")
+			require("github-theme").setup({
+				options = {
+					styles = {
+						comments = "italic",
+					},
+					darken = {
+						sidebars = {
+							enabled = true,
+						},
+					},
+				},
+			})
+
+			vim.cmd.colorscheme("github_dark")
 		end,
+	},
+
+	-- nvim-tree
+	{
+		"nvim-tree/nvim-tree.lua",
+		opts = {
+			renderer = {
+				icons = {
+					show = {
+						git = false,
+						file = false,
+						folder = false,
+					},
+				},
+			},
+		},
 	},
 
 	-- lualine
@@ -73,10 +169,27 @@ require("lazy").setup({
 		"nvim-lualine/lualine.nvim",
 		opts = {
 			options = {
+				disabled_filetypes = { "NvimTree", "Trouble" },
 				icons_enabled = false,
-				theme = "ayu",
 				component_separators = "|",
 				section_separators = "",
+			},
+			sections = {
+				lualine_x = {
+					{
+						"copilot",
+						show_running = true,
+						symbols = {
+							status = {
+								enabled = "copilot on ",
+								disabled = "copilot off",
+							},
+						},
+					},
+					"filetype",
+					"fileformat",
+					"encoding",
+				},
 			},
 		},
 	},
@@ -92,11 +205,49 @@ require("lazy").setup({
 				typescript = { { "prettierd", "prettier" } },
 				typescriptreact = { { "prettierd", "prettier" } },
 			},
-			format_on_save = {
-				timeout_ms = 500,
-				lsp_fallback = true,
-			},
+			format_on_save = function(bufnr)
+				if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
+					return
+				end
+				return { timeout_ms = 500, lsp_fallback = true }
+			end,
+			notify_on_error = false,
 		},
+		init = function()
+			-- Format the current buffer with :Format
+			vim.api.nvim_create_user_command("Format", function(args)
+				local range = nil
+				if args.count ~= -1 then
+					local end_line = vim.api.nvim_buf_get_lines(0, args.line2 - 1, args.line2, true)[1]
+					range = {
+						start = { args.line1, 0 },
+						["end"] = { args.line2, end_line:len() },
+					}
+				end
+				require("conform").format({ async = true, lsp_fallback = true, range = range })
+			end, { range = true })
+
+			-- Disable format_on_save in the current buffer with :FormatDisable
+			-- or globally with :FormatDisable!
+			vim.api.nvim_create_user_command("FormatDisable", function(args)
+				if args.bang then
+					vim.g.disable_autoformat = true
+				else
+					vim.b.disable_autoformat = true
+				end
+			end, {
+				desc = "Disable autoformat-on-save",
+				bang = true,
+			})
+
+			-- Enable format_on_save in the current buffer with :FormatEnable
+			vim.api.nvim_create_user_command("FormatEnable", function()
+				vim.b.disable_autoformat = false
+				vim.g.disable_autoformat = false
+			end, {
+				desc = "Enable autoformat-on-save",
+			})
+		end,
 	},
 
 	-- linter
@@ -105,14 +256,20 @@ require("lazy").setup({
 		config = function()
 			require("lint").linters_by_ft = {
 				javascript = { "eslint" },
+				javascriptreact = { "eslint" },
 				typescript = { "eslint" },
+				typescriptreact = { "eslint" },
 			}
 
-			vim.api.nvim_create_autocmd("BufWritePost", {
+			-- lint on open, save
+			vim.api.nvim_create_autocmd("BufReadPre", {
 				callback = function()
 					require("lint").try_lint()
 				end,
 			})
+
+			-- prevent layout shift with new error
+			vim.opt.signcolumn = "yes"
 		end,
 	},
 
@@ -153,7 +310,7 @@ require("lazy").setup({
 			local configs = require("nvim-treesitter.configs")
 
 			configs.setup({
-				ensure_installed = { "lua", "javascript", "typescript", "html" },
+				ensure_installed = { "lua", "javascript", "typescript", "html", "comment" },
 				sync_install = false,
 				auto_install = true,
 				highlight = {
@@ -200,12 +357,7 @@ require("lazy").setup({
 	{
 		"williamboman/mason.nvim",
 		build = ":MasonUpdate",
-		-- config = true,
-		opts = {
-			ui = {
-				border = "rounded",
-			},
-		},
+		config = true,
 	},
 	{
 		"williamboman/mason-lspconfig.nvim",
@@ -235,11 +387,14 @@ require("lazy").setup({
 			},
 		},
 	},
+
+	-- gitsigns
+	{
+		"lewis6991/gitsigns.nvim",
+		config = true,
+	},
 }, {
 	-- lazy.nvim opts
-	ui = {
-		border = "rounded",
-	},
 })
 -- ========================================================================= --
 
@@ -253,6 +408,16 @@ vim.keymap.set("n", "<leader>fh", telescope.help_tags, { desc = "[F]ind [H]elp T
 -- the following line causes an error
 -- vim.keymap.set("n", "<leader>fd", builtin.diagnotics, { desc = "[F]ind [D]iagnostics" })
 vim.keymap.set("n", "<leader>fb", telescope.buffers, { desc = "[F]ind [B]uffers" })
+vim.keymap.set("n", "<leader>fl", telescope.live_grep, { desc = "[F]ind [L]ive" })
+
+-- nvim-tree
+vim.keymap.set("n", "<leader>e", ":NvimTreeToggle<CR>", { desc = "[E]xplorer", silent = true })
+
+-- twilight
+vim.keymap.set("n", "<leader>w", ":Twilight<CR>", { desc = "T[w]ilight" })
+
+-- terminal
+vim.keymap.set("n", "<leader>t", ":ToggleTerm<CR>", { desc = "[T]erminal" })
 
 -- fast jk to escape
 vim.keymap.set("i", "jk", "<Esc>", { silent = true })
@@ -270,7 +435,10 @@ vim.keymap.set("n", "<S-h>", ":bprevious<CR>", { silent = true })
 vim.keymap.set("n", "<leader><leader>", "<C-^>", { silent = true, desc = "Swap Buffers" })
 
 -- close buffer with <leader>q
-vim.keymap.set("n", "<leader>q", ":bdelete<CR>", { silent = true, desc = "[Q]uit Buffer" })
+vim.keymap.set("n", "<leader>q", ":bdelete<CR>:bnext<CR>", { silent = true, desc = "[Q]uit Buffer" })
+
+-- close all buffers but current with <leader>qo
+vim.keymap.set("n", "<leader>qo", ":%bd|e#|bd#<cr>|'\"", { silent = true, desc = "[Q]uit [O]ther Buffers" })
 
 -- escape to normal mode in terminal
 vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { silent = true })
@@ -280,6 +448,9 @@ vim.keymap.set("t", "<leader>q", "<C-\\><C-n><C-W>", { silent = true, desc = "[Q
 
 -- toggle trouble with <leader>d
 vim.keymap.set("n", "<leader>d", ":TroubleToggle<CR>", { silent = true, desc = "[D]iagnostics" })
+
+-- format with <leader>f
+vim.keymap.set("n", "<leader>f", ":Format<CR>", { silent = true, desc = "[F]ormat" })
 
 -- lsp
 function LSP_Keymapping_Callback(event)
