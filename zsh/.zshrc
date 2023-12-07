@@ -40,4 +40,4 @@ function git_branch_name() {
 
 setopt prompt_subst
 
-prompt='%2/ $(git_branch_name)λ '
+PROMPT='%F{yellow}%~/%f $(git_branch_name)%F{blue}λ%f '
