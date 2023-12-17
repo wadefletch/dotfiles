@@ -161,6 +161,9 @@ require("lazy").setup({
 					},
 				},
 			},
+			git = {
+				ignore = false,
+			},
 		},
 	},
 
