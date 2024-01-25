@@ -207,6 +207,8 @@ require("lazy").setup({
 				javascriptreact = { { "prettierd", "prettier" } },
 				typescript = { { "prettierd", "prettier" } },
 				typescriptreact = { { "prettierd", "prettier" } },
+				terraform = { "terraform_fmt" },
+				python = { "isort", "black" },
 			},
 			format_on_save = function(bufnr)
 				if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
@@ -262,6 +264,7 @@ require("lazy").setup({
 				javascriptreact = { "eslint" },
 				typescript = { "eslint" },
 				typescriptreact = { "eslint" },
+				terraform = { "tflint" },
 			}
 
 			-- lint on open, save
@@ -313,7 +316,7 @@ require("lazy").setup({
 			local configs = require("nvim-treesitter.configs")
 
 			configs.setup({
-				ensure_installed = { "lua", "javascript", "typescript", "html", "comment" },
+				ensure_installed = { "lua", "javascript", "typescript", "html", "comment", "python" },
 				sync_install = false,
 				auto_install = true,
 				highlight = {
@@ -371,6 +374,9 @@ require("lazy").setup({
 				"html",
 				"cssls",
 				"jsonls",
+				"terraformls",
+				"tflint",
+				"ruff_lsp",
 			},
 			handlers = {
 				function(server)
