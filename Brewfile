@@ -1,0 +1,21 @@
+brew 'bash'
+brew 'coreutils' # those that come with macos are usually outdated
+brew 'gh'
+brew 'git'
+brew 'koekeishiya/formulae/skhd'
+brew 'koekeishiya/formulae/yabai'
+brew 'neovim'
+brew 'node'
+brew 'pyenv'
+brew 'stow'
+
+cask 'alacritty'
+cask 'discord'
+cask 'docker'
+cask 'github'
+cask 'notion'
+cask 'visual-studio-code'
+cask 'zoom'
+
+tap 'homebrew/cask-fonts'
+brew 'font-blex-mono-nerd-font'
