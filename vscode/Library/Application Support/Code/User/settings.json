@@ -1,28 +1,33 @@
 {
-    "workbench.colorTheme": "Nord Deep",
-    "workbench.iconTheme": "Monokai Pro Icons",
-    "editor.bracketPairColorization.enabled": false,
-    "editor.fontFamily": "'Iosevka Term Nerd Font', 'JetBrainsMono Nerd Font', Menlo, Monaco, 'Courier New', monospace",
-    "editor.formatOnSave": true,
-    "[python]": {
-        "editor.defaultFormatter": "charliermarsh.ruff",
-        "editor.codeActionsOnSave": {
-            "source.fixAll": "explicit",
-            "source.organizeImports": "explicit"
-        }
+  "[python]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
     },
-    "github.copilot.enable": {
-        "*": true,
-        "plaintext": false,
-        "markdown": true,
-        "scminput": false
-    },
-    "editor.rulers": [
-        80,
-        120
-    ],
-    "files.exclude": {
-        "**/__pycache__/**": true,
-        "**/.pytest_cache/**": true
-    }
+    "editor.defaultFormatter": "charliermarsh.ruff"
+  },
+  "editor.bracketPairColorization.enabled": false,
+  "editor.fontFamily": "'JetBrainsMono Nerd Font', Menlo, Monaco, 'Courier New', monospace",
+  "editor.formatOnSave": true,
+  "editor.rulers": [
+    80,
+    120
+  ],
+  "files.exclude": {
+    "**/.pytest_cache/**": true,
+    "**/__pycache__/**": true
+  },
+  "github.copilot.enable": {
+    "*": true,
+    "markdown": true,
+    "plaintext": false,
+    "scminput": false
+  },
+  "material-icon-theme.folders.color": "#616e88",
+  "material-icon-theme.folders.theme": "classic",
+  "material-icon-theme.hidesExplorerArrows": true,
+  "material-icon-theme.saturation": 0.7,
+  "window.zoomLevel": 1,
+  "workbench.colorTheme": "Nord Deep",
+  "workbench.iconTheme": "material-icon-theme"
 }
