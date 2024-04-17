@@ -47,6 +47,12 @@ vim.g.loaded_netrwPlugin = 1
 
 -- disable mode (lualine instead)
 vim.opt.showmode = false
+
+-- colorscheme
+vim.cmd("colorscheme slate")
+
+-- transparent background
+vim.cmd("highlight Normal guibg=none ctermbg=none")
 -- ========================================================================= --
 
 -- ================================ PLUGINS ================================ --
@@ -89,64 +95,28 @@ require("lazy").setup({
 		opts = { icons = false },
 	},
 
-	-- folding
-	{ -- UFO
-		"kevinhwang91/nvim-ufo",
-		dependencies = "kevinhwang91/promise-async",
-		event = "BufReadPost", -- needed for folds to load in time
-		keys = {
-			{
-				"zr",
-				function()
-					require("ufo").openAllFolds()
-				end,
-				desc = "Open All Folds",
-			},
-			{
-				"zm",
-				function()
-					require("ufo").closeAllFolds()
-				end,
-				desc = "Close All Folds",
-			},
-		},
-		init = function()
-			vim.opt.foldlevel = 99
-			vim.opt.foldlevelstart = 99
-		end,
-		opts = {
-			provider_selector = function(_, ft, _)
-				local lspWithOutFolding = { "markdown", "sh", "css", "html", "python" }
-				if vim.tbl_contains(lspWithOutFolding, ft) then
-					return { "treesitter", "indent" }
-				end
-				return { "lsp", "indent" }
-			end,
-		},
-	},
-
 	-- colorscheme
-	{
-		"projekt0n/github-nvim-theme",
-		lazy = false,
-		priority = 1000,
-		config = function()
-			require("github-theme").setup({
-				options = {
-					styles = {
-						comments = "italic",
-					},
-					darken = {
-						sidebars = {
-							enabled = true,
-						},
-					},
-				},
-			})
+	-- {
+	-- 	"projekt0n/github-nvim-theme",
+	-- 	lazy = false,
+	-- 	priority = 1000,
+	-- 	config = function()
+	-- 		require("github-theme").setup({
+	-- 			options = {
+	-- 				styles = {
+	-- 					comments = "italic",
+	-- 				},
+	-- 				darken = {
+	-- 					sidebars = {
+	-- 						enabled = true,
+	-- 					},
+	-- 				},
+	-- 			},
+	-- 		})
 
-			vim.cmd.colorscheme("github_dark")
-		end,
-	},
+	-- 		vim.cmd.colorscheme("github_dark_default")
+	-- 	end,
+	-- },
 
 	-- nvim-tree
 	{
@@ -265,6 +235,7 @@ require("lazy").setup({
 				typescript = { "eslint" },
 				typescriptreact = { "eslint" },
 				terraform = { "tflint" },
+				python = { "ruff" },
 			}
 
 			-- lint on open, save
@@ -327,6 +298,7 @@ require("lazy").setup({
 			})
 		end,
 	},
+	{ "nvim-treesitter/nvim-treesitter-context" },
 
 	-- bufferline
 	{
@@ -377,6 +349,7 @@ require("lazy").setup({
 				"terraformls",
 				"tflint",
 				"ruff_lsp",
+				"yamlls",
 			},
 			handlers = {
 				function(server)
