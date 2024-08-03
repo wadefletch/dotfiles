@@ -42,3 +42,10 @@ function git_branch_name() {
 setopt prompt_subst
 
 PROMPT='%F{yellow}%~/%f $(git_branch_name)%F{blue}λ%f '
+
+# bun completions
+[ -s "/Users/wadefletcher/.bun/_bun" ] && source "/Users/wadefletcher/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
