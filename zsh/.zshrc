@@ -2,9 +2,10 @@
 # Wade Fletcher, 2023
 
 # ========== Path Adjustments ==========
-export PATH="/usr/local/sbin:$PATH" # homebrew
+export PATH="/usr/local/sbin:$PATH"                                             # homebrew
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH" # yarn
-export PATH="$HOME/.pyenv/bin:$PATH" # pyenv
+export PATH="$HOME/.pyenv/bin:$PATH"                                            # pyenv
+export PATH="/opt/homebrew/opt/llvm/bin:$PATH"                                  # llvm
 
 # ============== Aliases ===============
 # Config File Shortcuts
@@ -17,8 +18,8 @@ alias nvimconf="cd ~/.dotfiles/nvim/.config/nvim/ && nvim init.lua"
 # ============== PNPM ==================
 export PNPM_HOME="/Users/wadefletcher/Library/pnpm"
 case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
+*":$PNPM_HOME:"*) ;;
+*) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 
 # ============== Pyenv =================
@@ -30,9 +31,8 @@ bindkey "^[[B" history-beginning-search-forward
 
 # ============== Prompt ================
 function git_branch_name() {
-  branch=$(git symbolic-ref HEAD 2> /dev/null | awk 'BEGIN{FS="/"} {print $NF}')
-  if [[ $branch == "" ]];
-  then
+  branch=$(git symbolic-ref HEAD 2>/dev/null | awk 'BEGIN{FS="/"} {print $NF}')
+  if [[ $branch == "" ]]; then
     :
   else
     echo '('$branch') '
@@ -42,3 +42,16 @@ function git_branch_name() {
 setopt prompt_subst
 
 PROMPT='%F{yellow}%~/%f $(git_branch_name)%F{blue}λ%f '
+
+# bun completions
+[ -s "/Users/wadefletcher/.bun/_bun" ] && source "/Users/wadefletcher/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+. "$HOME/.cargo/env"
+
+# gcloud components
+source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
+source "$(brew --prefix)/share/google-cloud-sdk/completion.zsh.inc"
