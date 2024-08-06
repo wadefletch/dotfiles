@@ -50,6 +50,7 @@ PROMPT='%F{yellow}%~/%f $(git_branch_name)%F{blue}λ%f '
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
+# cargo
 . "$HOME/.cargo/env"
 
 # gcloud components

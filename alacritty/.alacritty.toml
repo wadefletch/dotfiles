@@ -1,52 +1,78 @@
-[[colors.indexed_colors]]
-color = "0xd18616"
-index = 16
-
-[[colors.indexed_colors]]
-color = "0xffa198"
-index = 17
-
-[colors.bright]
-black = "0x6e7681"
-blue = "0x79c0ff"
-cyan = "0x39c5cf"
-green = "0x56d364"
-magenta = "0xd2a8ff"
-red = "0xffa198"
-white = "0xb3b1ad"
-yellow = "0xe3b341"
-
-[colors.normal]
-black = "0x484f58"
-blue = "0x58a6ff"
-cyan = "0x39c5cf"
-green = "0x3fb950"
-magenta = "0xbc8cff"
-red = "0xff7b72"
-white = "0xb3b1ad"
-yellow = "0xd29922"
-
+# Default colors
 [colors.primary]
-background = "0x0d1117"
-foreground = "0xb3b1ad"
+background = "#011627"
+foreground = "#d6deeb"
+
+# Cursor colors
+[colors.cursor]
+text = "CellBackground"
+cursor = "CellForeground"
+
+[colors.vi_mode_cursor]
+text = "CellBackground"
+cursor = "#22da6e"
+
+# Search colors
+[colors.search.matches]
+foreground = "#000000"
+background = "#22da6e"
+
+[colors.search.focused_match]
+foreground = "#ffffff"
+background = "#22da6e"
+
+[colors.footer_bar]
+foreground = "#ffffff"
+background = "#1d3b53"
+
+# Selection colors
+[colors.selection]
+text = "#ffffff"
+background = "#0d486e"
+
+# Normal colors
+[colors.normal]
+black = "#011627"
+red = "#EF5350"
+green = "#22da6e"
+yellow = "#c5e478"
+blue = "#82AAFF"
+magenta = "#C792EA"
+cyan = "#21c7a8"
+white = "#ffffff"
+
+# Bright colors
+[colors.bright]
+black = "#575656"
+red = "#EF5350"
+green = "#22da6e"
+yellow = "#ffeb95"
+blue = "#82AAFF"
+magenta = "#C792EA"
+cyan = "#7fdbca"
+white = "#ffffff"
 
 [env]
 TERM = "xterm-256color"
 
 [font]
-size = 13.0
+size = 14.0
 
 [font.bold]
-family = "BlexMono Nerd Font"
+family = "Fragment Mono"
 style = "Bold"
 
 [font.italic]
-family = "BlexMono Nerd Font"
+family = "Fragment Mono"
 style = "Italic"
 
 [font.normal]
-family = "BlexMono Nerd Font"
+family = "Fragment Mono"
 style = "Regular"
+
+[font.offset]
+x = 0
+y = 5
 
 [mouse]
 hide_when_typing = true
