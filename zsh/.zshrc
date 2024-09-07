@@ -15,6 +15,16 @@ alias yabairc="nvim ~/.dotfiles/yabai/.yabairc"
 alias alacrittyrc="nvim ~/.dotfiles/alacritty/.alacritty.toml"
 alias nvimconf="cd ~/.dotfiles/nvim/.config/nvim/ && nvim init.lua"
 
+# Git Shortcuts
+alias ga="git add"
+alias gc="git commit"
+alias gcm="git commit -m"
+alias gca="git commit --amend --no-edit"
+alias gco="git checkout"
+alias gcb="git checkout -b"
+alias gq="git add . && git commit -m \"$(date -u +'%Y-%m-%dT%H:%M:%S')\" && git push"
+alias wip="git add . && git commit -m \"WIP $(date -u +'%Y-%m-%dT%H:%M:%S')\" && git push"
+
 # ============== PNPM ==================
 export PNPM_HOME="/Users/wadefletcher/Library/pnpm"
 case ":$PATH:" in
