@@ -1,58 +1,94 @@
 {
-    "[python]": {
-        "editor.codeActionsOnSave": {
-            "source.fixAll": "explicit",
-            "source.organizeImports": "explicit"
-        },
-        "editor.defaultFormatter": "charliermarsh.ruff"
-    },
-    "[typescript]": {
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[typescriptreact]": {
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "eslint.codeActionsOnSave.mode": "all",
-    "editor.bracketPairColorization.enabled": false,
-    "editor.fontFamily": "'Fragment Mono', Menlo, Monaco, 'Courier New', monospace",
-    "editor.formatOnSave": true,
-    "editor.rulers": [
-        80,
-        120
-    ],
-    "files.exclude": {
-        "**/.pytest_cache/**": true,
-        "**/__pycache__/**": true
-    },
-    "github.copilot.enable": {
-        "*": true,
-        "markdown": true,
-        "plaintext": false,
-        "scminput": false
-    },
-    "material-icon-theme.folders.color": "#616e88",
-    "material-icon-theme.folders.theme": "classic",
-    "material-icon-theme.hidesExplorerArrows": true,
-    "material-icon-theme.saturation": 0.7,
-    "window.zoomLevel": 1,
-    "workbench.iconTheme": "material-icon-theme",
-    "cursor.cpp.disabledLanguages": [
-        "plaintext",
-        "scminput"
-    ],
+  "[python]": {
     "editor.codeActionsOnSave": {
-        "source.fixAll": "always"
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
     },
-    "[javascript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "charliermarsh.ruff"
+  },
+  "[typescript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "eslint.codeActionsOnSave.mode": "all",
+  "editor.bracketPairColorization.enabled": false,
+  "editor.fontFamily": "'Fragment Mono', Menlo, Monaco, 'Courier New', monospace",
+  "editor.formatOnSave": true,
+  "editor.rulers": [80, 120],
+  "files.exclude": {
+    "**/.pytest_cache/**": true,
+    "**/__pycache__/**": true
+  },
+  "github.copilot.enable": {
+    "*": true,
+    "markdown": true,
+    "plaintext": false,
+    "scminput": false
+  },
+  "material-icon-theme.folders.color": "#616e88",
+  "material-icon-theme.folders.theme": "classic",
+  "material-icon-theme.hidesExplorerArrows": true,
+  "material-icon-theme.saturation": 0.7,
+  "window.zoomLevel": 1,
+  "workbench.iconTheme": "material-icon-theme",
+  "cursor.cpp.disabledLanguages": ["plaintext", "scminput"],
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "always"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.importFormat": "relative",
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "workbench.colorTheme": "Night Owl",
+  "prisma.showPrismaDataPlatformNotification": false,
+  "breadcrumbs.enabled": false,
+  "editor.renderWhitespace": "all",
+  "workbench.statusBar.visible": false,
+  "editor.lineNumbers": "relative",
+  "vim.leader": "<Space>",
+  "vim.normalModeKeyBindingsNonRecursive": [
+    // Switch between buffers
+    {
+      "before": ["<S-h>"],
+      "commands": [":bprevious"]
     },
-    "python.analysis.autoImportCompletions": true,
-    "python.analysis.importFormat": "relative",
-    "[jsonc]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    {
+      "before": ["<S-l>"],
+      "commands": [":bnext"]
     },
-    "workbench.colorTheme": "Night Owl",
-    "prisma.showPrismaDataPlatformNotification": false
+    // splits
+    {
+      "before": ["leader", "v"],
+      "commands": [":vsplit"]
+    },
+    {
+      "before": ["leader", "s"],
+      "commands": [":split"]
+    },
+    // search buffers
+    {
+      "before": ["leader", "f", "b"],
+      "commands": ["workbench.action.quickOpen"]
+    },
+    // rename
+    {
+      "before": ["leader", "r", "n"],
+      "commands": ["editor.action.rename"],
+      "when": "editorHasRenameProvider && editorTextFocus && !editorReadonly"
+    }
+  ],
+  "vim.insertModeKeyBindingsNonRecursive": [
+    {
+      "before": ["j", "k"],
+      "after": ["<Esc>"]
+    }
+  ]
 }
