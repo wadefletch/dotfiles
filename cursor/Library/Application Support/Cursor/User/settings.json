@@ -50,8 +50,7 @@
   "workbench.colorTheme": "Night Owl",
   "prisma.showPrismaDataPlatformNotification": false,
   "breadcrumbs.enabled": false,
-  "editor.renderWhitespace": "all",
-  "workbench.statusBar.visible": false,
+  "editor.renderWhitespace": "trailing",
   "editor.lineNumbers": "relative",
   "vim.leader": "<Space>",
   "vim.normalModeKeyBindingsNonRecursive": [
@@ -90,5 +89,6 @@
       "before": ["j", "k"],
       "after": ["<Esc>"]
     }
-  ]
+  ],
+  "rust-analyzer.check.workspace": false
 }
