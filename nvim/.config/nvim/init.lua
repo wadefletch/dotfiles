@@ -364,7 +364,7 @@ require("lazy").setup({
         opts = {
             ensure_installed = {
                 "lua_ls",
-                "tsserver",
+                "ts_ls",
                 "html",
                 "cssls",
                 "jsonls",
@@ -402,7 +402,7 @@ require("lazy").setup({
         opts = {
             ensure_installed = {
                 "lua_ls",
-                "tsserver",
+                "ts_ls",
                 "html",
                 "cssls",
                 "jsonls",

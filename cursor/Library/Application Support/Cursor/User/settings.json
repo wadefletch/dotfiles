@@ -1,4 +1,10 @@
 {
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   "[python]": {
     "editor.codeActionsOnSave": {
       "source.fixAll": "explicit",
@@ -7,43 +13,37 @@
     "editor.defaultFormatter": "charliermarsh.ruff"
   },
   "[typescript]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
   },
   "[typescriptreact]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
   },
-  "eslint.codeActionsOnSave.mode": "all",
+  "breadcrumbs.enabled": false,
+  "cursor.cpp.disabledLanguages": ["plaintext", "scminput"],
   "editor.bracketPairColorization.enabled": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "always"
+  },
   "editor.fontFamily": "'Fragment Mono', Menlo, Monaco, 'Courier New', monospace",
   "editor.formatOnSave": true,
+  "editor.lineNumbers": "relative",
+  "editor.renderWhitespace": "all",
   "editor.rulers": [80, 120],
+  "eslint.codeActionsOnSave.mode": "all",
   "files.exclude": {
     "**/.pytest_cache/**": true,
     "**/__pycache__/**": true
-  },
-  "github.copilot.enable": {
-    "*": true,
-    "markdown": true,
-    "plaintext": false,
-    "scminput": false
   },
   "material-icon-theme.folders.color": "#616e88",
   "material-icon-theme.folders.theme": "classic",
   "material-icon-theme.hidesExplorerArrows": true,
   "material-icon-theme.saturation": 0.7,
-  "window.zoomLevel": 1,
-  "workbench.iconTheme": "material-icon-theme",
-  "cursor.cpp.disabledLanguages": ["plaintext", "scminput"],
-  "editor.codeActionsOnSave": {
-    "source.fixAll": "always"
-  },
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
+  "prisma.showPrismaDataPlatformNotification": false,
   "python.analysis.autoImportCompletions": true,
   "python.analysis.importFormat": "relative",
+<<<<<<< Updated upstream
   "[jsonc]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
@@ -52,6 +52,15 @@
   "breadcrumbs.enabled": false,
   "editor.renderWhitespace": "trailing",
   "editor.lineNumbers": "relative",
+=======
+  "ruff.nativeServer": "auto",
+  "vim.insertModeKeyBindingsNonRecursive": [
+    {
+      "after": ["<Esc>"],
+      "before": ["j", "k"]
+    }
+  ],
+>>>>>>> Stashed changes
   "vim.leader": "<Space>",
   "vim.normalModeKeyBindingsNonRecursive": [
     // Switch between buffers
@@ -84,6 +93,7 @@
       "when": "editorHasRenameProvider && editorTextFocus && !editorReadonly"
     }
   ],
+<<<<<<< Updated upstream
   "vim.insertModeKeyBindingsNonRecursive": [
     {
       "before": ["j", "k"],
@@ -91,4 +101,9 @@
     }
   ],
   "rust-analyzer.check.workspace": false
+=======
+  "window.zoomLevel": 1,
+  "workbench.colorTheme": "Night Owl",
+  "workbench.iconTheme": "material-icon-theme"
+>>>>>>> Stashed changes
 }

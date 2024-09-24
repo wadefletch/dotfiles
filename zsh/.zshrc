@@ -23,7 +23,8 @@ alias gca="git commit --amend --no-edit"
 alias gco="git checkout"
 alias gcb="git checkout -b"
 alias gq="git add . && git commit -m \"$(date -u +'%Y-%m-%dT%H:%M:%S')\" && git push"
-alias wip="git add . && git commit -m \"WIP $(date -u +'%Y-%m-%dT%H:%M:%S')\" && git push"
+# alias wip="git add . && git commit -m \"WIP $(date -u +'%Y-%m-%dT%H:%M:%S')\" && git push"
+alias wip="gq"
 
 # yabai + skhd shortcuts
 alias startup="yabai --restart-service && sudo yabai --load-sa && skhd --restart-service"
