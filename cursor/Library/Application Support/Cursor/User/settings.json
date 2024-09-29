@@ -29,7 +29,7 @@
   "editor.fontFamily": "'Fragment Mono', Menlo, Monaco, 'Courier New', monospace",
   "editor.formatOnSave": true,
   "editor.lineNumbers": "relative",
-  "editor.renderWhitespace": "all",
+  "editor.renderWhitespace": "trailing",
   "editor.rulers": [80, 120],
   "eslint.codeActionsOnSave.mode": "all",
   "files.exclude": {
@@ -43,24 +43,14 @@
   "prisma.showPrismaDataPlatformNotification": false,
   "python.analysis.autoImportCompletions": true,
   "python.analysis.importFormat": "relative",
-<<<<<<< Updated upstream
-  "[jsonc]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "workbench.colorTheme": "Night Owl",
-  "prisma.showPrismaDataPlatformNotification": false,
-  "breadcrumbs.enabled": false,
-  "editor.renderWhitespace": "trailing",
-  "editor.lineNumbers": "relative",
-=======
   "ruff.nativeServer": "auto",
+  "rust-analyzer.check.workspace": false,
   "vim.insertModeKeyBindingsNonRecursive": [
     {
       "after": ["<Esc>"],
       "before": ["j", "k"]
     }
   ],
->>>>>>> Stashed changes
   "vim.leader": "<Space>",
   "vim.normalModeKeyBindingsNonRecursive": [
     // Switch between buffers
@@ -93,17 +83,7 @@
       "when": "editorHasRenameProvider && editorTextFocus && !editorReadonly"
     }
   ],
-<<<<<<< Updated upstream
-  "vim.insertModeKeyBindingsNonRecursive": [
-    {
-      "before": ["j", "k"],
-      "after": ["<Esc>"]
-    }
-  ],
-  "rust-analyzer.check.workspace": false
-=======
   "window.zoomLevel": 1,
   "workbench.colorTheme": "Night Owl",
   "workbench.iconTheme": "material-icon-theme"
->>>>>>> Stashed changes
 }
