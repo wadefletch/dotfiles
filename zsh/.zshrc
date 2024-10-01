@@ -44,18 +44,13 @@ bindkey "^[[A" history-beginning-search-backward
 bindkey "^[[B" history-beginning-search-forward
 
 # ============== Prompt ================
-function git_branch_name() {
-  branch=$(git symbolic-ref HEAD 2>/dev/null | awk 'BEGIN{FS="/"} {print $NF}')
-  if [[ $branch == "" ]]; then
-    :
-  else
-    echo '('$branch') '
-  fi
-}
+autoload -Uz vcs_info
+precmd() { vcs_info }
 
-setopt prompt_subst
+zstyle ':vcs_info:git:*' formats '(%b) '
 
-PROMPT='%F{yellow}%~/%f $(git_branch_name)%F{blue}λ%f '
+setopt PROMPT_SUBST
+PROMPT='%F{yellow}%~/%f ${vcs_info_msg_0_}%F{blue}λ%f '
 
 # bun completions
 [ -s "/Users/wadefletcher/.bun/_bun" ] && source "/Users/wadefletcher/.bun/_bun"

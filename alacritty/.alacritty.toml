@@ -1,57 +1,3 @@
-# Default colors
-[colors.primary]
-background = "#011627"
-foreground = "#d6deeb"
-
-# Cursor colors
-[colors.cursor]
-text = "CellBackground"
-cursor = "CellForeground"
-
-[colors.vi_mode_cursor]
-text = "CellBackground"
-cursor = "#22da6e"
-
-# Search colors
-[colors.search.matches]
-foreground = "#000000"
-background = "#22da6e"
-
-[colors.search.focused_match]
-foreground = "#ffffff"
-background = "#22da6e"
-
-[colors.footer_bar]
-foreground = "#ffffff"
-background = "#1d3b53"
-
-# Selection colors
-[colors.selection]
-text = "#ffffff"
-background = "#0d486e"
-
-# Normal colors
-[colors.normal]
-black = "#011627"
-red = "#EF5350"
-green = "#22da6e"
-yellow = "#c5e478"
-blue = "#82AAFF"
-magenta = "#C792EA"
-cyan = "#21c7a8"
-white = "#ffffff"
-
-# Bright colors
-[colors.bright]
-black = "#575656"
-red = "#EF5350"
-green = "#22da6e"
-yellow = "#ffeb95"
-blue = "#82AAFF"
-magenta = "#C792EA"
-cyan = "#7fdbca"
-white = "#ffffff"
-
 [env]
 TERM = "xterm-256color"
 
@@ -59,20 +5,16 @@ TERM = "xterm-256color"
 size = 14.0
 
 [font.bold]
-family = "Fragment Mono"
+family = "Iosevka"
 style = "Bold"
 
 [font.italic]
-family = "Fragment Mono"
+family = "Iosevka"
 style = "Italic"
 
 [font.normal]
-family = "Fragment Mono"
+family = "Iosevka"
 style = "Regular"
-
-[font.offset]
-x = 0
-y = 5
 
 [mouse]
 hide_when_typing = true
@@ -81,5 +23,5 @@ hide_when_typing = true
 decorations = "buttonless"
 
 [window.padding]
-x = 20
-y = 20
+x = 15
+y = 15
