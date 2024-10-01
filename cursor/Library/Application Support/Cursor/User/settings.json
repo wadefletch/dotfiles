@@ -26,7 +26,7 @@
   "editor.codeActionsOnSave": {
     "source.fixAll": "always"
   },
-  "editor.fontFamily": "'Fragment Mono', Menlo, Monaco, 'Courier New', monospace",
+  "editor.fontFamily": "'Iosevka', 'Fragment Mono', Menlo, Monaco, 'Courier New', monospace",
   "editor.formatOnSave": true,
   "editor.lineNumbers": "relative",
   "editor.renderWhitespace": "trailing",
@@ -40,7 +40,6 @@
   "material-icon-theme.folders.theme": "classic",
   "material-icon-theme.hidesExplorerArrows": true,
   "material-icon-theme.saturation": 0.7,
-  "prisma.showPrismaDataPlatformNotification": false,
   "python.analysis.autoImportCompletions": true,
   "python.analysis.importFormat": "relative",
   "ruff.nativeServer": "auto",
@@ -51,6 +50,7 @@
       "before": ["j", "k"]
     }
   ],
+  // "editor.lineNumbers": "relative",
   "vim.leader": "<Space>",
   "vim.normalModeKeyBindingsNonRecursive": [
     // Switch between buffers

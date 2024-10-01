@@ -47,3 +47,6 @@ alt - t : yabai -m window --toggle float --grid 4:4:1:1:2:2
 # Make window native fullscreen
 alt - f         : yabai -m window --toggle zoom-fullscreen
 shift + alt - f : yabai -m window --toggle native-fullscreen
+
+# pass through camera
+ctrl - g : osascript -e 'tell application "QuickTime Player" to activate' -e 'tell application "QuickTime Player" to new movie recording' -e 'tell application "QuickTime Player" to stop document 1' && yabai -m query --windows | jq '.[] | select(.title | test("^Movie Recording$")).id' | xargs -I{} yabai -m window {} --toggle float --grid 6:6:2:2:2:2
