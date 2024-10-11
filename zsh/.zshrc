@@ -65,3 +65,7 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 # gcloud components
 source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
 source "$(brew --prefix)/share/google-cloud-sdk/completion.zsh.inc"
+
+# ssh
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_github_arrakis

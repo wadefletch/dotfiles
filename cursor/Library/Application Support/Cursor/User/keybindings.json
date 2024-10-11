@@ -1,1 +1,6 @@
-[]
+[
+  {
+    "key": "cmd+m",
+    "command": "workbench.action.tasks.reRunTask"
+  }
+]

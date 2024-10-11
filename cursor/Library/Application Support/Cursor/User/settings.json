@@ -36,6 +36,10 @@
     "**/.pytest_cache/**": true,
     "**/__pycache__/**": true
   },
+  "workbench.colorCustomizations": {
+    "editorRuler.foreground": "#00000040"
+  },
+  "editor.scrollbar.verticalScrollbarSize": 4,
   "material-icon-theme.folders.color": "#616e88",
   "material-icon-theme.folders.theme": "classic",
   "material-icon-theme.hidesExplorerArrows": true,
@@ -84,6 +88,13 @@
     }
   ],
   "window.zoomLevel": 1,
-  "workbench.colorTheme": "Atom One Light",
-  "workbench.iconTheme": "material-icon-theme"
+  "workbench.colorTheme": "Gruvbox Light Soft",
+  "workbench.iconTheme": "material-icon-theme",
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "cSpell.userWords": ["Tractorbeam"],
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
