@@ -88,7 +88,7 @@
     }
   ],
   "window.zoomLevel": 1,
-  "workbench.colorTheme": "Gruvbox Light Soft",
+  "workbench.colorTheme": "Tokyo Night Light",
   "workbench.iconTheme": "material-icon-theme",
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
