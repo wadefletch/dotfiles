@@ -22,9 +22,11 @@ alias gcm="git commit -m"
 alias gca="git commit --amend --no-edit"
 alias gco="git checkout"
 alias gcb="git checkout -b"
-alias gq="git add . && git commit -m \"$(date -u +'%Y-%m-%dT%H:%M:%S')\" && git push"
-# alias wip="git add . && git commit -m \"WIP $(date -u +'%Y-%m-%dT%H:%M:%S')\" && git push"
-alias wip="gq"
+gq() {
+  git add .
+  git commit -m "$(date -u +'%Y-%m-%dT%H:%M:%S')"
+  git push
+}
 
 # yabai + skhd shortcuts
 alias startup="yabai --restart-service && sudo yabai --load-sa && skhd --restart-service"
@@ -65,7 +67,3 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 # gcloud components
 source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
 source "$(brew --prefix)/share/google-cloud-sdk/completion.zsh.inc"
-
-# ssh
-eval "$(ssh-agent -s)"
-ssh-add ~/.ssh/id_github_arrakis
