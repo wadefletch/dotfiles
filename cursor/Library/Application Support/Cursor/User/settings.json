@@ -21,7 +21,7 @@
     "editor.formatOnSave": true
   },
   "breadcrumbs.enabled": false,
-  "cursor.cpp.disabledLanguages": ["plaintext", "scminput"],
+  "cursor.cpp.disabledLanguages": ["scminput"],
   "editor.bracketPairColorization.enabled": false,
   "editor.codeActionsOnSave": {
     "source.fixAll": "always"
@@ -96,5 +96,11 @@
   "cSpell.userWords": ["Tractorbeam"],
   "[css]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "[mdx]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "cursor.aipreview.enabled": true,
+  "cursor.cmdk.useThemedDiffBackground": true,
+  "cursor.general.enableShadowWorkspace": true
 }
