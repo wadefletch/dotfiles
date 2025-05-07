@@ -1,0 +1,33 @@
+[env]
+TERM = "xterm-256color"
+
+[font]
+size = 14.0
+
+[font.bold]
+family = "Iosevka Nerd Font"
+style = "Bold"
+
+[font.italic]
+family = "Iosevka Nerd Font"
+style = "Italic"
+
+[font.normal]
+family = "Iosevka Nerd Font"
+style = "Regular"
+
+[mouse]
+hide_when_typing = true
+
+[window]
+decorations = "buttonless"
+
+[window.padding]
+x = 15
+y = 15
+
+# import colorscheme
+[general]
+import = [
+    "~/.config/alacritty/catppuccin-mocha.toml"
+]

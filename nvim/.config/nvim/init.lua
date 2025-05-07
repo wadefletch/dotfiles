@@ -56,11 +56,32 @@ vim.cmd("highlight Normal guibg=none ctermbg=none")
 -- configure plugins
 require("lazy").setup({
     -- colorscheme
+    -- {
+    --     "folke/tokyonight.nvim",
+    --     config = function()
+    --         vim.cmd.colorscheme("tokyonight")
+    --     end
+    -- },
+    -- {
+    --     "ellisonleao/gruvbox.nvim",
+    --     priority = 1000,
+    --     opts = {
+    --         transparent_mode = true,
+    --         contrast = "soft",
+    --     },
+    --     config = function()
+    --         vim.o.background = "dark"
+    --         vim.cmd("colorscheme gruvbox")
+    --     end,
+    -- },
     {
-        "folke/tokyonight.nvim",
+        "catppuccin/nvim",
+        name = "catppuccin",
+        priority = 1000,
         config = function()
-            vim.cmd.colorscheme("tokyonight")
-        end
+            vim.o.background = "dark"
+            vim.cmd("colorscheme catppuccin-mocha")
+        end,
     },
 
     -- autopairs
@@ -81,13 +102,13 @@ require("lazy").setup({
     { "tpope/vim-rhubarb" },
 
     -- github copilot
-    {
-        "github/copilot.vim",
-        init = function()
-            vim.g.copilot_filetypes = { markdown = true }
-        end,
-    },
-    { "ofseed/copilot-status.nvim" },
+    -- {
+    --     "github/copilot.vim",
+    --     init = function()
+    --         vim.g.copilot_filetypes = { markdown = true }
+    --     end,
+    -- },
+    -- { "ofseed/copilot-status.nvim" },
 
     -- diagnostics
     {
