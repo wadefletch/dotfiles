@@ -1,8 +1,20 @@
 {
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[mdx]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[python]": {
@@ -21,7 +33,12 @@
     "editor.formatOnSave": true
   },
   "breadcrumbs.enabled": false,
+  "cSpell.userWords": ["Tractorbeam"],
+  "cursor.aipreview.enabled": true,
+  "cursor.cmdk.useThemedDiffBackground": true,
   "cursor.cpp.disabledLanguages": ["scminput"],
+  "cursor.general.enableShadowWorkspace": true,
+  "editor.accessibilitySupport": "off",
   "editor.bracketPairColorization.enabled": false,
   "editor.codeActionsOnSave": {
     "source.fixAll": "always"
@@ -31,19 +48,16 @@
   "editor.lineNumbers": "relative",
   "editor.renderWhitespace": "trailing",
   "editor.rulers": [80, 120],
+  "editor.scrollbar.verticalScrollbarSize": 4,
   "eslint.codeActionsOnSave.mode": "all",
   "files.exclude": {
     "**/.pytest_cache/**": true,
     "**/__pycache__/**": true
   },
-  "workbench.colorCustomizations": {
-    "editorRuler.foreground": "#00000040"
-  },
-  "editor.scrollbar.verticalScrollbarSize": 4,
   "material-icon-theme.folders.color": "#616e88",
   "material-icon-theme.folders.theme": "classic",
   "material-icon-theme.hidesExplorerArrows": true,
-  "material-icon-theme.saturation": 0.7,
+  "material-icon-theme.saturation": 0,
   "python.analysis.autoImportCompletions": true,
   "python.analysis.importFormat": "relative",
   "ruff.nativeServer": "auto",
@@ -80,27 +94,73 @@
       "before": ["leader", "f", "b"],
       "commands": ["workbench.action.quickOpen"]
     },
+    // command line in zen mode
+    {
+      "key": "shift+;",
+      "command": "vim.showQuickpickCmdLine",
+      "when": "inZenMode && vim.mode != 'Insert'"
+    },
     // rename
     {
       "before": ["leader", "r", "n"],
       "commands": ["editor.action.rename"],
       "when": "editorHasRenameProvider && editorTextFocus && !editorReadonly"
+    },
+    // close
+    {
+      "before": ["leader", "b"],
+      "commands": ["workbench.action.toggleSidebarVisibility"]
     }
   ],
+  // "vim.statusBarColorControl": true,
   "window.zoomLevel": 1,
-  "workbench.colorTheme": "Tokyo Night",
-  "workbench.iconTheme": "material-icon-theme",
-  "[html]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "workbench.colorCustomizations": {
+    "editorRuler.foreground": "#00000040",
+    "[Vira*]": {
+      "toolbar.activeBackground": "#80CBC426",
+      "activityBarBadge.background": "#80CBC4",
+      "activityBar.activeBorder": "#80CBC4",
+      "activityBarTop.activeBorder": "#80CBC4",
+      "list.inactiveSelectionIconForeground": "#80CBC4",
+      "list.activeSelectionForeground": "#80CBC4",
+      "list.inactiveSelectionForeground": "#80CBC4",
+      "list.highlightForeground": "#80CBC4",
+      "sash.hoverBorder": "#80CBC480",
+      "list.activeSelectionIconForeground": "#80CBC4",
+      "scrollbarSlider.activeBackground": "#80CBC480",
+      "editorSuggestWidget.highlightForeground": "#80CBC4",
+      "textLink.foreground": "#80CBC4",
+      "progressBar.background": "#80CBC4",
+      "pickerGroup.foreground": "#80CBC4",
+      "tab.activeBorder": "#80CBC4",
+      "notificationLink.foreground": "#80CBC4",
+      "editorWidget.resizeBorder": "#80CBC4",
+      "editorWidget.border": "#80CBC4",
+      "settings.modifiedItemIndicator": "#80CBC4",
+      "settings.headerForeground": "#80CBC4",
+      "panelTitle.activeBorder": "#80CBC4",
+      "breadcrumb.activeSelectionForeground": "#80CBC4",
+      "menu.selectionForeground": "#80CBC4",
+      "menubar.selectionForeground": "#80CBC4",
+      "editor.findMatchBorder": "#80CBC4",
+      "selection.background": "#80CBC440",
+      "statusBarItem.remoteBackground": "#80CBC4",
+      "notebook.inactiveFocusedCellBorder": "#80CBC480",
+      "commandCenter.activeBorder": "#80CBC480"
+    },
+    "statusBar.background": "#5f0000",
+    "statusBar.noFolderBackground": "#5f0000",
+    "statusBar.debuggingBackground": "#5f0000",
+    "statusBar.foreground": "#ffffff",
+    "statusBar.debuggingForeground": "#ffffff"
   },
-  "cSpell.userWords": ["Tractorbeam"],
-  "[css]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[mdx]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "cursor.aipreview.enabled": true,
-  "cursor.cmdk.useThemedDiffBackground": true,
-  "cursor.general.enableShadowWorkspace": true
+  "workbench.colorTheme": "Comrade Contrast (rainglow)",
+  "workbench.fontAliasing": "antialiased",
+  "editor.smoothScrolling": true,
+  "editor.cursorBlinking": "smooth",
+  // "editor.cursorSmoothCaretAnimation": "on",
+  "workbench.list.smoothScrolling": true,
+  "terminal.integrated.cursorBlinking": true,
+  "vim.camelCaseMotion.enable": true,
+  "workbench.iconTheme": "material-icon-theme"
 }

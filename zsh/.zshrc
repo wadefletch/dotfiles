@@ -12,7 +12,7 @@ export PATH="/opt/homebrew/opt/llvm/bin:$PATH"                                  
 alias zshrc="nvim ~/.dotfiles/zsh/.zshrc"
 alias skhdrc="nvim ~/.dotfiles/skhd/.skhdrc"
 alias yabairc="nvim ~/.dotfiles/yabai/.yabairc"
-alias alacrittyrc="nvim ~/.dotfiles/alacritty/.alacritty.toml"
+alias alacrittyrc="nvim ~/.dotfiles/alacritty/.config/alacritty/alacritty.toml"
 alias nvimconf="cd ~/.dotfiles/nvim/.config/nvim/ && nvim init.lua"
 
 # Git Shortcuts
