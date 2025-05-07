@@ -47,7 +47,9 @@ bindkey "^[[B" history-beginning-search-forward
 
 # ============== Prompt ================
 autoload -Uz vcs_info
-precmd() { vcs_info }
+precmd() {
+  vcs_info
+}
 
 zstyle ':vcs_info:git:*' formats '(%b) '
 
