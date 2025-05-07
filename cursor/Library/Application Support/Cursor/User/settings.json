@@ -114,7 +114,7 @@
   ],
   // "vim.statusBarColorControl": true,
   "window.zoomLevel": 1,
-  "workbench.colorTheme": "Noctis Azureus",
+  "workbench.colorTheme": "Dare Contrast (rainglow)",
   "workbench.fontAliasing": "antialiased",
   "editor.smoothScrolling": true,
   "editor.cursorBlinking": "smooth",
