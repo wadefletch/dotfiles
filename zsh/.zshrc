@@ -54,7 +54,7 @@ precmd() {
 zstyle ':vcs_info:git:*' formats '(%b) '
 
 setopt PROMPT_SUBST
-PROMPT='%F{yellow}%~/%f ${vcs_info_msg_0_}%F{blue}λ%f '
+PROMPT='%F{yellow}%~/%f ${vcs_info_msg_0_}%F{green}λ%f '
 
 # bun completions
 [ -s "/Users/wadefletcher/.bun/_bun" ] && source "/Users/wadefletcher/.bun/_bun"
@@ -69,3 +69,8 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 # gcloud components
 source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
 source "$(brew --prefix)/share/google-cloud-sdk/completion.zsh.inc"
+
+# disable paging in aws cli output so cursor can use it
+export AWS_PAGER=""
+
+alias claude="/Users/wadefletcher/.claude/local/claude"

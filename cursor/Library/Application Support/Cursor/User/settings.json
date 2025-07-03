@@ -112,9 +112,9 @@
       "commands": ["workbench.action.toggleSidebarVisibility"]
     }
   ],
-  // "vim.statusBarColorControl": true,
+  "vim.statusBarColorControl": true,
   "window.zoomLevel": 1,
-  "workbench.colorTheme": "Dare Contrast (rainglow)",
+  "workbench.colorTheme": "Blink Contrast (rainglow)",
   "workbench.fontAliasing": "antialiased",
   "editor.smoothScrolling": true,
   "editor.cursorBlinking": "smooth",
@@ -123,5 +123,21 @@
   "terminal.integrated.cursorBlinking": true,
   "vim.camelCaseMotion.enable": true,
   "workbench.iconTheme": "material-icon-theme",
-  "cSpell.enabled": false
+  "cSpell.enabled": false,
+  "zenMode.hideStatusBar": false,
+  "workbench.colorCustomizations": {
+    "statusBar.background": "#5f0000",
+    "statusBar.noFolderBackground": "#5f0000",
+    "statusBar.debuggingBackground": "#5f0000",
+    "statusBar.foreground": "#ffffff",
+    "statusBar.debuggingForeground": "#ffffff"
+  },
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "update.releaseTrack": "prerelease",
+  "cursor.composer.shouldChimeAfterChatFinishes": true,
+  "json.schemaDownload.enable": true,
+  "githubPullRequests.terminalLinksHandler": "github",
+  "[dockerfile]": {
+    "editor.defaultFormatter": "ms-azuretools.vscode-containers"
+  }
 }
