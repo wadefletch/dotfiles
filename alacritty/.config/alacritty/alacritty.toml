@@ -26,8 +26,7 @@ decorations = "buttonless"
 x = 15
 y = 15
 
-# import colorscheme
 [general]
 import = [
-    "~/.config/alacritty/catppuccin-mocha.toml"
+    "~/.config/alacritty/rainglow_blink_contrast.toml"
 ]
