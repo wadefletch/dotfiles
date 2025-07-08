@@ -1,1 +1,43 @@
-{}
+{
+    "permissions": {
+        "allow": [
+            "mcp__linear__list_issues",
+            "mcp__linear__get_issue",
+            "Bash(pnpm lint)",
+            "Bash(pnpm format)",
+            "Bash(pnpm format)",
+            "Bash(pnpm format:*)",
+            "WebFetch(*)",
+            "Bash(gh pr list:*)",
+            "Bash(gh pr view:*)",
+            "Bash(find:*)",
+            "Bash(pnpm test:*)",
+            "Bash(curl:*)"
+        ],
+        "deny": []
+    },
+    "hooks": {
+        "Notification": [
+            {
+                "matcher": "",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "echo \"\\x07\""
+                    }
+                ]
+            }
+        ],
+        "Stop": [
+            {
+                "matcher": "",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "echo \"\\x07\""
+                    }
+                ]
+            }
+        ]
+    }
+}
