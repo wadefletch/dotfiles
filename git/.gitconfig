@@ -17,3 +17,5 @@ required = true
 format = ssh
 [commit]
 gpgsign = true
+[pull]
+	ff = only
