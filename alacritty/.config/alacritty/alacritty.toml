@@ -19,6 +19,10 @@ style = "Regular"
 [mouse]
 hide_when_typing = true
 
+[bell]
+duration = 1000
+command = { program = "osascript", args = ["-e", "beep"] }
+
 [window]
 decorations = "buttonless"
 
