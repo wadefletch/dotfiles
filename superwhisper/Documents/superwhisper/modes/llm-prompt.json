@@ -1,0 +1,33 @@
+{
+  "activationApps" : [
+
+  ],
+  "activationSites" : [
+
+  ],
+  "adjustOutputVolume" : true,
+  "contextFromActiveApplication" : false,
+  "contextFromClipboard" : false,
+  "contextFromSelection" : false,
+  "contextTemplate" : "Use the copied text as context to complete this task.\n\nCopied text: ",
+  "description" : "",
+  "diarize" : false,
+  "key" : "message-WTGF",
+  "language" : "en",
+  "languageModelEnabled" : true,
+  "languageModelID" : "sw-claude-4-sonnet",
+  "literalPunctuation" : false,
+  "name" : "LLM Prompt",
+  "prompt" : "The transcript is a user’s voice dictation that will be passed into an LLM as a prompt. Improve the prompt to accurately convey the user’s intent to the model. Don’t add information that isn’t present in the user’s direct transcript. Use prompting techniques for claude models.",
+  "promptExamples" : [
+
+  ],
+  "realtimeOutput" : false,
+  "script" : "",
+  "scriptEnabled" : false,
+  "translateToEnglish" : false,
+  "type" : "custom",
+  "useSystemAudio" : false,
+  "version" : 1,
+  "voiceModelID" : "large-v3-turbo"
+}

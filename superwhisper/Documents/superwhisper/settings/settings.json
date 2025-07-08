@@ -1,0 +1,17 @@
+{
+  "modeKeys" : [
+    "default",
+    "message",
+    "message-WCUM",
+    "message-UFWS",
+    "message-MXED",
+    "message-WTGF"
+  ],
+  "replacements" : [
+
+  ],
+  "vocabulary" : [
+    "superwhisper",
+    "Tractorbeam"
+  ]
+}

@@ -69,3 +69,18 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 # gcloud components
 source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
 source "$(brew --prefix)/share/google-cloud-sdk/completion.zsh.inc"
+
+alias claude="/Users/wadefletcher/.claude/local/claude"
+
+# claude-sync
+claude-sync() {
+  local current_host=$(hostname)
+  if [[ "$current_host" == "arrakis" ]]; then
+    rsync -avz corrino:~/.claude/projects/ ~/.claude/projects/
+  elif [[ "$current_host" == "corrino" ]]; then
+    rsync -avz arrakis:~/.claude/projects/ ~/.claude/projects/
+  else
+    echo "Current host is neither arrakis nor corrino"
+    return 1
+  fi
+}

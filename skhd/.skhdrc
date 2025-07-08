@@ -33,10 +33,6 @@ ctrl + shift - l : yabai -m window --resize right:50:0; \
 # Equalize size of windows
 ctrl + alt - e : yabai -m space --balance
 
-# Rotate windows clockwise and anticlockwise
-ctrl - r         : yabai -m space --rotate 270
-ctrl + shift - r : yabai -m space --rotate 90
-
 # Float / Unfloat window
 ctrl + shift - space : \
     yabai -m window --toggle float; \
