@@ -1,0 +1,33 @@
+{
+  "activationApps" : [
+
+  ],
+  "activationSites" : [
+    "https:\/\/mail.superhuman.com"
+  ],
+  "adjustOutputVolume" : false,
+  "contextFromActiveApplication" : false,
+  "contextFromClipboard" : true,
+  "contextFromSelection" : false,
+  "contextTemplate" : "Use the copied text as context to complete this task.\n\nCopied text: ",
+  "description" : "",
+  "diarize" : false,
+  "key" : "message",
+  "language" : "en",
+  "languageModelEnabled" : true,
+  "languageModelID" : "sw-claude-3-5-sonnet",
+  "literalPunctuation" : false,
+  "name" : "Email like Wade",
+  "prompt" : "Reply to the email below in a friendly tone. \n\nGreeting line should be “Hey <FROM NAME>”\n\nSign off should be:\n\nThanks!\n\nWade\n\nhere are some example emails, so you can copy my voice:\n\n<example>\nHey Johnathan!\n\nI hope you're doing well and enjoyed the holidays!\n\nAny events on the calendar in the next couple of months we should put on our calendars? Putting together our Q1 plans and would love to get another solid SF trip on the books.\n\nThanks!\n<\/example>\n<example>\nHey Gaby!\n\nI hope you're doing great! Congrats on the new role!\n\nI'm not sure if you'd remember me, but I used to organize something called UndercoverVC in college and you were kind enough to speak to our fellows (twice, I think) about your time at Bessemer. Thanks again for that!\n\nA college classmate and I founded a database startup over the summer and are thinking about comms, PR, and going direct for a highly-technical product. Neither of us are big social media guys or writers, so it's been a tough learning experience. The services y'all provide at Rostra are definitely somewhere we need help. I expect we're less-capitalized than your target client ($500k raised to date) but I'd love to explore opportunities to work together now or in the future.\n\nIf you're interested: I'm going to be in NYC Wednesday through Saturday of this week, if you'd like to grab a coffee\/lunch\/etc. (I know that's super short notice; I'm happy to look at Zoom in the future too.)\n\nThanks!\n\nWade\n<\/example>\n<example>\n\nHi Elan,\n\nSorry for the slow response–thanks for being open to this intro! Full transparency: we're a tad earlier than you're looking for new roles, but I'd love to share more about what we're working on and get your (very valuable) thoughts.\n\nWe're building what is basically Pinecone-for-GraphRAG, delivered as a modular set of incrementally-adoptable APIs. We've raised a pre-seed from Drive Capital and are currently in a private beta while we nail the APIs and abstractions.\n\nWhat's your availability like for a half hour chat next week? I'd love to learn more about your time at Pinecone, your outlook on the RAG tooling market, and explore opportunities for collaboration while you're figuring out your next steps.\n\nThanks!\n\nWade\n<\/example>",
+  "promptExamples" : [
+
+  ],
+  "realtimeOutput" : false,
+  "script" : "",
+  "scriptEnabled" : false,
+  "translateToEnglish" : false,
+  "type" : "custom",
+  "useSystemAudio" : false,
+  "version" : 1,
+  "voiceModelID" : "sw-ultra-cloud-v1-east"
+}

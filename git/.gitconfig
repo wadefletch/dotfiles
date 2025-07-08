@@ -1,7 +1,7 @@
 [user]
 name = wadefletch
 email = wbfletch@gmail.com
-signingkey = /Users/wadefletcher/.ssh/github_signing_ed25519.pub
+	signingkey = /Users/wadefletcher/.ssh/id_github_corrino
 [core]
 editor = nvim
 [init]
