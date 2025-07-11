@@ -1,22 +1,30 @@
 [user]
 name = wadefletch
 email = wbfletch@gmail.com
-	signingkey = /Users/wadefletcher/.ssh/id_github_corrino
+signingkey = /Users/wadefletcher/.ssh/id_github_wadefletch.pub
+
 [core]
 editor = nvim
+
 [init]
 defaultBranch = main
+
 [push]
 autoSetupRemote = true
+
 [filter "lfs"]
 clean = git-lfs clean -- %f
 smudge = git-lfs smudge -- %f
 process = git-lfs filter-process
 required = true
+
 [gpg]
 format = ssh
+[gpg "ssh"]
+allowedSignersFile = /Users/wadefletcher/.config/git/allowed_signers
+
 [commit]
-	gpgsign = false
-	sshsign = false
+gpgsign = true
+
 [pull]
-	ff = only
+ff = only
