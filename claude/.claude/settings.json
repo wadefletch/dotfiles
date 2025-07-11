@@ -15,29 +15,5 @@
             "Bash(curl:*)"
         ],
         "deny": []
-    },
-    "hooks": {
-        "Notification": [
-            {
-                "matcher": "",
-                "hooks": [
-                    {
-                        "type": "command",
-                        "command": "echo \"\\x07\""
-                    }
-                ]
-            }
-        ],
-        "Stop": [
-            {
-                "matcher": "",
-                "hooks": [
-                    {
-                        "type": "command",
-                        "command": "echo \"\\x07\""
-                    }
-                ]
-            }
-        ]
     }
 }
