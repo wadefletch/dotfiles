@@ -1,17 +1,15 @@
 {
-  "modeKeys" : [
-    "default",
-    "message",
-    "message-WCUM",
-    "message-UFWS",
-    "message-MXED",
-    "message-WTGF"
-  ],
-  "replacements" : [
-
-  ],
-  "vocabulary" : [
-    "superwhisper",
-    "Tractorbeam"
-  ]
+    "modeKeys": [
+        "default",
+        "message",
+        "email-like-wade",
+        "feedback",
+        "linear",
+        "llm-prompt"
+    ],
+    "replacements": [],
+    "vocabulary": [
+        "superwhisper",
+        "Tractorbeam"
+    ]
 }
