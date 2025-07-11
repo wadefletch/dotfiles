@@ -1,77 +1,64 @@
-# zsh config
-# Wade Fletcher, 2023
+# Environment
+export EDITOR="nvim"
+export AWS_PAGER=""  # disable paging for cursor
+export BUN_INSTALL="$HOME/.bun"
+export PNPM_HOME="/Users/wadefletcher/Library/pnpm"
 
-# ========== Path Adjustments ==========
-export PATH="/usr/local/sbin:$PATH"                                             # homebrew
+# Path - consolidated
+export PATH="/usr/local/sbin:$PATH"                                             # homebrew sbin
+export PATH="/opt/homebrew/opt/llvm/bin:$PATH"                                  # llvm
+export PATH="$BUN_INSTALL/bin:$PATH"                                            # bun
+export PATH="$PNPM_HOME:$PATH"                                                  # pnpm
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH" # yarn
 export PATH="$HOME/.pyenv/bin:$PATH"                                            # pyenv
-export PATH="/opt/homebrew/opt/llvm/bin:$PATH"                                  # llvm
 
-# ============== Aliases ===============
-# Config File Shortcuts
+# History
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=50000
+SAVEHIST=50000
+setopt EXTENDED_HISTORY          # save timestamp
+setopt HIST_EXPIRE_DUPS_FIRST    # expire duplicates first
+setopt HIST_IGNORE_DUPS          # ignore duplicated commands
+setopt HIST_IGNORE_SPACE         # ignore commands starting with space
+setopt HIST_VERIFY               # show command before executing from history
+setopt SHARE_HISTORY             # share history between sessions
+
+# Key bindings
+bindkey "^[[A" history-beginning-search-backward
+bindkey "^[[B" history-beginning-search-forward
+
+# Prompt
+autoload -Uz vcs_info
+precmd() { vcs_info }
+zstyle ':vcs_info:git:*' formats '(%b) '
+setopt PROMPT_SUBST
+PROMPT='%F{yellow}%~/%f ${vcs_info_msg_0_}%F{green}λ%f '
+
+# Aliases - config files
 alias zshrc="nvim ~/.dotfiles/zsh/.zshrc"
+alias nvimconf="cd ~/.dotfiles/nvim/.config/nvim/ && nvim init.lua"
+alias alacrittyrc="nvim ~/.dotfiles/alacritty/.config/alacritty/alacritty.toml"
 alias skhdrc="nvim ~/.dotfiles/skhd/.skhdrc"
 alias yabairc="nvim ~/.dotfiles/yabai/.yabairc"
-alias alacrittyrc="nvim ~/.dotfiles/alacritty/.config/alacritty/alacritty.toml"
-alias nvimconf="cd ~/.dotfiles/nvim/.config/nvim/ && nvim init.lua"
 
-# Git Shortcuts
+# Aliases - git
 alias ga="git add"
 alias gc="git commit"
 alias gcm="git commit -m"
 alias gca="git commit --amend --no-edit"
 alias gco="git checkout"
 alias gcb="git checkout -b"
+alias gs="git status -sb"
+alias gp="git push"
+alias gl="git log --oneline -10"
+
+# Functions
 gq() {
   git add .
   git commit -m "$(date -u +'%Y-%m-%dT%H:%M:%S')"
   git push
 }
 
-# yabai + skhd shortcuts
-alias startup="yabai --restart-service && sudo yabai --load-sa && skhd --restart-service"
-
-# ============== PNPM ==================
-export PNPM_HOME="/Users/wadefletcher/Library/pnpm"
-case ":$PATH:" in
-*":$PNPM_HOME:"*) ;;
-*) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-
-# ============== Pyenv =================
-eval "$(pyenv init -)"
-
-# ============== History ===============
-bindkey "^[[A" history-beginning-search-backward
-bindkey "^[[B" history-beginning-search-forward
-
-# ============== Prompt ================
-autoload -Uz vcs_info
-precmd() {
-  vcs_info
-}
-
-zstyle ':vcs_info:git:*' formats '(%b) '
-
-setopt PROMPT_SUBST
-PROMPT='%F{yellow}%~/%f ${vcs_info_msg_0_}%F{green}λ%f '
-
-# bun completions
-[ -s "/Users/wadefletcher/.bun/_bun" ] && source "/Users/wadefletcher/.bun/_bun"
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-
-# cargo
-. "$HOME/.cargo/env"
-
-# gcloud components
-source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
-source "$(brew --prefix)/share/google-cloud-sdk/completion.zsh.inc"
-
-# claude code
-alias claude="/Users/wadefletcher/.claude/local/claude"
 claude-sync() {
   local current_host=$(hostname)
   if [[ "$current_host" == "arrakis" ]]; then
@@ -84,5 +71,24 @@ claude-sync() {
   fi
 }
 
-# disable paging in aws cli output so cursor can use it
-export AWS_PAGER=""
+# Lazy loading
+pyenv() {
+  unset -f pyenv
+  eval "$(command pyenv init -)"
+  pyenv "$@"
+}
+
+gcloud() {
+  unset -f gcloud
+  source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
+  source "$(brew --prefix)/share/google-cloud-sdk/completion.zsh.inc"
+  gcloud "$@"
+}
+
+# Aliases - tools
+alias startup="yabai --restart-service && sudo yabai --load-sa && skhd --restart-service"
+alias claude="/Users/wadefletcher/.claude/local/claude"
+
+# Immediate loads (fast)
+. "$HOME/.cargo/env"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
