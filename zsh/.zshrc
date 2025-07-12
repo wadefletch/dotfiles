@@ -24,8 +24,28 @@ setopt HIST_VERIFY               # show command before executing from history
 setopt SHARE_HISTORY             # share history between sessions
 
 # Key bindings
+bindkey -e  # Use emacs key bindings (readline compatible)
+
+# History search with up/down arrows
 bindkey "^[[A" history-beginning-search-backward
 bindkey "^[[B" history-beginning-search-forward
+
+# Standard readline word movement (Alt+f/b)
+bindkey "^[f" forward-word
+bindkey "^[b" backward-word
+
+# Alt+arrow for word movement (multiple terminal escape sequences)
+bindkey "^[[1;3C" forward-word     # Alt+Right
+bindkey "^[[1;3D" backward-word    # Alt+Left
+bindkey "^[^[[C" forward-word      # Alt+Right (older terminals)
+bindkey "^[^[[D" backward-word     # Alt+Left (older terminals)
+
+# Additional readline-compatible bindings
+bindkey "^[d" kill-word            # Alt+d (delete word forward)
+bindkey "^[^?" backward-kill-word  # Alt+Backspace
+bindkey "^[." insert-last-word     # Alt+. (insert last argument)
+bindkey "^[<" beginning-of-buffer-or-history  # Alt+< (beginning)
+bindkey "^[>" end-of-buffer-or-history        # Alt+> (end)
 
 # Prompt
 autoload -Uz vcs_info
