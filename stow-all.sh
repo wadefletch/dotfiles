@@ -6,6 +6,7 @@ directories=(
     "alacritty"
     "cargo"
     "claude"
+    "crowdcontrol"
     "cursor"
     "git"
     "nvim"
