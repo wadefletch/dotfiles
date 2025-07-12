@@ -7,7 +7,7 @@
       "Bash(pnpm format)",
       "Bash(pnpm format)",
       "Bash(pnpm format:*)",
-      "WebFetch(*)",
+      "WebFetch",
       "Bash(gh pr list:*)",
       "Bash(gh pr view:*)",
       "Bash(find:*)",
@@ -44,7 +44,8 @@
       "Bash(gh run view:*)",
       "Bash(gh run logs:*)",
 
-      "WebFetch(domain:*)",
+      "WebFetch",
+      "WebSearch",
 
       "mcp__linear__list_my_issues",
       "mcp__linear__list_teams",
