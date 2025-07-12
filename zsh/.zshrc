@@ -71,6 +71,29 @@ claude-sync() {
   fi
 }
 
+ cctb() {
+      local agent_name="$1"
+      local cc_cmd="CROWDCONTROL_WORKSPACES_DIR=~/Development/Tractorbeam/cc-workspaces crowdcontrol"
+      local repo="tractorbeamai/monorepo"
+
+      echo "🛸 Creating agent: $agent_name"
+      if eval "$cc_cmd new $agent_name git@github.com:$repo"; then
+
+          echo "🚀 Starting agent..."
+          if eval "$cc_cmd start $agent_name"; then
+
+              echo "🔌 Connecting to agent..."
+              eval "$cc_cmd connect $agent_name"
+          else
+              echo "❌ Failed to start agent: $agent_name"
+              return 1
+          fi
+      else
+          echo "❌ Failed to create agent: $agent_name"
+          return 1
+      fi
+  }
+
 # Lazy loading
 pyenv() {
   unset -f pyenv
