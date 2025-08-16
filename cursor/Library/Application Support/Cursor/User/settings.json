@@ -112,9 +112,8 @@
       "commands": ["workbench.action.toggleSidebarVisibility"]
     }
   ],
-  "vim.statusBarColorControl": true,
   "window.zoomLevel": 1,
-  "workbench.colorTheme": "Blink Contrast (rainglow)",
+  "workbench.colorTheme": "Lichen Contrast (rainglow)",
   "workbench.fontAliasing": "antialiased",
   "editor.smoothScrolling": true,
   "editor.cursorBlinking": "smooth",
@@ -140,5 +139,6 @@
   "[dockerfile]": {
     "editor.defaultFormatter": "ms-azuretools.vscode-containers"
   },
-  "diffEditor.renderSideBySide": false
+  "diffEditor.renderSideBySide": false,
+  "powermode.enabled": true
 }

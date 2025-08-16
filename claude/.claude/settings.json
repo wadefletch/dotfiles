@@ -13,22 +13,18 @@
       "Bash(find:*)",
       "Bash(pnpm test:*)",
       "Bash(curl:*)",
-
       "Bash(pnpm lint:*)",
       "Bash(pnpm --version)",
       "Bash(pnpm list:*)",
       "Bash(pnpm ls:*)",
       "Bash(pnpm why:*)",
-
       "Bash(git status:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)",
       "Bash(git show:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-
       "Bash(node --version)",
-
       "Bash(pwd)",
       "Bash(whoami)",
       "Bash(date)",
@@ -39,14 +35,11 @@
       "Bash(ls:*)",
       "Bash(echo:*)",
       "Bash(which:*)",
-
       "Bash(gh pr diff:*)",
       "Bash(gh run view:*)",
       "Bash(gh run logs:*)",
-
       "WebFetch",
       "WebSearch",
-
       "mcp__linear__list_my_issues",
       "mcp__linear__list_teams",
       "mcp__linear__list_comments",
@@ -62,7 +55,6 @@
       "mcp__linear__list_issue_labels",
       "mcp__linear__get_team",
       "mcp__linear__search_documentation",
-
       "mcp__playwright__browser_close",
       "mcp__playwright__browser_resize",
       "mcp__playwright__browser_console_messages",
@@ -89,7 +81,9 @@
       "mcp__playwright__browser_generate_playwright_test",
       "mcp__playwright__browser_wait_for"
     ],
-    "deny": ["Bash(rm -rf:*)"]
+    "deny": [
+      "Bash(rm -rf:*)"
+    ]
   },
-  "model": "sonnet"
+  "model": "opus"
 }
