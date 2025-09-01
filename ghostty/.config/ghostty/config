@@ -1,0 +1,13 @@
+# disable auto-update since we're letting homebrew handle this
+auto-update = off
+
+# cross-platform aesthetics
+font-family = Iosveka Nerd Font Mono
+theme = tokyonight
+window-padding-x = 10
+window-padding-y = 10
+
+# macos-specific aesthetics
+macos-icon = xray
+macos-titlebar-style = transparent
+macos-titlebar-proxy-icon = hidden

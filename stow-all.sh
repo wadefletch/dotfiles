@@ -15,6 +15,8 @@ directories=(
     "tmux"
     "vscode"
     "zsh"
+    "ghostty"
+    "starship"
 )
 
 for dir in "${directories[@]}"; do
