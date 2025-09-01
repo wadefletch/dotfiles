@@ -11,6 +11,7 @@ export PATH="$BUN_INSTALL/bin:$PATH"                                            
 export PATH="$PNPM_HOME:$PATH"                                                  # pnpm
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH" # yarn
 export PATH="$HOME/.pyenv/bin:$PATH"                                            # pyenv
+export PATH="$HOME/.local/bin:$PATH"
 
 # History
 HISTFILE="$HOME/.zsh_history"
@@ -48,11 +49,10 @@ bindkey "^[<" beginning-of-buffer-or-history  # Alt+< (beginning)
 bindkey "^[>" end-of-buffer-or-history        # Alt+> (end)
 
 # Prompt
-autoload -Uz vcs_info
-precmd() { vcs_info }
-zstyle ':vcs_info:git:*' formats '(%b) '
-setopt PROMPT_SUBST
-PROMPT='%F{yellow}%~/%f ${vcs_info_msg_0_}%F{green}λ%f '
+eval "$(starship init zsh)"
+
+# Aliases - tools
+alias claude="/Users/wadefletcher/.claude/local/claude"
 
 # Aliases - config files
 alias zshrc="nvim ~/.dotfiles/zsh/.zshrc"
@@ -127,10 +127,6 @@ gcloud() {
   gcloud "$@"
 }
 
-# Aliases - tools
-alias claude="/Users/wadefletcher/.claude/local/claude"
-
 # Immediate loads (fast)
 . "$HOME/.cargo/env"
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
-export PATH="$HOME/.local/bin:$PATH"
