@@ -10,12 +10,10 @@ directories=(
     "cursor"
     "git"
     "nvim"
-    "skhd"
     "ssh"
     "superwhisper"
     "tmux"
     "vscode"
-    "yabai"
     "zsh"
 )
 

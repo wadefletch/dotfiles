@@ -2,8 +2,6 @@ brew 'bash'
 brew 'coreutils' # those that come with macos are usually outdated
 brew 'gh'
 brew 'git'
-brew 'koekeishiya/formulae/skhd'
-brew 'koekeishiya/formulae/yabai'
 brew 'neovim'
 brew 'node'
 brew 'pyenv'

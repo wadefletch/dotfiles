@@ -58,8 +58,6 @@ PROMPT='%F{yellow}%~/%f ${vcs_info_msg_0_}%F{green}λ%f '
 alias zshrc="nvim ~/.dotfiles/zsh/.zshrc"
 alias nvimconf="cd ~/.dotfiles/nvim/.config/nvim/ && nvim init.lua"
 alias alacrittyrc="nvim ~/.dotfiles/alacritty/.config/alacritty/alacritty.toml"
-alias skhdrc="nvim ~/.dotfiles/skhd/.skhdrc"
-alias yabairc="nvim ~/.dotfiles/yabai/.yabairc"
 
 # Aliases - git
 alias ga="git add"
@@ -130,7 +128,6 @@ gcloud() {
 }
 
 # Aliases - tools
-alias startup="yabai --restart-service && sudo yabai --load-sa && skhd --restart-service"
 alias claude="/Users/wadefletcher/.claude/local/claude"
 
 # Immediate loads (fast)

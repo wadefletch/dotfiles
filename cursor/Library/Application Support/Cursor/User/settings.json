@@ -1,144 +1,179 @@
 {
-  "[css]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[html]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[json]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[jsonc]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[mdx]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[python]": {
+    "[css]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[html]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[json]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[mdx]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[python]": {
+        "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit",
+            "source.organizeImports": "explicit"
+        },
+        "editor.defaultFormatter": "charliermarsh.ruff"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+    },
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+    },
+    "breadcrumbs.enabled": false,
+    "cSpell.userWords": [
+        "Tractorbeam"
+    ],
+    "cursor.aipreview.enabled": true,
+    "cursor.cmdk.useThemedDiffBackground": true,
+    "cursor.cpp.disabledLanguages": [
+        "scminput"
+    ],
+    "cursor.general.enableShadowWorkspace": true,
+    "editor.bracketPairColorization.enabled": false,
     "editor.codeActionsOnSave": {
-      "source.fixAll": "explicit",
-      "source.organizeImports": "explicit"
+        "source.fixAll": "always"
     },
-    "editor.defaultFormatter": "charliermarsh.ruff"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true
-  },
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true
-  },
-  "breadcrumbs.enabled": false,
-  "cSpell.userWords": ["Tractorbeam"],
-  "cursor.aipreview.enabled": true,
-  "cursor.cmdk.useThemedDiffBackground": true,
-  "cursor.cpp.disabledLanguages": ["scminput"],
-  "cursor.general.enableShadowWorkspace": true,
-  "editor.accessibilitySupport": "off",
-  "editor.bracketPairColorization.enabled": false,
-  "editor.codeActionsOnSave": {
-    "source.fixAll": "always"
-  },
-  "editor.fontFamily": "'Iosevka', 'Fragment Mono', Menlo, Monaco, 'Courier New', monospace",
-  "editor.formatOnSave": true,
-  "editor.lineNumbers": "relative",
-  "editor.renderWhitespace": "trailing",
-  "editor.rulers": [80, 120],
-  "editor.scrollbar.verticalScrollbarSize": 4,
-  "eslint.codeActionsOnSave.mode": "all",
-  "files.exclude": {
-    "**/.pytest_cache/**": true,
-    "**/__pycache__/**": true
-  },
-  "material-icon-theme.folders.color": "#616e88",
-  "material-icon-theme.folders.theme": "classic",
-  "material-icon-theme.hidesExplorerArrows": true,
-  "material-icon-theme.saturation": 0,
-  "python.analysis.autoImportCompletions": true,
-  "python.analysis.importFormat": "relative",
-  "ruff.nativeServer": "auto",
-  "rust-analyzer.check.workspace": false,
-  "vim.insertModeKeyBindingsNonRecursive": [
-    {
-      "after": ["<Esc>"],
-      "before": ["j", "k"]
-    }
-  ],
-  // "editor.lineNumbers": "relative",
-  "vim.leader": "<Space>",
-  "vim.normalModeKeyBindingsNonRecursive": [
-    // Switch between buffers
-    {
-      "before": ["<S-h>"],
-      "commands": [":bprevious"]
+    "editor.fontFamily": "'Iosevka', 'Fragment Mono', Menlo, Monaco, 'Courier New', monospace",
+    "editor.formatOnSave": true,
+    "editor.renderWhitespace": "trailing",
+    "editor.rulers": [
+        80,
+        120
+    ],
+    "editor.scrollbar.verticalScrollbarSize": 4,
+    "eslint.codeActionsOnSave.mode": "all",
+    "files.exclude": {
+        "**/.pytest_cache/**": true,
+        "**/__pycache__/**": true
     },
-    {
-      "before": ["<S-l>"],
-      "commands": [":bnext"]
+    "material-icon-theme.folders.theme": "classic",
+    "material-icon-theme.hidesExplorerArrows": true,
+    "material-icon-theme.saturation": 0,
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.importFormat": "relative",
+    "ruff.nativeServer": "auto",
+    "rust-analyzer.check.workspace": false,
+    "vim.insertModeKeyBindingsNonRecursive": [
+        {
+            "after": [
+                "<Esc>"
+            ],
+            "before": [
+                "j",
+                "k"
+            ]
+        }
+    ],
+    // "editor.lineNumbers": "relative",
+    "vim.leader": "<Space>",
+    "vim.normalModeKeyBindingsNonRecursive": [
+        // Switch between buffers
+        {
+            "before": [
+                "<S-h>"
+            ],
+            "commands": [
+                ":bprevious"
+            ]
+        },
+        {
+            "before": [
+                "<S-l>"
+            ],
+            "commands": [
+                ":bnext"
+            ]
+        },
+        // splits
+        {
+            "before": [
+                "leader",
+                "v"
+            ],
+            "commands": [
+                ":vsplit"
+            ]
+        },
+        {
+            "before": [
+                "leader",
+                "s"
+            ],
+            "commands": [
+                ":split"
+            ]
+        },
+        // search buffers
+        {
+            "before": [
+                "leader",
+                "f",
+                "b"
+            ],
+            "commands": [
+                "workbench.action.quickOpen"
+            ]
+        },
+        // command line in zen mode
+        {
+            "key": "shift+;",
+            "command": "vim.showQuickpickCmdLine",
+            "when": "inZenMode && vim.mode != 'Insert'"
+        },
+        // rename
+        {
+            "before": [
+                "leader",
+                "r",
+                "n"
+            ],
+            "commands": [
+                "editor.action.rename"
+            ],
+            "when": "editorHasRenameProvider && editorTextFocus && !editorReadonly"
+        },
+        // toggle sidebar
+        {
+            "before": [
+                "leader",
+                "b"
+            ],
+            "commands": [
+                "workbench.action.toggleSidebarVisibility"
+            ]
+        }
+    ],
+    "window.zoomLevel": 1,
+    "workbench.colorTheme": "Codecourse (rainglow)",
+    "workbench.fontAliasing": "antialiased",
+    "editor.smoothScrolling": true,
+    "editor.cursorBlinking": "smooth",
+    "workbench.list.smoothScrolling": true,
+    "terminal.integrated.cursorBlinking": true,
+    "vim.camelCaseMotion.enable": true,
+    "workbench.iconTheme": "material-icon-theme",
+    "cSpell.enabled": false,
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "update.releaseTrack": "prerelease",
+    "cursor.composer.shouldChimeAfterChatFinishes": true,
+    "json.schemaDownload.enable": true,
+    "githubPullRequests.terminalLinksHandler": "github",
+    "[dockerfile]": {
+        "editor.defaultFormatter": "ms-azuretools.vscode-containers"
     },
-    // splits
-    {
-      "before": ["leader", "v"],
-      "commands": [":vsplit"]
-    },
-    {
-      "before": ["leader", "s"],
-      "commands": [":split"]
-    },
-    // search buffers
-    {
-      "before": ["leader", "f", "b"],
-      "commands": ["workbench.action.quickOpen"]
-    },
-    // command line in zen mode
-    {
-      "key": "shift+;",
-      "command": "vim.showQuickpickCmdLine",
-      "when": "inZenMode && vim.mode != 'Insert'"
-    },
-    // rename
-    {
-      "before": ["leader", "r", "n"],
-      "commands": ["editor.action.rename"],
-      "when": "editorHasRenameProvider && editorTextFocus && !editorReadonly"
-    },
-    // close
-    {
-      "before": ["leader", "b"],
-      "commands": ["workbench.action.toggleSidebarVisibility"]
-    }
-  ],
-  "window.zoomLevel": 1,
-  "workbench.colorTheme": "Lichen Contrast (rainglow)",
-  "workbench.fontAliasing": "antialiased",
-  "editor.smoothScrolling": true,
-  "editor.cursorBlinking": "smooth",
-  // "editor.cursorSmoothCaretAnimation": "on",
-  "workbench.list.smoothScrolling": true,
-  "terminal.integrated.cursorBlinking": true,
-  "vim.camelCaseMotion.enable": true,
-  "workbench.iconTheme": "material-icon-theme",
-  "cSpell.enabled": false,
-  "zenMode.hideStatusBar": false,
-  "workbench.colorCustomizations": {
-    "statusBar.background": "#5f0000",
-    "statusBar.noFolderBackground": "#5f0000",
-    "statusBar.debuggingBackground": "#5f0000",
-    "statusBar.foreground": "#ffffff",
-    "statusBar.debuggingForeground": "#ffffff"
-  },
-  "typescript.updateImportsOnFileMove.enabled": "always",
-  "update.releaseTrack": "prerelease",
-  "cursor.composer.shouldChimeAfterChatFinishes": true,
-  "json.schemaDownload.enable": true,
-  "githubPullRequests.terminalLinksHandler": "github",
-  "[dockerfile]": {
-    "editor.defaultFormatter": "ms-azuretools.vscode-containers"
-  },
-  "diffEditor.renderSideBySide": false,
-  "powermode.enabled": true
+    "powermode.enabled": true,
+    "javascript.updateImportsOnFileMove.enabled": "always"
 }

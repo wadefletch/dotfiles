@@ -18,6 +18,7 @@
   "languageModelID" : "sw-gpt-4o-mini",
   "literalPunctuation" : false,
   "name" : "Default",
+  "pauseMediaPlayback" : false,
   "prompt" : "",
   "promptExamples" : [
 
