@@ -4,14 +4,18 @@ export AWS_PAGER=""  # disable paging for cursor
 export BUN_INSTALL="$HOME/.bun"
 export PNPM_HOME="/Users/wadefletcher/Library/pnpm"
 
-# Path - consolidated
+# Path
 export PATH="/usr/local/sbin:$PATH"                                             # homebrew sbin
 export PATH="/opt/homebrew/opt/llvm/bin:$PATH"                                  # llvm
 export PATH="$BUN_INSTALL/bin:$PATH"                                            # bun
 export PATH="$PNPM_HOME:$PATH"                                                  # pnpm
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH" # yarn
-export PATH="$HOME/.pyenv/bin:$PATH"                                            # pyenv
 export PATH="$HOME/.local/bin:$PATH"
+
+# Pyenv
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init - zsh)"
 
 # History
 HISTFILE="$HOME/.zsh_history"
@@ -113,13 +117,7 @@ claude-sync() {
       fi
   }
 
-# Lazy loading
-pyenv() {
-  unset -f pyenv
-  eval "$(command pyenv init -)"
-  pyenv "$@"
-}
-
+# Lazy load expensive gcloud
 gcloud() {
   unset -f gcloud
   source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
