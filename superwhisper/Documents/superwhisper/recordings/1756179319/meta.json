@@ -1,0 +1,87 @@
+{
+  "literalPunctuationEnabled" : false,
+  "systemAudioEnabled" : false,
+  "datetime" : "2025-08-26T03:37:45",
+  "appVersion" : "2.2.1",
+  "languageModelName" : "",
+  "recordingDevice" : "CC-08-FA-BB-94-17:input",
+  "separateSpeakersEnabled" : false,
+  "segments" : [
+    {
+      "end" : 35.456,
+      "text" : "Okay, here's a bunch of context and a template for a statement of work. I need you to fill in this statement of work template with everything from the context here. Now, let me be very clear. We have changed some things from what's in the context and some of the context is contradictory. So this team just wants to prototype and understand what use cases are potentially going to work for them. They don't need like full end-to-end automations or platforms or anything else. They just want to run experiments and understand what's going on. We want to help them do that.",
+      "start" : 1.44
+    },
+    {
+      "end" : 68.02,
+      "text" : "And the way we discussed with them to do that is actually to just do a CLI tool and build the actual agents so that we can help them answer this. Is AI going to work for us? Where is AI going to work for us? And hopefully we, through the process, will convince them that these are some ways that will work, that they should pay us a lot of money to build out into a bigger platform.",
+      "start" : 35.456
+    },
+    {
+      "end" : 86.5,
+      "text" : "For now, they're very concerned on keeping it in experimentation because they have this big meeting amongst the whole firm coming up where they want to look smart and present a full day about AI and what it means for them and private equity and everything else to their team.",
+      "start" : 68.02
+    },
+    {
+      "end" : 94.688,
+      "text" : "And then their team will then know a lot so that when they have their LP meeting later on, they can appear together and with it and everything on AI.",
+      "start" : 86.5
+    },
+    {
+      "end" : 107.26,
+      "text" : "And so, yeah, so if you could take all this context, thread the needle through it, and then write, like fill out the statement of work template, it would be great.",
+      "start" : 98.76
+    },
+    {
+      "end" : 120.12,
+      "text" : "And then we'll continue to iterate on it together. You're welcome to leave me kind of comments like you might, if you were writing code, wrap the document for places that I need to time back in with something else or something doesn't quite feel right or anything like that.",
+      "start" : 107.54
+    },
+    {
+      "end" : 139.4,
+      "text" : "Remember, this is a legal document, so pay close attention and try to balance looking crisp and professional and together because we're a new consulting firm trying to look very professional and thorough without drowning in legalese or anything.",
+      "start" : 120.12
+    },
+    {
+      "end" : 141.008,
+      "text" : "So, thank you so much.",
+      "start" : 140.328
+    }
+  ],
+  "result" : "Okay, here's a bunch of context and a template for a statement of work. I need you to fill in this statement of work template with everything from the context here. Now, let me be very clear. We have changed some things from what's in the context and some of the context is contradictory. So this team just wants to prototype and understand what use cases are potentially going to work for them. They don't need like full end-to-end automations or platforms or anything else. They just want to run experiments and understand what's going on. We want to help them do that. And the way we discussed with them to do that is actually to just do a CLI tool and build the actual agents so that we can help them answer this. Is AI going to work for us? Where is AI going to work for us? And hopefully we, through the process, will convince them that these are some ways that will work, that they should pay us a lot of money to build out into a bigger platform. For now, they're very concerned on keeping it in experimentation because they have this big meeting amongst the whole firm coming up where they want to look smart and present a full day about AI and what it means for them and private equity and everything else to their team. And then their team will then know a lot so that when they have their LP meeting later on, they can appear together and with it and everything on AI. And so, yeah, so if you could take all this context, thread the needle through it, and then write, like fill out the statement of work template, it would be great. And then we'll continue to iterate on it together. You're welcome to leave me kind of comments like you might, if you were writing code, wrap the document for places that I need to time back in with something else or something doesn't quite feel right or anything like that. Remember, this is a legal document, so pay close attention and try to balance looking crisp and professional and together because we're a new consulting firm trying to look very professional and thorough without drowning in legalese or anything. So, thank you so much.",
+  "processingTime" : 3892,
+  "modelKey" : "sw-ultra-cloud-v1-east",
+  "speakers" : [
+
+  ],
+  "languageSelected" : "en",
+  "rawResult" : " Okay, here's a bunch of context and a template for a statement of work. I need you to fill in this statement of work template with everything from the context here. Now, let me be very clear. We have changed some things from what's in the context and some of the context is contradictory. So this team just wants to prototype and understand what use cases are potentially going to work for them. They don't need like full end-to-end automations or platforms or anything else. They just want to run experiments and understand what's going on. We want to help them do that. And the way we discussed with them to do that is actually to just do a CLI tool and build the actual agents so that we can help them answer this. Is AI going to work for us? Where is AI going to work for us? And hopefully we, through the process, will convince them that these are some ways that will work, that they should pay us a lot of money to build out into a bigger platform. For now, they're very concerned on keeping it in experimentation because they have this big meeting amongst the whole firm coming up where they want to look smart and present a full day about AI and what it means for them and private equity and everything else to their team. And then their team will then know a lot so that when they have their LP meeting later on, they can appear together and with it and everything on AI. And so, yeah, so if you could take all this context, thread the needle through it, and then write, like fill out the statement of work template, it would be great. And then we'll continue to iterate on it together. You're welcome to leave me kind of comments like you might, if you were writing code, wrap the document for places that I need to time back in with something else or something doesn't quite feel right or anything like that. Remember, this is a legal document, so pay close attention and try to balance looking crisp and professional and together because we're a new consulting firm trying to look very professional and thorough without drowning in legalese or anything. So, thank you so much.",
+  "translationEnabled" : false,
+  "duration" : 141500,
+  "prompt" : "",
+  "promptContext" : {
+    "systemContext" : {
+      "time" : "",
+      "language" : "en"
+    },
+    "userContext" : {
+
+    },
+    "applicationContext" : {
+      "name" : "",
+      "nouns" : [
+
+      ]
+    },
+    "modeContext" : {
+      "type" : "custom",
+      "examples" : [
+
+      ]
+    }
+  },
+  "modeName" : "Default",
+  "modelName" : "Ultra (Cloud)",
+  "realtimeEnabled" : false,
+  "applicationContextEnabled" : false
+}

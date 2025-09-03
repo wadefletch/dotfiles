@@ -1,0 +1,45 @@
+# Terminal type
+term = xterm-256color
+
+# Font configuration
+font-family = "Iosevka Nerd Font"
+font-family-bold = "Iosevka Nerd Font"
+font-family-italic = "Iosevka Nerd Font"
+font-size = 14
+
+# Mouse behavior
+mouse-hide-while-typing = true
+
+# Window configuration
+# "buttonless" in Alacritty is macOS-specific, closest in Ghostty:
+macos-titlebar-style = hidden
+window-padding-x = 15
+window-padding-y = 15
+
+# Color configuration
+background = #131719
+foreground = #c0ccdb
+
+# Cursor colors
+cursor-color = #ffffff
+cursor-text = #131719
+
+# Color palette - Normal colors (0-7)
+palette = 0=#1e2427
+palette = 1=#ba0e2e
+palette = 2=#5298c4
+palette = 3=#d4856a
+palette = 4=#43b5b3
+palette = 5=#d4856a
+palette = 6=#43b5b3
+palette = 7=#d0d9e4
+
+# Color palette - Bright colors (8-15)
+palette = 8=#343f44
+palette = 9=#e61f44
+palette = 10=#9ec5de
+palette = 11=#ebc6b9
+palette = 12=#8ad4d2
+palette = 13=#ebc6b9
+palette = 14=#8ad4d2
+palette = 15=#f1f3f7

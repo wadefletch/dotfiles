@@ -1,0 +1,84 @@
+{
+  "languageModelProcessingTime" : 3385,
+  "systemAudioEnabled" : false,
+  "segments" : [
+    {
+      "start" : 3.52,
+      "end" : 23.408,
+      "text" : " this is really really really good very happy with this and the great engineering great thinking through of everything we've done here most of my changes are stylistic and honestly a little bit nitpicky some of them are a little more substantive and important especially around approvals made a little diagram"
+    },
+    {
+      "start" : 23.408,
+      "end" : 24.528,
+      "text" : " for you there."
+    },
+    {
+      "start" : 24.528,
+      "end" : 42.656,
+      "text" : " A lot of these comments you can probably resolve with an LLM because again, a lot of them are kind of stylistic and less substantive, given that most of the substantive meat of this PR, I think we discussed extensibly beforehand, which is good."
+    },
+    {
+      "start" : 42.656,
+      "end" : 50.08,
+      "text" : " I'm sorry this review is taking so long, obviously a big PR and obviously an unusual week for me, but great work here."
+    },
+    {
+      "start" : 50.08,
+      "end" : 53.376,
+      "text" : " And I'm going to hop on the next one on top of this right now, too."
+    }
+  ],
+  "languageModelName" : "GPT-4.1",
+  "result" : "this is really really really good very happy with this and the great engineering great thinking through of everything we've done here most of my changes are stylistic and honestly a little bit nitpicky some of them are a little more substantive and important especially around approvals made a little diagram for you there. A lot of these comments you can probably resolve with an LLM because again, a lot of them are kind of stylistic and less substantive, given that most of the substantive meat of this PR, I think we discussed extensibly beforehand, which is good. I'm sorry this review is taking so long, obviously a big PR and obviously an unusual week for me, but great work here. And I'm going to hop on the next one on top of this right now, too.",
+  "promptContext" : {
+    "modeContext" : {
+      "examples" : [
+        {
+          "input" : "yeah okay like, I don’t know, this just doesn’t feel right. it’s kind of bloated? I think there’s too many steps here and I don’t think the user is gonna understand why they’re doing it. maybe we could drop one of them?",
+          "output" : "**Too many steps**  \nThis flow feels bloated. It has more steps than necessary, and I don’t think the user will understand the purpose behind each one. We should consider simplifying it—removing a step might improve clarity and reduce friction.",
+          "id" : "10EC544D-4A77-4688-9AAE-7BA32B2CCE7F"
+        }
+      ],
+      "type" : "custom"
+    },
+    "systemContext" : {
+      "locale" : "en_US",
+      "language" : "English",
+      "time" : "July 25, 2025 at 1:48 PM",
+      "timezone" : "America\/New_York",
+      "computerName" : "wadefletcher"
+    },
+    "userContext" : {
+      "fullName" : "Wade Fletcher"
+    },
+    "applicationContext" : {
+      "url" : "https:\/\/app.graphite.dev\/github\/pr\/tractorbeamai\/monorepo\/270\/refactor-new-integrations-implementation?org=tractorbeamai#file-packages\/tools\/src\/execution\/state-manager.ts",
+      "focusedElementContent" : "",
+      "focusedElementDescription" : ", role=AXTextArea, placeholderValue=Add review summary",
+      "name" : "Arc",
+      "nouns" : [
+        "@deprecated"
+      ]
+    }
+  },
+  "languageSelected" : "en",
+  "rawResult" : " this is really really really good very happy with this and the great engineering great thinking through of everything we've done here most of my changes are stylistic and honestly a little bit nitpicky some of them are a little more substantive and important especially around approvals made a little diagram for you there. A lot of these comments you can probably resolve with an LLM because again, a lot of them are kind of stylistic and less substantive, given that most of the substantive meat of this PR, I think we discussed extensibly beforehand, which is good. I'm sorry this review is taking so long, obviously a big PR and obviously an unusual week for me, but great work here. And I'm going to hop on the next one on top of this right now, too.",
+  "recordingDevice" : "CC-08-FA-BB-94-17:input",
+  "duration" : 54120,
+  "modelKey" : "nvidia_parakeet-v2_476MB",
+  "appVersion" : "2.2.0",
+  "datetime" : "2025-07-25T17:48:45",
+  "llmResult" : "**Overall quality**  \nThis is excellent work. I’m very happy with the level of engineering and the depth of thought throughout. Most of my feedback is minor and stylistic—these are largely nitpicks, not fundamental issues.\n\n**Stylistic changes**  \nThe majority of my comments are about style. Many of them can probably be resolved quickly, potentially even with an LLM. They’re not central to the substance of the PR.\n\n**Substantive points around approvals**  \nThere are a few comments related to approvals that are more important and substantive—those need a closer look. I also created a diagram to help clarify my thoughts there.\n\n**Prior discussion of core changes**  \nWe already discussed the main, substantive elements of this PR in depth before, which I think was the right call and made things a lot smoother.\n\n**Review timing**  \nSorry for the delay—this was a big PR and it’s been an unusual week for me. Great work getting this done. I’m jumping straight into the next one now.",
+  "speakers" : [
+
+  ],
+  "prompt" : "\nINSTRUCTIONS:\nYou are a feedback formatter for a startup founder who shares raw thoughts via voice dictation. Your job is to turn a spoken transcript into clear, complete, and actionable written feedback—formatted for pasting directly into Notion or Figma comments.\n\n**Your constraints and responsibilities**\n\n**No new ideas**  \nDo not add or infer anything not explicitly said in the transcript. Your job is to restructure and clarify—not to extrapolate or editorialize.\n\n**Make it explicit and complete**  \nRewrite incomplete or implied thoughts as full, clear sentences. If a point trails off or is phrased unclearly, reconstruct it clearly using only what’s already there. Don’t leave anything vague or half-formed.\n\n**Structure by topic**  \nBreak the feedback into coherent sections, each introduced with a short, bolded header (no colons or bullets). Each section should be a short paragraph of feedback that makes one clear point. If multiple ideas are touched on in one section of the transcript, separate them into distinct sections.\n\n**Clarity and brevity**  \nEliminate filler words, repetition, and digressions. Tighten the phrasing so that each section reads smoothly and directly. Prioritize clarity over preserving speech patterns.\n\n**Founder tone**  \nUse a confident, collaborative, and direct voice—like a founder giving thoughtful, high-trust feedback to a teammate. Avoid corporate speak or polish. Say exactly what needs to be said.\n\n**Make it useful**  \nWhere relevant, apply principles from good product and engineering feedback:  \n- Highlight specific problems or opportunities  \n- Reference components, flows, or design artifacts precisely  \n- Frame suggestions in terms of user or team outcomes\n\n\nEXAMPLES OF CORRECT BEHAVIOR:\nUser: yeah okay like, I don’t know, this just doesn’t feel right. it’s kind of bloated? I think there’s too many steps here and I don’t think the user is gonna understand why they’re doing it. maybe we could drop one of them?\nAssistant: **Too many steps**  \nThis flow feels bloated. It has more steps than necessary, and I don’t think the user will understand the purpose behind each one. We should consider simplifying it—removing a step might improve clarity and reduce friction.\n\n\n\nSYSTEM CONTEXT:\nCurrent time: July 25, 2025 at 1:48 PM\nTime zone: America\/New_York\nLocale: en_US\nComputer name: wadefletcher\n\n\nUSER INFORMATION:\n    User's full name: Wade Fletcher\n    \n    \n\n\nAPPLICATION CONTEXT:\nUser is currently using Arc and is at URL: https:\/\/app.graphite.dev\/github\/pr\/tractorbeamai\/monorepo\/270\/refactor-new-integrations-implementation?org=tractorbeamai#file-packages\/tools\/src\/execution\/state-manager.ts\n\nFocused on this element: , role=AXTextArea, placeholderValue=Add review summary \n\n\nFocused element has this value:  \n\n\nNames and Usernames: @deprecated\n\n\nUSER MESSAGE:\nthis is really really really good very happy with this and the great engineering great thinking through of everything we've done here most of my changes are stylistic and honestly a little bit nitpicky some of them are a little more substantive and important especially around approvals made a little diagram for you there. A lot of these comments you can probably resolve with an LLM because again, a lot of them are kind of stylistic and less substantive, given that most of the substantive meat of this PR, I think we discussed extensibly beforehand, which is good. I'm sorry this review is taking so long, obviously a big PR and obviously an unusual week for me, but great work here. And I'm going to hop on the next one on top of this right now, too.\n\n",
+  "applicationContextEnabled" : true,
+  "modeName" : "Feedback",
+  "processingTime" : 512,
+  "modelName" : "Parakeet (English)",
+  "separateSpeakersEnabled" : false,
+  "translationEnabled" : false,
+  "realtimeEnabled" : false,
+  "literalPunctuationEnabled" : false
+}

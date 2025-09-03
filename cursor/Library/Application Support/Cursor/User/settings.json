@@ -113,7 +113,7 @@
     }
   ],
   "window.zoomLevel": 1,
-  "workbench.colorTheme": "Lichen Contrast (rainglow)",
+  "workbench.colorTheme": "mono dark",
   "workbench.fontAliasing": "antialiased",
   "editor.smoothScrolling": true,
   "editor.cursorBlinking": "smooth",

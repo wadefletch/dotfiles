@@ -1,0 +1,57 @@
+{
+  "languageSelected" : "en",
+  "prompt" : "",
+  "systemAudioEnabled" : false,
+  "modeName" : "Default",
+  "processingTime" : 718,
+  "datetime" : "2025-08-08T02:56:57",
+  "modelKey" : "sw-ultra-cloud-v1-east",
+  "promptContext" : {
+    "userContext" : {
+
+    },
+    "modeContext" : {
+      "type" : "custom",
+      "examples" : [
+
+      ]
+    },
+    "applicationContext" : {
+      "name" : "",
+      "nouns" : [
+
+      ]
+    },
+    "systemContext" : {
+      "time" : "",
+      "language" : "en"
+    }
+  },
+  "segments" : [
+    {
+      "text" : "We do want to re-enable chunking on Reducto, which just means removing where I disabled it, I think, and then paying those chunks each as a custom document to Anthropic.",
+      "start" : 1.664,
+      "end" : 30.552
+    },
+    {
+      "text" : "The intention is that we will then use the returned citations from Anthropic to determine which bounding boxes to render in the client.",
+      "start" : 30.552,
+      "end" : 41.248
+    }
+  ],
+  "modelName" : "Ultra (Cloud)",
+  "realtimeEnabled" : false,
+  "result" : "We do want to re-enable chunking on Reducto, which just means removing where I disabled it, I think, and then paying those chunks each as a custom document to Anthropic. The intention is that we will then use the returned citations from Anthropic to determine which bounding boxes to render in the client.",
+  "recordingDevice" : "CC-08-FA-BB-94-17:input",
+  "literalPunctuationEnabled" : false,
+  "applicationContextEnabled" : false,
+  "rawResult" : " We do want to re-enable chunking on Reducto, which just means removing where I disabled it, I think, and then paying those chunks each as a custom document to Anthropic. The intention is that we will then use the returned citations from Anthropic to determine which bounding boxes to render in the client.",
+  "duration" : 42360,
+  "appVersion" : "2.2.0",
+  "translationEnabled" : false,
+  "separateSpeakersEnabled" : false,
+  "speakers" : [
+
+  ],
+  "languageModelName" : ""
+}
