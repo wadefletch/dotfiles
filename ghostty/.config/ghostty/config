@@ -15,7 +15,7 @@ macos-titlebar-style = "transparent"
 macos-titlebar-proxy-icon = "hidden"
 
 # pane navigation
-keybind = "ctrl+h=goto_split:left"
-keybind = "ctrl+j=goto_split:bottom"
-keybind = "ctrl+k=goto_split:top"
-keybind = "ctrl+l=goto_split:right"
+keybind = "shift+ctrl+h=goto_split:left"
+keybind = "shift+ctrl+j=goto_split:bottom"
+keybind = "shift+ctrl+k=goto_split:top"
+keybind = "shift+ctrl+l=goto_split:right"
