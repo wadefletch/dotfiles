@@ -1,24 +1,11 @@
 {
-  "[css]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "[css][html][json][jsonc][mdx][markdown][javascript][javascriptreact][typescript][typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
   },
   "[dockerfile]": {
-    "editor.defaultFormatter": "ms-azuretools.vscode-containers"
-  },
-  "[html]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[json]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[jsonc]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[mdx]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "ms-azuretools.vscode-containers",
+    "editor.formatOnSave": true
   },
   "[python]": {
     "editor.codeActionsOnSave": {
@@ -26,14 +13,6 @@
       "source.organizeImports": "explicit"
     },
     "editor.defaultFormatter": "charliermarsh.ruff"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true
-  },
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true
   },
   "breadcrumbs.enabled": false,
   "cSpell.enabled": false,
@@ -55,6 +34,7 @@
   "editor.scrollbar.verticalScrollbarSize": 4,
   "editor.smoothScrolling": true,
   "eslint.codeActionsOnSave.mode": "all",
+  "explorer.confirmDragAndDrop": false,
   "files.exclude": {
     "**/__pycache__/**": true,
     "**/.pytest_cache/**": true
@@ -65,12 +45,15 @@
   "material-icon-theme.folders.theme": "classic",
   "material-icon-theme.hidesExplorerArrows": true,
   "material-icon-theme.saturation": 0,
-  "powermode.enabled": true,
+  "powermode.enabled": false,
   "python.analysis.autoImportCompletions": true,
   "python.analysis.importFormat": "relative",
   "ruff.nativeServer": "auto",
   "rust-analyzer.check.workspace": false,
   "terminal.integrated.cursorBlinking": true,
+  "terminal.integrated.scrollback": 8000,
+  "terminal.integrated.shellIntegration.enabled": true,
+  "terminal.integrated.stickyScroll.enabled": true,
   "typescript.updateImportsOnFileMove.enabled": "always",
   "update.releaseTrack": "prerelease",
   "vim.camelCaseMotion.enable": true,
@@ -118,19 +101,38 @@
       "commands": ["editor.action.rename"],
       "when": "editorHasRenameProvider && editorTextFocus && !editorReadonly"
     },
+    {
+      "before": ["leader", "c", "r"], // lazyvim default
+      "commands": ["editor.action.rename"],
+      "when": "editorHasRenameProvider && editorTextFocus && !editorReadonly"
+    },
     // toggle sidebar
     {
       "before": ["leader", "b"],
       "commands": ["workbench.action.toggleSidebarVisibility"]
+    },
+    // toggle terminal
+    {
+      "before": ["leader", "t"],
+      "commands": ["workbench.action.terminal.toggleTerminal"]
     }
   ],
+  "vim.visualModeKeyBindingsNonRecursive": [
+    // move lines around with J or K
+    {
+      "before": ["J"],
+      "commands": ["editor.action.moveLinesDownAction"]
+    },
+    {
+      "before": ["K"],
+      "commands": ["editor.action.moveLinesUpAction"]
+    }
+  ],
+  "window.autoDetectColorScheme": true,
   "window.zoomLevel": 1,
-  "workbench.colorTheme": "Tokyo Night Light",
   "workbench.fontAliasing": "antialiased",
   "workbench.iconTheme": "material-icon-theme",
   "workbench.list.smoothScrolling": true,
-  "terminal.integrated.minimumContrastRatio": 1,
-  "terminal.integrated.scrollback": 4000,
-  "terminal.integrated.stickyScroll.enabled": true,
-  "explorer.confirmDragAndDrop": false
+  "workbench.preferredDarkColorTheme": "Tokyo Night Storm",
+  "workbench.preferredLightColorTheme": "Tokyo Night Light"
 }
