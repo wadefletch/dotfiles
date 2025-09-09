@@ -125,11 +125,12 @@
     }
   ],
   "window.zoomLevel": 1,
-  "workbench.colorTheme": "Tokyo Night Storm",
+  "workbench.colorTheme": "Tokyo Night Light",
   "workbench.fontAliasing": "antialiased",
   "workbench.iconTheme": "material-icon-theme",
   "workbench.list.smoothScrolling": true,
   "terminal.integrated.minimumContrastRatio": 1,
   "terminal.integrated.scrollback": 4000,
-  "terminal.integrated.stickyScroll.enabled": true
+  "terminal.integrated.stickyScroll.enabled": true,
+  "explorer.confirmDragAndDrop": false
 }
