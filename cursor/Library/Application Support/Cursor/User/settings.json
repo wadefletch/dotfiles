@@ -133,5 +133,8 @@
   "workbench.iconTheme": "material-icon-theme",
   "workbench.list.smoothScrolling": true,
   "workbench.preferredDarkColorTheme": "Tokyo Night Storm",
-  "workbench.preferredLightColorTheme": "Tokyo Night Light"
+  "workbench.preferredLightColorTheme": "Tokyo Night Light",
+  "[sql]": {
+    "editor.defaultFormatter": "inferrinizzard.prettier-sql-vscode"
+  }
 }

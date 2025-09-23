@@ -8,3 +8,9 @@ vim.g.maplocalleader = " "
 
 -- vertical bars at 80 and 120 chars
 vim.opt.colorcolumn = "80,120"
+
+-- sync clipboard between os and neovim
+-- vim.opt.clipboard = "unnamedplus"
+
+-- animate
+vim.g.snacks_animate = true
