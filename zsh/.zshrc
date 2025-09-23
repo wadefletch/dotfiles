@@ -3,7 +3,7 @@ export EDITOR="nvim"
 # Pyenv (Python)
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-[[ -d $PYENV_ROOT/bin ]] && eval "$(pyenv init - zsh)"
+eval "$(pyenv init - zsh)"
 
 # NVM (Node)
 export NVM_DIR="$HOME/.nvm"
@@ -16,7 +16,7 @@ export PATH="$PNPM_HOME:$PATH"                                                  
 
 # Rustup (Rust)
 export PATH="$(brew --prefix rustup)/bin:$PATH"
-#
+
 # LLVM (probably Rust, tbh not sure why i have this)
 export PATH="/opt/homebrew/opt/llvm/bin:$PATH"                                  # llvm
 
