@@ -1,11 +1,14 @@
 # disable auto-update since we're letting homebrew handle this
 auto-update = "off"
 
+# zsh shell integration
+shell-integration = "zsh"
+
 # cross-platform aesthetics
 font-family = "IosvekaTerm Nerd Font Mono"
 theme = "TokyoNight Storm"
-background-opacity = "0.98"
-background-blur-radius = "5"
+background-opacity = "0.95"
+background-blur-radius = "10"
 window-padding-x = "10"
 window-padding-y = "10"
 
@@ -23,4 +26,4 @@ keybind = "shift+ctrl+l=goto_split:right"
 # quick terminal (⌘` = command + grave (backtick))
 # TIL a backtick is also called a grave?
 keybind = global:cmd+grave_accent=toggle_quick_terminal
-quick-terminal-position = center
+quick-terminal-position = top
