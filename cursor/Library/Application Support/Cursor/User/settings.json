@@ -105,6 +105,12 @@
       "commands": ["editor.action.rename"],
       "when": "editorHasRenameProvider && editorTextFocus && !editorReadonly"
     },
+    // code actions
+    {
+      "before": ["leader", "c", "a"], // lazyvim default
+      "commands": ["editor.action.quickFix"],
+      "when": "editorHasCodeActionsProvider && editorTextFocus && !editorReadonly"
+    },
     // toggle sidebar
     {
       "before": ["leader", "b"],
@@ -151,5 +157,6 @@
   },
   "[github-actions-workflow]": {
     "editor.defaultFormatter": "redhat.vscode-yaml"
-  }
+  },
+  "claude-code.selectedModel": "default"
 }

@@ -27,3 +27,6 @@ keybind = "shift+ctrl+l=goto_split:right"
 # TIL a backtick is also called a grave?
 keybind = global:cmd+grave_accent=toggle_quick_terminal
 quick-terminal-position = top
+
+# claude code keybind fix
+keybind = shift+enter=text:\x1b\r
