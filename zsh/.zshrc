@@ -12,13 +12,13 @@ export NVM_DIR="$HOME/.nvm"
 
 # PNPM (Node)
 export PNPM_HOME="/Users/wadefletcher/Library/pnpm"
-export PATH="$PNPM_HOME:$PATH"                                                  # pnpm
+export PATH="$PNPM_HOME:$PATH"
 
 # Rustup (Rust)
 export PATH="$(brew --prefix rustup)/bin:$PATH"
 
 # LLVM (probably Rust, tbh not sure why i have this)
-export PATH="/opt/homebrew/opt/llvm/bin:$PATH"                                  # llvm
+export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 
 # AWS Cli
 export AWS_PAGER=""  # disable paging so agents can consume
@@ -50,7 +50,6 @@ bindkey "^[^[[C" forward-word      # Alt+Right (older terminals)
 bindkey "^[^[[D" backward-word     # Alt+Left (older terminals)
 
 # Additional readline-compatible bindings
-
 bindkey "^[d" kill-word            # Alt+d (delete word forward)
 bindkey "^[^?" backward-kill-word  # Alt+Backspace
 bindkey "^[." insert-last-word     # Alt+. (insert last argument)
