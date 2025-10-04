@@ -2,6 +2,10 @@
 echo "Installing Homebrew..."
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
+# update homebrew
+echo "Updating Homebrew Recipes..."
+brew update
+
 # install xcode command line tools
 echo "Installing Xcode Command Line Tools..."
 xcode-select --install 2>/dev/null || echo "Xcode Command Line Tools already installed"
@@ -12,7 +16,7 @@ sudo xcodebuild -license accept 2>/dev/null || echo "Xcode license already accep
 
 # install a bunch of brew formulae and casks
 echo "Installing applications via Homebrew..."
-brew install --cask cursor ghostty google-chrome spotify docker
+brew install --cask cursor ghostty google-chrome spotify docker granola
 brew install git gh starship font-jetbrains-mono-nerd-font uv
 
 # making finder show hidden files
