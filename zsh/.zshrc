@@ -1,9 +1,14 @@
-export EDITOR="nvim"
+# Default editor
+if command -v nvim &> /dev/null; then
+  export EDITOR="nvim"
+fi
 
 # Pyenv (Python)
-export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init - zsh)"
+if command -v pyenv &> /dev/null; then
+  export PYENV_ROOT="$HOME/.pyenv"
+  [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+  eval "$(pyenv init - zsh)"
+fi
 
 # NVM (Node)
 export NVM_DIR="$HOME/.nvm"
@@ -11,17 +16,25 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
 
 # PNPM (Node)
-export PNPM_HOME="/Users/wadefletcher/Library/pnpm"
-export PATH="$PNPM_HOME:$PATH"
+if [[ -d "/Users/wadefletcher/Library/pnpm" ]]; then
+  export PNPM_HOME="/Users/wadefletcher/Library/pnpm"
+  export PATH="$PNPM_HOME:$PATH"
+fi
 
 # Rustup (Rust)
-export PATH="$(brew --prefix rustup)/bin:$PATH"
+if command -v brew &> /dev/null && brew list rustup &>/dev/null; then
+  export PATH="$(brew --prefix rustup)/bin:$PATH"
+fi
 
 # Postgres 17
-export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"
+if [[ -d "/opt/homebrew/opt/postgresql@17/bin" ]]; then
+  export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"
+fi
 
 # LLVM (probably Rust, tbh not sure why i have this)
-export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+if [[ -d "/opt/homebrew/opt/llvm/bin" ]]; then
+  export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+fi
 
 # AWS Cli
 export AWS_PAGER=""  # disable paging so agents can consume
@@ -61,8 +74,8 @@ bindkey "^[>" end-of-buffer-or-history        # Alt+> (end)
 
 # Prompt
 if [[ -n "$CURSOR_AGENT" ]]; then
-  # Skip pretty terminal init when inside a Cusror Agent sandbox
-else
+  # Skip pretty terminal init when inside a Cursor Agent sandbox
+elif command -v starship &> /dev/null; then
   eval "$(starship init zsh)"
 fi
 
@@ -70,38 +83,31 @@ fi
 alias claude="/Users/wadefletcher/.claude/local/claude"
 
 # Aliases - config files
-alias zshrc="nvim ~/.dotfiles/zsh/.zshrc"
-alias ghosttyrc="nvim ~/.dotfiles/ghostty/.config/ghostty/config"
-alias nvimconf="nvim ~/.dotfiles/nvim/.config/nvim/"
+alias zshrc="${EDITOR:-vi} ~/.dotfiles/zsh/.zshrc"
+alias ghosttyrc="${EDITOR:-vi} ~/.dotfiles/ghostty/.config/ghostty/config"
+alias nvimconf="${EDITOR:-vi} ~/.dotfiles/nvim/.config/nvim/"
 
 # Aliases - git
-alias ga="git add"
-alias gc="git commit"
-alias gcm="git commit -m"
-alias gca="git commit --amend --no-edit"
-alias gcd="git commit -m '$(date -u +\'%Y-%m-%dT%H:%M:%S\')'"
-alias gbo="git checkout"
-alias gbb="git checkout -b"
-alias gs="git status -sb"
-alias gp="git push"
-alias gl="git log --oneline -10"
+if command -v git &> /dev/null; then
+  alias ga="git add"
+  alias gc="git commit"
+  alias gcm="git commit -m"
+  alias gca="git commit --amend --no-edit"
+  alias gcd="git commit -m '$(date -u +\'%Y-%m-%dT%H:%M:%S\')'"
+  alias gbo="git checkout"
+  alias gbb="git checkout -b"
+  alias gs="git status -sb"
+  alias gp="git push"
+  alias gl="git log --oneline -10"
+fi
 
 # Utility functions
-gq() {
-  git add .
-  git commit -m "$(date -u +'%Y-%m-%dT%H:%M:%S')"
-  git push
-}
+if command -v git &> /dev/null; then
+  gq() {
+    git add .
+    git commit -m "$(date -u +'%Y-%m-%dT%H:%M:%S')"
+    git push
+  }
+fi
 
-claude-sync() {
-  local current_host=$(hostname)
-  if [[ "$current_host" == "arrakis" ]]; then
-    rsync -avz corrino:~/.claude/projects/ ~/.claude/projects/
-  elif [[ "$current_host" == "corrino" ]]; then
-    rsync -avz arrakis:~/.claude/projects/ ~/.claude/projects/
-  else
-    echo "Current host is neither arrakis nor corrino"
-    return 1
-  fi
-}
 

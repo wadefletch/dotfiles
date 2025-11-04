@@ -1,0 +1,17 @@
+node_modules/
+.context/
+
+# macOS stuff
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+.VolumeIcon.icns
+.fseventsd
+.TemporaryItems
+
+# Claude Code
+**/.claude/settings.local.json
+**/CLAUDE.local.md
