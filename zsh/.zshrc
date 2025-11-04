@@ -17,6 +17,9 @@ export PATH="$PNPM_HOME:$PATH"
 # Rustup (Rust)
 export PATH="$(brew --prefix rustup)/bin:$PATH"
 
+# Postgres 17
+export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"
+
 # LLVM (probably Rust, tbh not sure why i have this)
 export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 
@@ -57,7 +60,11 @@ bindkey "^[<" beginning-of-buffer-or-history  # Alt+< (beginning)
 bindkey "^[>" end-of-buffer-or-history        # Alt+> (end)
 
 # Prompt
-eval "$(starship init zsh)"
+if [[ -n "$CURSOR_AGENT" ]]; then
+  # Skip pretty terminal init when inside a Cusror Agent sandbox
+else
+  eval "$(starship init zsh)"
+fi
 
 # Aliases - tools
 alias claude="/Users/wadefletcher/.claude/local/claude"

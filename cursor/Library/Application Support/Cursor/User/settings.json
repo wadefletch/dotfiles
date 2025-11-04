@@ -138,8 +138,8 @@
   "workbench.fontAliasing": "antialiased",
   "workbench.iconTheme": "material-icon-theme",
   "workbench.list.smoothScrolling": true,
-  "workbench.preferredDarkColorTheme": "Tokyo Night Storm",
-  "workbench.preferredLightColorTheme": "Tokyo Night Light",
+  "workbench.preferredDarkColorTheme": "Mayukai Sunset",
+  "workbench.preferredLightColorTheme": "GitHub Light",
   "[sql]": {
     "editor.defaultFormatter": "inferrinizzard.prettier-sql-vscode"
   },
@@ -158,5 +158,16 @@
   "[github-actions-workflow]": {
     "editor.defaultFormatter": "redhat.vscode-yaml"
   },
-  "claude-code.selectedModel": "default"
+  "claude-code.selectedModel": "default",
+  "editor.accessibilitySupport": "off",
+  "cursor.diffs.useCharacterLevelDiffs": true,
+  "amp.url": "https://ampcode.com/",
+  "amp.tab.enabled": true,
+  "editor.wordBasedSuggestions": "off",
+  "search.exclude": {
+    "**/dist/**": true,
+    "**/routeTree.gen.ts": true,
+    "pnpm-lock.yaml": true,
+    "**.tsbuildinfo": true
+  }
 }
