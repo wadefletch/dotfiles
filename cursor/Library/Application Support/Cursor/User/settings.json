@@ -882,4 +882,5 @@
   "claudeCode.preferredLocation": "panel",
   "cursor.composer.usageSummaryDisplay": "always"
   // "workbench.activityBar.location": "top"
+  "claudeCode.selectedModel": "default"
 }
