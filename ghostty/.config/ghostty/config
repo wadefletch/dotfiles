@@ -22,6 +22,8 @@ keybind = "shift+ctrl+h=goto_split:left"
 keybind = "shift+ctrl+j=goto_split:bottom"
 keybind = "shift+ctrl+k=goto_split:top"
 keybind = "shift+ctrl+l=goto_split:right"
+keybind = "alt+ctrl+j=new_split:down"
+keybind = "alt+ctrl+l=new_split:right"
 
 # quick terminal (⌘` = command + grave (backtick))
 # TIL a backtick is also called a grave?
