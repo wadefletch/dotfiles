@@ -17,8 +17,6 @@
   "breadcrumbs.enabled": false,
   "cSpell.enabled": false,
   "cSpell.userWords": ["Tractorbeam"],
-  "cursor.aipreview.enabled": true,
-  "cursor.cmdk.useThemedDiffBackground": true,
   "cursor.composer.shouldChimeAfterChatFinishes": true,
   "cursor.cpp.disabledLanguages": ["scminput"],
   "cursor.general.enableShadowWorkspace": true,
@@ -37,7 +35,8 @@
   "explorer.confirmDragAndDrop": false,
   "files.exclude": {
     "**/__pycache__/**": true,
-    "**/.pytest_cache/**": true
+    "**/.pytest_cache/**": true,
+    ".pnpm-store": true
   },
   "githubPullRequests.terminalLinksHandler": "github",
   "javascript.updateImportsOnFileMove.enabled": "always",
@@ -138,12 +137,11 @@
   "workbench.fontAliasing": "antialiased",
   "workbench.iconTheme": "material-icon-theme",
   "workbench.list.smoothScrolling": true,
-  "workbench.preferredDarkColorTheme": "Mayukai Sunset",
+  "workbench.preferredDarkColorTheme": "Tonic (rainglow)",
   "workbench.preferredLightColorTheme": "GitHub Light Default",
   "[sql]": {
     "editor.defaultFormatter": "inferrinizzard.prettier-sql-vscode"
   },
-  "cursor.enable_agent_window_setting": true,
   "[dockercompose]": {
     "editor.insertSpaces": true,
     "editor.tabSize": 2,
@@ -168,7 +166,8 @@
     "**/dist/**": true,
     "**/routeTree.gen.ts": true,
     "pnpm-lock.yaml": true,
-    "**.tsbuildinfo": true
+    "**.tsbuildinfo": true,
+    "**/node_modules/**": true
   },
   "cursor.composer.shouldAllowCustomModes": true,
   "files.associations": {
@@ -179,11 +178,7 @@
     {
       "tool": "Bash",
       "matches": {
-        "cmd": [
-          "pnpm lint",
-          "pnpm lint:types",
-          "pnpm lint:eslint *"
-        ]
+        "cmd": ["pnpm lint", "pnpm lint:types", "pnpm lint:eslint *"]
       },
       "action": "allow"
     },
@@ -866,5 +861,24 @@
     }
   ],
   "git.confirmSync": false,
-// "workbench.activityBar.location": "top"
+  "githubPullRequests.pullBranch": "never",
+  "githubPullRequests.queries": [
+    {
+      "label": "Local Pull Request Branches",
+      "query": "default"
+    },
+    {
+      "label": "Waiting For My Review",
+      "query": "repo:${owner}/${repository} is:open review-requested:${user}"
+    },
+    {
+      "label": "Created By Me",
+      "query": "repo:${owner}/${repository} is:open author:${user}"
+    },
+    {
+      "label": "All Open",
+      "query": "default"
+    }
+  ]
+  // "workbench.activityBar.location": "top"
 }
