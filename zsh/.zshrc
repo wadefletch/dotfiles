@@ -36,6 +36,9 @@ if [[ -d "/opt/homebrew/opt/llvm/bin" ]]; then
   export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 fi
 
+# Path addition required by factory.ai droid
+export PATH="/Users/wadefletcher/.local/bin:$PATH"
+
 # AWS Cli
 export AWS_PAGER=""  # disable paging so agents can consume
 
