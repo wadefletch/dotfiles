@@ -135,7 +135,6 @@
   "window.autoDetectColorScheme": true,
   "window.zoomLevel": 1,
   "workbench.fontAliasing": "antialiased",
-  "workbench.iconTheme": "material-icon-theme",
   "workbench.list.smoothScrolling": true,
   "workbench.preferredDarkColorTheme": "Volatile (rainglow)",
   "workbench.preferredLightColorTheme": "GitHub Light Default",
@@ -879,6 +878,8 @@
       "label": "All Open",
       "query": "default"
     }
-  ]
+  ],
+  "claudeCode.preferredLocation": "panel",
+  "cursor.composer.usageSummaryDisplay": "always"
   // "workbench.activityBar.location": "top"
 }
