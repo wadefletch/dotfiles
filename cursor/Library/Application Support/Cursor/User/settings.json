@@ -137,7 +137,7 @@
   "workbench.fontAliasing": "antialiased",
   "workbench.iconTheme": "material-icon-theme",
   "workbench.list.smoothScrolling": true,
-  "workbench.preferredDarkColorTheme": "Tonic (rainglow)",
+  "workbench.preferredDarkColorTheme": "Volatile (rainglow)",
   "workbench.preferredLightColorTheme": "GitHub Light Default",
   "[sql]": {
     "editor.defaultFormatter": "inferrinizzard.prettier-sql-vscode"
