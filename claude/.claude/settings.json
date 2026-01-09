@@ -1,4 +1,8 @@
 {
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "permissions": {
     "allow": [
       "WebFetch",
@@ -40,11 +44,18 @@
       "mcp__context7__get-library-docs",
       "mcp__context7__resolve-library-id"
     ],
-    "deny": ["Bash(rm -rf:*)"]
+    "deny": [
+      "Bash(rm -rf:*)"
+    ]
   },
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh"
+  },
+  "enabledPlugins": {
+    "core@tractorbeam": true,
+    "git@tractorbeam": true,
+    "linear@tractorbeam": true,
+    "context7@claude-plugins-official": true
   }
 }
-

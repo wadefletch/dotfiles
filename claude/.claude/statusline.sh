@@ -1,17 +1,30 @@
 #!/bin/bash
+# Claude Code status line
+#
+# Design:
+#   cyan    → directory (primary context - where you are)
+#   white   → git branch (navigation context)
+#   gray    → metadata (model, context %)
+#
+# Groups separated by ·
+#   location (dir branch) | model | context %
+#
+# Format: dir branch · model · %%
+
 input=$(cat)
 
-# Current directory and git info
+# Current directory
 current_dir=$(echo "$input" | jq -r '.workspace.current_dir')
 dir_name=$(basename "$current_dir")
+
+# Model
 model=$(echo "$input" | jq -r '.model.display_name')
 
 # Git branch
-git_info=""
+branch=""
 if git -C "$current_dir" rev-parse --git-dir > /dev/null 2>&1; then
     branch=$(git -C "$current_dir" --no-optional-locks symbolic-ref --short HEAD 2>/dev/null || \
              git -C "$current_dir" --no-optional-locks rev-parse --short HEAD 2>/dev/null)
-    git_info="  $branch"  # nf-dev-git_branch
 fi
 
 # Context window percentage
@@ -24,9 +37,16 @@ else
     percent=0
 fi
 
-# Cost
-cost=$(echo "$input" | jq -r '.cost.total_cost_usd // 0')
-cost_fmt=$(printf "%.2f" "$cost")
+# Colors
+cyan="\033[36m"
+gray="\033[90m"
+reset="\033[0m"
 
-printf "\033[36m%s\033[0m%s \033[90m%s · %d%% · \$%s\033[0m" \
-    "$dir_name" "$git_info" "$model" "$percent" "$cost_fmt"
+# Output: dir branch · model · %%
+if [ -n "$branch" ]; then
+    printf "${cyan}%s${reset} %s ${gray}· %s · %d%%${reset}" \
+        "$dir_name" "$branch" "$model" "$percent"
+else
+    printf "${cyan}%s${reset} ${gray}· %s · %d%%${reset}" \
+        "$dir_name" "$model" "$percent"
+fi
