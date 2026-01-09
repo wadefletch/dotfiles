@@ -159,7 +159,7 @@
   "editor.accessibilitySupport": "off",
   "cursor.diffs.useCharacterLevelDiffs": true,
   "amp.url": "https://ampcode.com/",
-  "amp.tab.enabled": true,
+  "amp.tab.enabled": false,
   "editor.wordBasedSuggestions": "off",
   "search.exclude": {
     "**/dist/**": true,
