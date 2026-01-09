@@ -52,6 +52,14 @@
     "type": "command",
     "command": "~/.claude/statusline.sh"
   },
+  "extraKnownMarketplaces": {
+    "tractorbeam": {
+      "source": {
+        "source": "github",
+        "repo": "tractorbeamai/claude"
+      }
+    }
+  },
   "enabledPlugins": {
     "core@tractorbeam": true,
     "git@tractorbeam": true,
