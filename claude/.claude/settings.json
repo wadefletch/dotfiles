@@ -44,34 +44,19 @@
       "mcp__context7__get-library-docs",
       "mcp__context7__resolve-library-id"
     ],
-    "deny": [
-      "Bash(rm -rf:*)"
-    ]
+    "deny": []
   },
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh"
   },
-  "extraKnownMarketplaces": {
-    "tractorbeam": {
-      "source": {
-        "source": "github",
-        "repo": "tractorbeamai/claude"
-      }
-    },
-    "claude-plugins-official": {
-      "source": {
-        "source": "github",
-        "repo": "anthropics/claude-plugins-official"
-      }
-    }
-  },
   "enabledPlugins": {
-    "core@tractorbeam": true,
-    "git@tractorbeam": true,
-    "linear@tractorbeam": true,
     "context7@claude-plugins-official": true,
     "code-simplifier@claude-plugins-official": true,
-    "frontend-design@claude-plugins-official": true
+    "frontend-design@claude-plugins-official": true,
+    "plugin-dev@claude-plugins-official": true,
+    "core@tractorbeam": true,
+    "git@tractorbeam": true,
+    "linear@tractorbeam": true
   }
 }
