@@ -84,9 +84,6 @@ elif command -v starship &> /dev/null; then
   eval "$(starship init zsh)"
 fi
 
-# Aliases - tools
-alias claude="/Users/wadefletcher/.claude/local/claude"
-
 # Aliases - config files
 alias zshrc="${EDITOR:-vi} ~/.dotfiles/zsh/.zshrc"
 alias ghosttyrc="${EDITOR:-vi} ~/.dotfiles/ghostty/.config/ghostty/config"
