@@ -41,8 +41,7 @@
       "Bash(gh pr diff:*)",
       "Bash(gh run view:*)",
       "Bash(gh run logs:*)",
-      "mcp__context7__get-library-docs",
-      "mcp__context7__resolve-library-id"
+      "mcp__plugin_context7_context7"
     ],
     "deny": []
   },
@@ -55,10 +54,10 @@
     "context7@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": true,
     "plugin-dev@claude-plugins-official": true,
-
     "core@tractorbeam": true,
     "git@tractorbeam": true,
-    "linear@tractorbeam": true
+    "linear@tractorbeam": true,
+    "typescript-lsp@claude-plugins-official": true
   },
   "autoUpdatesChannel": "latest"
 }
