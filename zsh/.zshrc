@@ -112,4 +112,13 @@ if command -v git &> /dev/null; then
   }
 fi
 
+# Stop all Docker containers and processes on dev ports
+stopall() {
+  docker ps -q | xargs -r docker kill 2>/dev/null
+  for port in 3000 3001 3002 3003 3004 3005; do
+    lsof -ti:$port | xargs -r kill -9 2>/dev/null
+  done
+  echo "Stopped all Docker containers and cleared ports 3000-3005"
+}
+
 

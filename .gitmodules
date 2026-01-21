@@ -1,0 +1,9 @@
+[submodule "claude/.claude/references/ai-sdk"]
+	path = claude/.claude/references/ai-sdk
+	url = https://github.com/vercel/ai
+[submodule "claude/.claude/references/tanstack-router-and-start"]
+	path = claude/.claude/references/tanstack-router-and-start
+	url = https://github.com/TanStack/router
+[submodule "claude/.claude/references/tanstack-db"]
+	path = claude/.claude/references/tanstack-db
+	url = https://github.com/TanStack/db

@@ -57,7 +57,16 @@
     "core@tractorbeam": true,
     "git@tractorbeam": true,
     "linear@tractorbeam": true,
-    "typescript-lsp@claude-plugins-official": true
+    "typescript-lsp@claude-plugins-official": false,
+    "rust-analyzer-lsp@claude-plugins-official": false
+  },
+  "extraKnownMarketplaces": {
+    "tractorbeam": {
+      "source": {
+        "source": "github",
+        "repo": "tractorbeamai/claude"
+      }
+    }
   },
   "autoUpdatesChannel": "latest"
 }
