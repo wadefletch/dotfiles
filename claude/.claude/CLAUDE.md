@@ -10,6 +10,8 @@ Local copies of framework documentation for Claude Code context.
 | @tanstack/react-router | 1.154.5 | ~/.claude/references/tanstack-router-and-start |
 | @tanstack/react-start | 1.154.5 | ~/.claude/references/tanstack-router-and-start |
 | @tanstack/db | 0.5.22 | ~/.claude/references/tanstack-db |
+| @tanstack/react-table | 8.21.3 | ~/.claude/references/tanstack-table |
+| @tanstack/react-form | 1.21.3 | ~/.claude/references/tanstack-form |
 
 ## Shell Functions
 

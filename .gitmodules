@@ -7,3 +7,9 @@
 [submodule "claude/.claude/references/tanstack-db"]
 	path = claude/.claude/references/tanstack-db
 	url = https://github.com/TanStack/db
+[submodule "claude/.claude/references/tanstack-table"]
+	path = claude/.claude/references/tanstack-table
+	url = https://github.com/TanStack/table
+[submodule "claude/.claude/references/tanstack-form"]
+	path = claude/.claude/references/tanstack-form
+	url = https://github.com/TanStack/form
