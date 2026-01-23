@@ -50,19 +50,17 @@
       "Write(~/.claude/references/**)",
       "NotebookEdit(~/.claude/references/**)"
     ],
-    "additionalDirectories": [
-      "~/.claude/references"
-    ]
+    "additionalDirectories": ["~/.claude/references"]
   },
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh"
   },
   "enabledPlugins": {
-    "code-simplifier@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": false,
     "context7@claude-plugins-official": true,
-    "frontend-design@claude-plugins-official": true,
-    "plugin-dev@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": false,
+    "plugin-dev@claude-plugins-official": false,
     "core@tractorbeam": true,
     "git@tractorbeam": true,
     "linear@tractorbeam": true,

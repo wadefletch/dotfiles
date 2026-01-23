@@ -26,6 +26,11 @@ if command -v brew &> /dev/null && brew list rustup &>/dev/null; then
   export PATH="$(brew --prefix rustup)/bin:$PATH"
 fi
 
+# Cargo-installed Binaries (Rust)
+if [[ -d "$HOME/.cargo/bin" ]]; then
+  export PATH="$HOME/.cargo/bin:$PATH"
+fi
+
 # Postgres 17
 if [[ -d "/opt/homebrew/opt/postgresql@17/bin" ]]; then
   export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"
