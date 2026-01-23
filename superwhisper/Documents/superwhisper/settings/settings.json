@@ -3,11 +3,15 @@
 
   ],
   "modeKeys" : [
+    "super",
     "default",
-    "message-WCUM",
+    "message-MXED",
     "message-MXED",
     "message-UFWS",
+    "message-UFWS",
     "message-WTGF",
+    "message-WTGF",
+    "message",
     "message"
   ],
   "replacements" : [

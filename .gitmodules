@@ -13,3 +13,9 @@
 [submodule "claude/.claude/references/tanstack-form"]
 	path = claude/.claude/references/tanstack-form
 	url = https://github.com/TanStack/form
+[submodule "claude/.claude/references/xlsx"]
+	path = claude/.claude/references/xlsx
+	url = https://git.sheetjs.com/sheetjs/sheetjs
+[submodule "claude/.claude/references/xlsx-docs"]
+	path = claude/.claude/references/xlsx-docs
+	url = https://git.sheetjs.com/sheetjs/docs.sheetjs.com

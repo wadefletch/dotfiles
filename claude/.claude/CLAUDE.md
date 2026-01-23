@@ -12,6 +12,8 @@ Local copies of framework documentation for Claude Code context.
 | @tanstack/db | 0.5.22 | ~/.claude/references/tanstack-db |
 | @tanstack/react-table | 8.21.3 | ~/.claude/references/tanstack-table |
 | @tanstack/react-form | 1.21.3 | ~/.claude/references/tanstack-form |
+| xlsx (SheetJS) | 0.20.3 | ~/.claude/references/xlsx |
+| xlsx (SheetJS) docs | - | ~/.claude/references/xlsx-docs |
 
 ## Shell Functions
 

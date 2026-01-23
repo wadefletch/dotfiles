@@ -28,6 +28,7 @@
       "Bash(cat:*)",
       "Bash(cd:*)",
       "Bash(ls:*)",
+      "Bash(jq:*)",
       "Bash(echo:*)",
       "Bash(which:*)",
       "Bash(find:*)",
