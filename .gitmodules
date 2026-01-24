@@ -19,3 +19,6 @@
 [submodule "claude/.claude/references/xlsx-docs"]
 	path = claude/.claude/references/xlsx-docs
 	url = https://git.sheetjs.com/sheetjs/docs.sheetjs.com
+[submodule "claude/.claude/references/nitro"]
+	path = claude/.claude/references/nitro
+	url = https://github.com/nitrojs/nitro
