@@ -22,3 +22,6 @@
 [submodule "claude/.claude/references/nitro"]
 	path = claude/.claude/references/nitro
 	url = https://github.com/nitrojs/nitro
+[submodule "claude/.claude/references/dd-trace"]
+	path = claude/.claude/references/dd-trace
+	url = https://github.com/DataDog/dd-trace-js.git

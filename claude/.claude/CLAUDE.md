@@ -15,6 +15,7 @@ Local copies of framework documentation for Claude Code context.
 | xlsx (SheetJS) | 0.20.3 | ~/.claude/references/xlsx |
 | xlsx (SheetJS) docs | - | ~/.claude/references/xlsx-docs |
 | nitro | nightly | ~/.claude/references/nitro |
+| dd-trace | 5.x | ~/.claude/references/dd-trace |
 
 ## Shell Functions
 
