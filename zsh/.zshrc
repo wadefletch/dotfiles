@@ -120,10 +120,10 @@ fi
 # Stop all Docker containers and processes on dev ports
 stopall() {
   docker ps -q | xargs -r docker kill 2>/dev/null
-  for port in 3000 3001 3002 3003 3004 3005; do
+  for port in 3000 3001 3002 3003 3004 3005 4317 4318 4566 5432 6379 8126; do
     lsof -ti:$port | xargs -r kill -9 2>/dev/null
   done
-  echo "Stopped all Docker containers and cleared ports 3000-3005"
+  echo "Stopped all Docker containers and cleared dev ports"
 }
 
 
