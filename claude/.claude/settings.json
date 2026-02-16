@@ -51,7 +51,9 @@
       "Write(~/.claude/references/**)",
       "NotebookEdit(~/.claude/references/**)"
     ],
-    "additionalDirectories": ["~/.claude/references"]
+    "additionalDirectories": [
+      "~/.claude/references"
+    ]
   },
   "statusLine": {
     "type": "command",
@@ -62,20 +64,10 @@
     "context7@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": false,
     "plugin-dev@claude-plugins-official": false,
-    "core@tractorbeam": true,
-    "git@tractorbeam": true,
-    "linear@tractorbeam": true,
-    "typescript-lsp@claude-plugins-official": false,
-    "rust-analyzer-lsp@claude-plugins-official": false,
-    "agent-browser@agent-browser": true
+    "tractorbeam-skills@tractorbeam": true,
+    "agent-browser@agent-browser": true,
+    "project-updates@tractorbeam": true
   },
-  "extraKnownMarketplaces": {
-    "tractorbeam": {
-      "source": {
-        "source": "github",
-        "repo": "tractorbeamai/claude"
-      }
-    }
-  },
+  "extraKnownMarketplaces": {},
   "autoUpdatesChannel": "latest"
 }

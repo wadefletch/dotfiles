@@ -17,6 +17,7 @@ directories=(
     "zsh"
     "ghostty"
     "starship"
+    "docker"
 )
 
 for dir in "${directories[@]}"; do
