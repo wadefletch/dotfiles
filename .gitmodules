@@ -25,3 +25,9 @@
 [submodule "claude/.claude/references/dd-trace"]
 	path = claude/.claude/references/dd-trace
 	url = https://github.com/DataDog/dd-trace-js.git
+[submodule "claude/.claude/references/nf3"]
+	path = claude/.claude/references/nf3
+	url = git@github.com:unjs/nf3.git
+[submodule "claude/.claude/references/nft"]
+	path = claude/.claude/references/nft
+	url = git@github.com:vercel/nft.git
