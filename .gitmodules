@@ -58,3 +58,7 @@
 	path = claude/.claude/references/datadog-opentelemetry-examples
 	url = https://github.com/DataDog/opentelemetry-examples
 	shallow = true
+[submodule "claude/.claude/references/datadog-labs-pup"]
+	path = claude/.claude/references/datadog-labs-pup
+	url = https://github.com/datadog-labs/pup
+	shallow = true

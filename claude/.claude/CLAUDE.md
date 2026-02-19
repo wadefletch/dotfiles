@@ -20,6 +20,7 @@ Local copies of framework documentation for Claude Code context.
 | Datadog Agent | - | ~/.claude/references/datadog-agent |
 | Fleet (FleetDM) | - | ~/.claude/references/fleetdm-fleet |
 | Datadog OpenTelemetry examples | - | ~/.claude/references/datadog-opentelemetry-examples |
+| Datadog Labs Pup | - | ~/.claude/references/datadog-labs-pup |
 
 ## Shell Functions
 
