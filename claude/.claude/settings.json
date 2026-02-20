@@ -69,5 +69,6 @@
     "project-updates@tractorbeam": true
   },
   "extraKnownMarketplaces": {},
-  "autoUpdatesChannel": "latest"
+  "autoUpdatesChannel": "latest",
+  "effortLevel": "medium"
 }
