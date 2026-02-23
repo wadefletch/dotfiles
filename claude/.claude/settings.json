@@ -70,5 +70,6 @@
   },
   "extraKnownMarketplaces": {},
   "autoUpdatesChannel": "latest",
-  "effortLevel": "medium"
+  "effortLevel": "medium",
+  "skipDangerousModePermissionPrompt": true
 }
