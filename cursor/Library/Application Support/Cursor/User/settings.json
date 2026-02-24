@@ -190,4 +190,5 @@
   "cursor.composer.usageSummaryDisplay": "always",
   "claudeCode.selectedModel": "default",
   "terraform.languageServer.enable": true,
+  "cursorpyright.analysis.autoImportCompletions": true,
 }
