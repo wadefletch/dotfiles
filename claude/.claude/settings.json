@@ -60,16 +60,27 @@
     "command": "~/.claude/statusline.sh"
   },
   "enabledPlugins": {
-    "code-simplifier@claude-plugins-official": false,
+    "code-simplifier@claude-plugins-official": true,
     "context7@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": false,
     "plugin-dev@claude-plugins-official": false,
-    "tractorbeam-skills@tractorbeam": true,
+    "interview@tractorbeam": true,
+    "deslop@tractorbeam": true,
+    "literate@tractorbeam": true,
+    "git@tractorbeam": true,
+    "linear@tractorbeam": true,
+    "granola@tractorbeam": true,
+    "github-actions@tractorbeam": true,
+    "setup-tractorbeam-configs@tractorbeam": false,
+    "project-updates@tractorbeam": true,
+    "terraform@tractorbeam": true,
+    "testing@tractorbeam": true,
+    "brd@tractorbeam": true,
     "agent-browser@agent-browser": true,
-    "project-updates@tractorbeam": true
+    "references@tractorbeam": true
   },
   "extraKnownMarketplaces": {},
   "autoUpdatesChannel": "latest",
-  "effortLevel": "medium",
-  "skipDangerousModePermissionPrompt": true
+  "skipDangerousModePermissionPrompt": true,
+  "effortLevel": "medium"
 }
