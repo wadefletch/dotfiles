@@ -5,7 +5,8 @@ auto-update = "off"
 shell-integration = "zsh"
 
 # cross-platform aesthetics
-theme = "Black Metal (Bathory)"
+# theme = "Black Metal (Bathory)"
+theme = "dark:Gruvbox Dark,light: Xcode Light hc"
 background-opacity = "0.95"
 background-blur-radius = "10"
 window-padding-x = "10"
