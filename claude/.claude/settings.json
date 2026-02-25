@@ -100,6 +100,7 @@
       "Bash(gh pr diff:*)",
       "Bash(gh run view:*)",
       "Bash(gh run logs:*)",
+      "Bash(gh pr checks:*)",
       "Bash(terraform fmt:*)",
       "Bash(terraform validate:*)",
       "Bash(terraform state list:*)",
