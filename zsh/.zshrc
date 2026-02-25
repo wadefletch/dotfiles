@@ -127,3 +127,7 @@ stopall() {
 }
 
 
+# Automatically squash-merge PR after all checks pass
+automerge() {
+  gh pr checks $1 --watch && gh pr merge $1 --squash --delete-branch
+}
