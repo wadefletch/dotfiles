@@ -15,35 +15,9 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
 
-# PNPM (Node)
-if [[ -d "/Users/wadefletcher/Library/pnpm" ]]; then
-  export PNPM_HOME="/Users/wadefletcher/Library/pnpm"
-  export PATH="$PNPM_HOME:$PATH"
-fi
-
 # Rustup (Rust)
 if command -v brew &> /dev/null && brew list rustup &>/dev/null; then
   export PATH="$(brew --prefix rustup)/bin:$PATH"
-fi
-
-# Cargo-installed Binaries (Rust)
-if [[ -d "$HOME/.cargo/bin" ]]; then
-  export PATH="$HOME/.cargo/bin:$PATH"
-fi
-
-# Postgres 17
-if [[ -d "/opt/homebrew/opt/postgresql@17/bin" ]]; then
-  export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"
-fi
-
-# LLVM (probably Rust, tbh not sure why i have this)
-if [[ -d "/opt/homebrew/opt/llvm/bin" ]]; then
-  export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
-fi
-
-# Path addition required by factory.ai droid
-if [[ -d "/Users/wadefletcher/.local/bin" ]]; then
-  export PATH="/Users/wadefletcher/.local/bin:$PATH"
 fi
 
 # AWS CLI
