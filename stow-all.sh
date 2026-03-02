@@ -11,7 +11,6 @@ directories=(
     "git"
     "nvim"
     "ssh"
-    "superwhisper"
     "tmux"
     "vscode"
     "zsh"
