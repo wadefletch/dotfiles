@@ -108,6 +108,7 @@
       "Bash(stat:*)",
       "Bash(jq:*)",
       "Bash(echo:*)",
+      "Bash(echo \"---\")",
       "Bash(which:*)",
       "Bash(find:*)",
       "Bash(mkdir:*)",
