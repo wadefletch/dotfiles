@@ -12,6 +12,7 @@ GNU Stow-based dotfiles for macOS. Each top-level directory is a stow package wh
 | crowdcontrol | CrowdControl config |
 | cursor | Cursor editor settings and keybindings |
 | docker | Docker daemon config |
+| gh | GitHub CLI config (XDG) |
 | ghostty | Ghostty terminal |
 | git | Git config (XDG) |
 | nightly-maintenance | LaunchAgent for nightly maintenance script |
@@ -24,23 +25,22 @@ GNU Stow-based dotfiles for macOS. Each top-level directory is a stow package wh
 
 ## Setup
 
-Install [GNU Stow](https://www.gnu.org/software/stow/), then from the repo root:
-
 ```sh
-# stow individual packages
-stow git zsh ghostty
-
-# or stow everything
-stow */
+git clone https://github.com/wadefletch/dotfiles ~/.dotfiles
+cd ~/.dotfiles
+./bootstrap.sh
 ```
 
-After cloning, symlink the git hooks:
+`bootstrap.sh` installs stow (via brew/apt/dnf/yum/pacman), stows all packages, and configures git hooks. Safe to re-run. macOS-only packages (cursor, vscode, nightly-maintenance) are skipped on Linux.
+
+To stow manually:
 
 ```sh
-git config core.hooksPath .githooks
+stow git zsh ghostty   # individual packages
+stow */                # everything
 ```
 
-## Bootstrap
+## Other scripts
 
 **`charlie.sh`** — Full-machine bootstrap for new team members. Installs Homebrew, Cursor, Ghostty, Node (via nvm), and configures git/zsh/starship from scratch. Run on a fresh Mac.
 

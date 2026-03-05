@@ -11,6 +11,7 @@ GNU Stow-based dotfiles for macOS. Each top-level directory is a stow package mi
   .claude/          # claude code settings (claude/)
   .cargo/, .docker/ # tool config (cargo/, docker/)
 .githooks/          # git hooks (core.hooksPath); post-merge updates submodules
+bootstrap.sh        # installs stow, stows packages, sets up git hooks (macOS + Linux)
 charlie.sh          # standalone bootstrap for new teammates (not stow-based)
 fresh.sh            # legacy bootstrap (installs brew, nvm, brewfile)
 ORGANIZATION.md     # rules for organizing ~/Documents and ~/Downloads
