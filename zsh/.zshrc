@@ -105,3 +105,12 @@ stopall() {
 automerge() {
   gh pr checks $1 --watch && gh pr merge $1 --squash --delete-branch
 }
+
+# Run a gh command as the Carlyle account over HTTPS, then switch back
+ghc() {
+  gh auth switch --user wade-fletcher-cw_tcgemu
+  gh config set -h github.com git_protocol https
+  gh "$@"
+  gh auth switch --user wadefletch
+  gh config set -h github.com git_protocol ssh
+}
