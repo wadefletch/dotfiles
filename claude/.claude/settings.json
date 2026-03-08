@@ -226,6 +226,9 @@
       "Bash(node --check:*)",
       "Bash(claude mcp list:*)",
       "Bash(agent-browser:*)",
+      "Bash(rtk gain:*)",
+      "Bash(rtk discover:*)",
+      "Bash(rtk --version)",
       "Bash(aws sts get-caller-identity)",
       "mcp__plugin_context7_context7",
       "Read(~/.claude/references/**)",
@@ -285,56 +288,10 @@
       "Write(~/.claude/references/**)",
       "NotebookEdit(~/.claude/references/**)"
     ],
-    "additionalDirectories": ["~/.claude/references"]
+    "additionalDirectories": [
+      "~/.claude/references"
+    ]
   },
-  "statusLine": {
-    "type": "command",
-    "command": "~/.claude/statusline.sh"
-  },
-  "enabledPlugins": {
-    "code-simplifier@claude-plugins-official": true,
-    "context7@claude-plugins-official": true,
-    "frontend-design@claude-plugins-official": false,
-    "plugin-dev@claude-plugins-official": false,
-    "document-skills@anthropic-agent-skills": true,
-    "interview@tractorbeam": true,
-    "deslop@tractorbeam": true,
-    "literate@tractorbeam": true,
-    "git@tractorbeam": true,
-    "linear@tractorbeam": true,
-    "granola@tractorbeam": true,
-    "github-actions@tractorbeam": true,
-    "setup-tractorbeam-configs@tractorbeam": true,
-    "project-updates@tractorbeam": true,
-    "terraform@tractorbeam": true,
-    "testing@tractorbeam": true,
-    "brd@tractorbeam": true,
-    "agent-browser@agent-browser": true,
-    "typescript-lsp@claude-plugins-official": true
-  },
-  "extraKnownMarketplaces": {
-    "anthropic-agent-skills": {
-      "source": {
-        "source": "github",
-        "repo": "anthropics/skills"
-      }
-    },
-    "tractorbeam": {
-      "source": {
-        "source": "github",
-        "repo": "tractorbeamai/skills"
-      }
-    },
-    "agent-browser": {
-      "source": {
-        "source": "github",
-        "repo": "vercel-labs/agent-browser"
-      }
-    }
-  },
-  "autoUpdatesChannel": "latest",
-  "skipDangerousModePermissionPrompt": true,
-  "effortLevel": "high",
   "hooks": {
     "PreToolUse": [
       {
@@ -347,5 +304,54 @@
         ]
       }
     ]
-  }
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh"
+  },
+  "enabledPlugins": {
+    "code-simplifier@claude-plugins-official": true,
+    "context7@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": false,
+    "plugin-dev@claude-plugins-official": false,
+    "typescript-lsp@claude-plugins-official": true,
+    "interview@tractorbeam": true,
+    "deslop@tractorbeam": true,
+    "literate@tractorbeam": true,
+    "git@tractorbeam": true,
+    "linear@tractorbeam": true,
+    "granola@tractorbeam": true,
+    "github-actions@tractorbeam": true,
+    "setup-tractorbeam-configs@tractorbeam": true,
+    "project-updates@tractorbeam": true,
+    "terraform@tractorbeam": true,
+    "testing@tractorbeam": true,
+    "brd@tractorbeam": true,
+    "references@tractorbeam": true,
+    "agent-browser@agent-browser": true,
+    "document-skills@anthropic-agent-skills": true
+  },
+  "extraKnownMarketplaces": {
+    "tractorbeam": {
+      "source": {
+        "source": "github",
+        "repo": "tractorbeamai/skills"
+      }
+    },
+    "agent-browser": {
+      "source": {
+        "source": "github",
+        "repo": "vercel-labs/agent-browser"
+      }
+    },
+    "anthropic-agent-skills": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/skills"
+      }
+    }
+  },
+  "autoUpdatesChannel": "latest",
+  "skipDangerousModePermissionPrompt": true,
+  "effortLevel": "high"
 }

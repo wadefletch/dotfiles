@@ -67,16 +67,16 @@ fi
 alias zshrc="${EDITOR:-vi} ~/.dotfiles/zsh/.zshrc"
 alias ghosttyrc="${EDITOR:-vi} ~/.dotfiles/ghostty/.config/ghostty/config"
 alias nvimconf="${EDITOR:-vi} ~/.dotfiles/nvim/.config/nvim/"
+# Aliases - directories
+alias cdd="cd ~/.dotfiles"
+alias cdcm="cd ~/Developer/Tractorbeam/client-carlyle/carlyle-monorepo"
+alias cdii="cd ~/Developer/Tractorbeam/internal-infra"
 
 # Aliases - git
 if command -v git &> /dev/null; then
   alias ga="git add"
-  alias gc="git commit"
-  alias gcm="git commit -m"
-  alias gca="git commit --amend --no-edit"
+  alias gc="git commit -m"
   alias gcd="git commit -m '$(date -u +\'%Y-%m-%dT%H:%M:%S\')'"
-  alias gbo="git checkout"
-  alias gbb="git checkout -b"
   alias gs="git status -sb"
   alias gp="git push"
   alias gl="git log --oneline -10"
@@ -90,6 +90,9 @@ if command -v git &> /dev/null; then
     git push
   }
 fi
+
+# mkdir and cd into it
+mkcd() { mkdir -p "$1" && cd "$1"; }
 
 # Stop all Docker containers and processes on dev ports
 stopall() {
