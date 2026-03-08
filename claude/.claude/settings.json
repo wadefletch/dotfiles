@@ -281,6 +281,8 @@
       "Skill(references)",
       "Skill(agent-browser)",
       "Skill(dogfood)",
+      "Skill(agent-browser:agent-browser)",
+      "Skill(agent-browser:dogfood)",
       "Read(~/.claude/memory/**)",
       "Write(~/.claude/memory/**)",
       "Edit(~/.claude/memory/**)"
