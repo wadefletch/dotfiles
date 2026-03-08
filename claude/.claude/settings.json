@@ -179,6 +179,7 @@
       "Bash(gh pr checks:*)",
       "Bash(gh run view:*)",
       "Bash(gh run list:*)",
+      "Bash(gh run watch:*)",
       "Bash(gh run logs:*)",
       "Bash(gh issue view:*)",
       "Bash(gh search issues:*)",
@@ -308,7 +309,8 @@
     "terraform@tractorbeam": true,
     "testing@tractorbeam": true,
     "brd@tractorbeam": true,
-    "agent-browser@agent-browser": true
+    "agent-browser@agent-browser": true,
+    "typescript-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "anthropic-agent-skills": {

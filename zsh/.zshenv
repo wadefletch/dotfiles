@@ -26,6 +26,11 @@ if [[ -d "/opt/homebrew/opt/llvm/bin" ]]; then
   export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 fi
 
+# Bun global binaries (bun link)
+if [[ -d "$HOME/.bun/bin" ]]; then
+  export PATH="$HOME/.bun/bin:$PATH"
+fi
+
 # Path addition required by factory.ai droid
 if [[ -d "$HOME/.local/bin" ]]; then
   export PATH="$HOME/.local/bin:$PATH"
