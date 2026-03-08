@@ -8,7 +8,7 @@ Do NOT rely on pretraining knowledge for Claude Code settings behavior, permissi
 
 MCP tool permissions only support server-level wildcards (`mcp__server__*`), not partial name wildcards (e.g., `mcp__server__get_*`). To allow only read-only tools from an MCP server, each tool must be listed individually.
 
-`mcp__claude_ai_*` tools are user-level only. Never include them in project-scoped settings (`.claude/settings.json` or `.claude/settings.local.json`).
+Bash permission wildcards: `:*` is deprecated, use ` *` (space-star) instead. You cannot combine a middle `*` with a trailing `:*` — use `Bash(git -C * show *)` not `Bash(git -C * show:*)`.
 
 ## RTK (Rust Token Killer)
 
