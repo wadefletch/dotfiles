@@ -108,6 +108,7 @@
       "Bash(file:*)",
       "Bash(stat:*)",
       "Bash(jq:*)",
+      "Bash(sqlite3 -readonly:*)",
       "Bash(echo:*)",
       "Bash(echo \"---\")",
       "Bash(which:*)",
@@ -334,7 +335,8 @@
     "brd@tractorbeam": true,
     "references@tractorbeam": true,
     "agent-browser@agent-browser": true,
-    "document-skills@anthropic-agent-skills": true
+    "document-skills@anthropic-agent-skills": true,
+    "rust-analyzer-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "tractorbeam": {
