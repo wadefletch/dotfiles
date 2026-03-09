@@ -185,7 +185,7 @@
       "Bash(gh release view:*)",
       "Bash(gh release list:*)",
       "Bash(gh issue view:*)",
-      "Bash(gh search issues:*)",
+      "Bash(gh search:*)",
       "Bash(gh api repos/*/issues/*/comments --jq:*)",
       "Bash(gh api repos/*/pulls/*/comments --jq:*)",
       "Bash(gh api repos/*/pulls/*/reviews --jq:*)",
