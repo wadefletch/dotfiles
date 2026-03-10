@@ -27,5 +27,11 @@ echo "  - git"
 claude plugin install git@tractorbeam
 echo "  - linear"
 claude plugin install linear@tractorbeam
+echo "  - reflect"
+claude plugin install reflect@tractorbeam
+echo "  - writing"
+claude plugin install writing@tractorbeam
+echo "  - documents"
+claude plugin install documents@tractorbeam
 
 echo "==> Done"

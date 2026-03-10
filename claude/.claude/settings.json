@@ -337,9 +337,12 @@
     "testing@tractorbeam": true,
     "brd@tractorbeam": true,
     "references@tractorbeam": true,
+    "reflect@tractorbeam": true,
     "agent-browser@agent-browser": true,
     "document-skills@anthropic-agent-skills": true,
-    "rust-analyzer-lsp@claude-plugins-official": true
+    "rust-analyzer-lsp@claude-plugins-official": true,
+    "writing@tractorbeam": true,
+    "documents@tractorbeam": true
   },
   "extraKnownMarketplaces": {
     "tractorbeam": {
@@ -358,6 +361,18 @@
       "source": {
         "source": "github",
         "repo": "anthropics/skills"
+      }
+    },
+    "obsidian-skills": {
+      "source": {
+        "source": "github",
+        "repo": "kepano/obsidian-skills"
+      }
+    },
+    "cloudflare": {
+      "source": {
+        "source": "github",
+        "repo": "cloudflare/skills"
       }
     }
   },
