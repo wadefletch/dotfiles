@@ -301,19 +301,6 @@
       "~/.claude/references"
     ]
   },
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/wadefletcher/.claude/hooks/rtk-rewrite.sh"
-          }
-        ]
-      }
-    ]
-  },
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh"
@@ -338,6 +325,7 @@
     "brd@tractorbeam": true,
     "references@tractorbeam": true,
     "reflect@tractorbeam": true,
+    "rtk@tractorbeam": true,
     "agent-browser@agent-browser": true,
     "document-skills@anthropic-agent-skills": true,
     "rust-analyzer-lsp@claude-plugins-official": true,

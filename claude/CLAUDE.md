@@ -12,4 +12,4 @@ Bash permission wildcards: `:*` is deprecated, use ` *` (space-star) instead. Yo
 
 ## RTK (Rust Token Killer)
 
-Token-optimized CLI proxy installed via `brew install rtk`. A PreToolUse hook in `settings.json` transparently rewrites Bash commands (e.g., `git status` → `rtk git status`) for 60-90% token savings. Use `rtk gain` to check savings analytics.
+The `rtk@tractorbeam` plugin registers a PreToolUse hook that transparently rewrites Bash commands (e.g., `git status` → `rtk git status`) for 60-90% token savings.

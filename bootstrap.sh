@@ -135,6 +135,15 @@ install_deps() {
         ok "$app"
       fi
     done
+
+    # macOS-only brew formulae
+    if command -v rtk &>/dev/null; then
+      ok "rtk already installed"
+    else
+      info "installing rtk"
+      brew install rtk
+      ok "rtk"
+    fi
   fi
 }
 
