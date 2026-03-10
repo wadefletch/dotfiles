@@ -361,7 +361,7 @@
       }
     }
   },
+  "effortLevel": "high",
   "autoUpdatesChannel": "latest",
-  "skipDangerousModePermissionPrompt": true,
-  "effortLevel": "high"
+  "skipDangerousModePermissionPrompt": true
 }
