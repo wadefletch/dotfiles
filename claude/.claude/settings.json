@@ -6,7 +6,9 @@
     "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
     "DISABLE_ERROR_REPORTING": "1",
     "DISABLE_TELEMETRY": "1",
-    "ENABLE_LSP_TOOL": "1"
+    "ENABLE_LSP_TOOL": "1",
+    "CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING": "1",
+    "MAX_THINKING_TOKENS": "31999"
   },
   "attribution": {
     "commit": "",
@@ -297,9 +299,7 @@
       "Write(~/.claude/references/**)",
       "NotebookEdit(~/.claude/references/**)"
     ],
-    "additionalDirectories": [
-      "~/.claude/references"
-    ]
+    "additionalDirectories": ["~/.claude/references"]
   },
   "statusLine": {
     "type": "command",
