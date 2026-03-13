@@ -49,6 +49,7 @@
       "Bash(npx tsc:*)",
       "Bash(npx tsx:*)",
       "Bash(npx vitest:*)",
+      "Bash(npx shadcn@latest info --json)",
       "Bash(npm --version)",
       "Bash(npm test)",
       "Bash(npm test:*)",
@@ -299,8 +300,11 @@
       "Write(~/.claude/references/**)",
       "NotebookEdit(~/.claude/references/**)"
     ],
-    "additionalDirectories": ["~/.claude/references"]
+    "additionalDirectories": [
+      "~/.claude/references"
+    ]
   },
+  "model": "sonnet",
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh"
@@ -364,7 +368,7 @@
       }
     }
   },
-  "effortLevel": "high",
+  "effortLevel": "medium",
   "autoUpdatesChannel": "latest",
   "skipDangerousModePermissionPrompt": true
 }
