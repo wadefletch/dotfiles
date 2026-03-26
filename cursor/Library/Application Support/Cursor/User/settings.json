@@ -52,7 +52,7 @@
   "terminal.integrated.scrollback": 8000,
   "terminal.integrated.shellIntegration.enabled": true,
   "typescript.updateImportsOnFileMove.enabled": "always",
-  "update.releaseTrack": "prerelease",
+  "update.releaseTrack": "dev",
   "vim.camelCaseMotion.enable": true,
   "vim.insertModeKeyBindingsNonRecursive": [
     {
