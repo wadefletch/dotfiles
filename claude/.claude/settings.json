@@ -308,7 +308,6 @@
       "~/.claude/references"
     ]
   },
-  "model": "sonnet",
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh"
@@ -378,7 +377,6 @@
       }
     }
   },
-  "effortLevel": "auto",
   "autoUpdatesChannel": "latest",
   "skipDangerousModePermissionPrompt": true
 }
