@@ -71,6 +71,7 @@ alias nvimconf="${EDITOR:-vi} ~/.dotfiles/nvim/.config/nvim/"
 alias cdd="cd ~/.dotfiles"
 alias cdcm="cd ~/Developer/Tractorbeam/client-carlyle/carlyle-monorepo"
 alias cdii="cd ~/Developer/Tractorbeam/internal-infra"
+alias cdt="cd ~/Developer/Tractorbeam"
 
 # Aliases - git
 if command -v git &> /dev/null; then
@@ -97,7 +98,7 @@ mkcd() { mkdir -p "$1" && cd "$1"; }
 # Stop all Docker containers and processes on dev ports
 stopall() {
   docker ps -q | xargs -r docker kill 2>/dev/null
-  for port in 3000 3001 3002 3003 3004 3005 4317 4318 4566 5432 6379 8126; do
+  for port in 3000 3001 3002 3003 3004 3005 4000 4001 4100 4317 4318 4566 5432 6379 8126 8888 8889 8890; do
     lsof -ti:$port | xargs -r kill -9 2>/dev/null
   done
   echo "Stopped all Docker containers and cleared dev ports"
