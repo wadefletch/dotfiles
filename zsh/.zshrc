@@ -97,11 +97,21 @@ mkcd() { mkdir -p "$1" && cd "$1"; }
 
 # Stop all Docker containers and processes on dev ports
 stopall() {
-  docker ps -q | xargs -r docker kill 2>/dev/null
+  local containers
+  containers=$(docker ps --format '{{.ID}} {{.Names}}' | grep -v orbstack)
+  if [[ -n "$containers" ]]; then
+    echo "$containers" | awk '{print $2}' | while read -r name; do echo "  container: $name"; done
+    echo "$containers" | awk '{print $1}' | xargs -r docker kill 2>/dev/null
+  fi
   for port in 3000 3001 3002 3003 3004 3005 4000 4001 4100 4317 4318 4566 5432 6379 8126 8888 8889 8890; do
-    lsof -ti:$port | xargs -r kill -9 2>/dev/null
+    local pids
+    pids=$(lsof -ti:$port 2>/dev/null)
+    if [[ -n "$pids" ]]; then
+      echo "  port $port: $(echo "$pids" | wc -w | tr -d ' ') process(es)"
+      echo "$pids" | xargs kill -9 2>/dev/null
+    fi
   done
-  echo "Stopped all Docker containers and cleared dev ports"
+  echo "done"
 }
 
 
