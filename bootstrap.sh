@@ -4,8 +4,8 @@ set -euo pipefail
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OS="$(uname -s)"
 
-# macOS-only stow packages (contain Library/ paths)
-MACOS_ONLY="cursor nightly-maintenance vscode"
+# macOS-only stow packages (contain Library/ paths or macOS-only tools)
+MACOS_ONLY="cursor duti nightly-maintenance vscode"
 
 # CLI packages to install (must exist in brew + apt/dnf/yum/pacman)
 PACKAGES=(git neovim tmux stow)
@@ -137,13 +137,15 @@ install_deps() {
     done
 
     # macOS-only brew formulae
-    if command -v rtk &>/dev/null; then
-      ok "rtk already installed"
-    else
-      info "installing rtk"
-      brew install rtk
-      ok "rtk"
-    fi
+    for formula in duti rtk; do
+      if command -v "$formula" &>/dev/null; then
+        ok "$formula already installed"
+      else
+        info "installing $formula"
+        brew install "$formula"
+        ok "$formula"
+      fi
+    done
   fi
 }
 
@@ -188,6 +190,12 @@ main() {
   install_deps
   stow_packages
   setup_hooks
+
+  if [[ "$OS" == "Darwin" ]] && command -v duti &>/dev/null; then
+    info "applying default app associations"
+    duti "$HOME/.config/duti/default-apps" 2>/dev/null || true
+    ok "default app associations"
+  fi
 
   echo ""
   echo "  done"
