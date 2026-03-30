@@ -1,7 +1,4 @@
 return {
-  -- pin mason-lspconfig to v1 branch (v2 removed mappings module that LazyVim still requires)
-  { "williamboman/mason-lspconfig.nvim", version = "1.x" },
-
   -- languages
   { import = "lazyvim.plugins.extras.lang.docker" },
   { import = "lazyvim.plugins.extras.lang.json" },
