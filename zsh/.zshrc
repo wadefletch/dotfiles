@@ -72,6 +72,7 @@ alias cdd="cd ~/.dotfiles"
 alias cdcm="cd ~/Developer/Tractorbeam/client-carlyle/carlyle-monorepo"
 alias cdii="cd ~/Developer/Tractorbeam/internal-infra"
 alias cdt="cd ~/Developer/Tractorbeam"
+alias cdo="cd ~/Obsidian/wadefletch/"
 
 # Aliases - git
 if command -v git &> /dev/null; then
