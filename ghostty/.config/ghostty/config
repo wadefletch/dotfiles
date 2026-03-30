@@ -7,7 +7,7 @@ shell-integration = "zsh"
 # cross-platform aesthetics
 font-family = "Iosevka NFM"
 # theme = "Black Metal (Bathory)"
-theme = "dark:Ayu,light: Xcode Light hc"
+theme = "dark:Nightfox,light: Xcode Light hc"
 background-opacity = "0.95"
 background-blur-radius = "10"
 window-padding-x = "10"

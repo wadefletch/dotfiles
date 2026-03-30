@@ -12,14 +12,16 @@ return {
   --   },
   -- },
 
-  { "Shatur/neovim-ayu" },
+  -- { "Shatur/neovim-ayu" },
 
-  -- Configure LazyVim to load tokyonight
+  { "EdenEast/nightfox.nvim" },
+
   {
     "LazyVim/LazyVim",
     opts = {
       -- colorscheme = "tokyonight",
-      colorscheme = "ayu",
+      -- colorscheme = "ayu",
+      colorscheme = "nightfox",
     },
   },
 }
