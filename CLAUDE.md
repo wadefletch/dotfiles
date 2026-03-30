@@ -1,4 +1,4 @@
-GNU Stow-based dotfiles for macOS. Each top-level directory is a stow package mirroring the target home directory structure. Run `stow <package>` from the repo root (or `stow-all.sh` for everything).
+GNU Stow-based dotfiles for macOS. Each top-level directory is a stow package mirroring the target home directory structure. Run `stow <package>` from the repo root (or `bootstrap.sh` for everything).
 
 ## Structure
 
@@ -11,9 +11,7 @@ GNU Stow-based dotfiles for macOS. Each top-level directory is a stow package mi
   .claude/          # claude code settings (claude/)
   .cargo/, .docker/ # tool config (cargo/, docker/)
 .githooks/          # git hooks (core.hooksPath); post-merge updates submodules
-bootstrap.sh        # installs stow, stows packages, sets up git hooks (macOS + Linux)
-charlie.sh          # standalone bootstrap for new teammates (not stow-based)
-fresh.sh            # legacy bootstrap (installs brew, nvm, brewfile)
+bootstrap.sh        # installs deps, stows packages, sets up git hooks (macOS + Linux)
 ORGANIZATION.md     # rules for organizing ~/Documents and ~/Downloads
 ```
 
@@ -22,7 +20,6 @@ ORGANIZATION.md     # rules for organizing ~/Documents and ~/Downloads
 - `zsh/.zshrc` — shell config, aliases (`ga`, `gc`, `gs`, `gp`, `gl`, `gq`), `stopall`, `automerge`
 - `zsh/.zshenv` — lightweight PATH exports (brew, local bin)
 - `claude/CLAUDE.md` — instructions for the claude stow package itself
-- `charlie.sh` — opinionated full-machine bootstrap for new team members
 
 ## Conventions
 

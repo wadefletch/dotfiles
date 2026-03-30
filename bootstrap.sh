@@ -124,6 +124,15 @@ install_deps() {
     ok "starship"
   fi
 
+  # claude code (native installer — auto-updates)
+  if command -v claude &>/dev/null; then
+    ok "claude code already installed"
+  else
+    info "installing claude code"
+    curl -fsSL https://claude.ai/install.sh | bash
+    ok "claude code"
+  fi
+
   # macOS GUI apps
   if [[ "$OS" == "Darwin" ]]; then
     for app in "${CASKS[@]}"; do
