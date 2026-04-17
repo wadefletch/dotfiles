@@ -36,3 +36,6 @@ ff = only
 [credential "https://gist.github.com"]
 	helper =
 	helper = !/opt/homebrew/bin/gh auth git-credential
+
+[includeIf "gitdir:~/Developer/Tractorbeam/client-carlyle/"]
+	path = ~/.config/git/gitconfig-carlyle

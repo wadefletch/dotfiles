@@ -1,0 +1,7 @@
+[user]
+	name = Wade Fletcher.cw
+	email = wade.fletcher.cw@carlyle.com
+
+[credential "https://github.com"]
+	helper =
+	helper = !~/.local/bin/git-credential-gh-carlyle
