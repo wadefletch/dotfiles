@@ -14,7 +14,6 @@
     },
     "editor.defaultFormatter": "charliermarsh.ruff",
   },
-  "breadcrumbs.enabled": false,
   "cSpell.enabled": false,
   "cSpell.userWords": ["Tractorbeam"],
   "cursor.composer.shouldChimeAfterChatFinishes": true,
@@ -191,4 +190,5 @@
   "claudeCode.selectedModel": "default",
   "terraform.languageServer.enable": true,
   "cursorpyright.analysis.autoImportCompletions": true,
+  "update.mode": "silentlyApplyOnQuit",
 }
