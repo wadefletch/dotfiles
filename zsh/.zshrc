@@ -116,6 +116,24 @@ stopall() {
 }
 
 
+# Trigger arrakis -> corrino tailscale ping via Fleet, forcing NAT hole
+# punch. Hard NAT at the office means corrino can't initiate directly; if
+# arrakis sends first, both sides become reachable. Token lives in login
+# keychain (service: fleet-api-token).
+punch() {
+  local target="${1:-corrino}"
+  local token
+  token=$(security find-generic-password -a "$USER" -s "fleet-api-token" -w 2>/dev/null) || {
+    echo "punch: no fleet-api-token in keychain (security add-generic-password -a \$USER -s fleet-api-token -w ...)" >&2
+    return 1
+  }
+  local script='/Applications/Tailscale.app/Contents/MacOS/Tailscale ping --c 3 --timeout 3s '"$target"
+  curl -sS -H "Authorization: Bearer $token" -H "Content-Type: application/json" \
+    -X POST "https://fleet.tractorbeam.ai/api/latest/fleet/scripts/run/sync" \
+    --data "{\"host_id\": 3, \"script_contents\": \"$script\"}" \
+    | jq -r '.output // .errors'
+}
+
 # Automatically squash-merge PR after all checks pass
 automerge() {
   gh pr checks $1 --watch && gh pr merge $1 --squash --delete-branch
