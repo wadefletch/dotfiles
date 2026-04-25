@@ -1,7 +1,7 @@
 [user]
 name = wadefletch
 email = wbfletch@gmail.com
-signingkey = /Users/wadefletcher/.ssh/id_github_wadefletch.pub
+signingkey = ~/.ssh/id_github_wadefletch.pub
 
 [core]
 editor = nvim
@@ -16,7 +16,7 @@ autoSetupRemote = true
 format = ssh
 
 [gpg "ssh"]
-allowedSignersFile = /Users/wadefletcher/.config/git/allowed_signers
+allowedSignersFile = ~/.config/git/allowed_signers
 
 [commit]
 gpgsign = true
@@ -32,10 +32,10 @@ ff = only
 
 [credential "https://github.com"]
 	helper =
-	helper = !/opt/homebrew/bin/gh auth git-credential
+	helper = !gh auth git-credential
 [credential "https://gist.github.com"]
 	helper =
-	helper = !/opt/homebrew/bin/gh auth git-credential
+	helper = !gh auth git-credential
 
 [includeIf "gitdir:~/Developer/Tractorbeam/client-carlyle/"]
 	path = ~/.config/git/gitconfig-carlyle
