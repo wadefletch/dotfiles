@@ -5,7 +5,7 @@ DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OS="$(uname -s)"
 
 # macOS-only stow packages (contain Library/ paths or macOS-only tools)
-MACOS_ONLY="cursor duti nightly-maintenance vscode"
+MACOS_ONLY="cursor duti nightly-maintenance vscode wallpapers"
 
 # CLI packages to install (must exist in brew + apt/dnf/yum/pacman)
 PACKAGES=(git neovim tmux stow)
