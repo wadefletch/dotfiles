@@ -120,7 +120,13 @@ install_deps() {
     ok "starship already installed"
   else
     info "installing starship"
-    curl -sS https://starship.rs/install.sh | sh -s -- -y
+    # Install into a user-writable bin dir so the upstream installer skips
+    # its `sudo -v` priming step. `sudo -v` requires a real password even
+    # under NOPASSWD: ALL (validation has no target command for the rule
+    # to match), and Coder's `coder` user has a locked account, so the
+    # default install path hangs on an unanswerable prompt.
+    mkdir -p "$HOME/.local/bin"
+    curl -sS https://starship.rs/install.sh | sh -s -- -y -b "$HOME/.local/bin"
     ok "starship"
   fi
 
