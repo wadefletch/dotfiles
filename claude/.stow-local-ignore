@@ -1,4 +1,4 @@
-CLAUDE\.md
-inventory\.md
-claude-plugin-refresh\.sh
+^/CLAUDE\.md$
+^/inventory\.md$
+^/claude-plugin-refresh\.sh$
 \.claude/references
