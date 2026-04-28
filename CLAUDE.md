@@ -4,7 +4,7 @@ GNU Stow-based dotfiles for macOS. Each top-level directory is a stow package mi
 
 ```
 <package>/          # stow package — contents symlinked into ~
-  .config/<app>/    # XDG config (ghostty, git, nvim, starship, tmux, alacritty)
+  .config/<app>/    # XDG config (ghostty, git, nvim, starship, alacritty)
   .zshrc, .zshenv   # shell config (zsh/)
   .ssh/config       # ssh config (ssh/)
   Library/...       # macOS paths (cursor/, vscode/, nightly-maintenance/)

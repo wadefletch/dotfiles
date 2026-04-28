@@ -8,7 +8,7 @@ OS="$(uname -s)"
 MACOS_ONLY="cursor duti nightly-maintenance vscode wallpapers"
 
 # CLI packages to install (must exist in brew + apt/dnf/yum/pacman)
-PACKAGES=(git neovim tmux stow)
+PACKAGES=(git neovim stow)
 
 # macOS GUI apps (brew casks)
 CASKS=(cursor ghostty docker)

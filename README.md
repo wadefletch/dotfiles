@@ -19,7 +19,6 @@ GNU Stow-based dotfiles for macOS. Each top-level directory is a stow package wh
 | nvim | Neovim config and markdownlint |
 | ssh | SSH config |
 | starship | Starship prompt |
-| tmux | tmux config |
 | vscode | VS Code settings |
 | zsh | Shell config, aliases, functions |
 
