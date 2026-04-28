@@ -4,6 +4,10 @@ set -euo pipefail
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OS="$(uname -s)"
 
+# Ensure curl-installed tools (starship, mise) are findable later in this
+# script. .zshenv adds this for interactive shells, but we run as bash.
+export PATH="$HOME/.local/bin:$PATH"
+
 # macOS-only stow packages (contain Library/ paths or macOS-only tools)
 MACOS_ONLY="cursor duti nightly-maintenance vscode wallpapers"
 
@@ -139,6 +143,20 @@ install_deps() {
     ok "claude code"
   fi
 
+  # mise (manages node/python/etc. per the stowed ~/.config/mise/config.toml).
+  # Linux distros don't reliably package it, so use the upstream installer
+  # which lands at ~/.local/bin/mise.
+  if command -v mise &>/dev/null; then
+    ok "mise already installed"
+  else
+    info "installing mise"
+    case "$OS" in
+      Darwin) brew install mise ;;
+      Linux)  curl -fsSL https://mise.run | sh ;;
+    esac
+    ok "mise"
+  fi
+
   # Switch login shell to zsh. Stowed config only loads if zsh is the
   # actual login shell, but apt/brew installing zsh doesn't change that.
   # On Coder workspaces `coder`'s password is locked, so chsh needs sudo.
@@ -222,6 +240,14 @@ main() {
   install_deps
   stow_packages
   setup_hooks
+
+  # Install everything declared in the stowed mise config (node, python, …).
+  # Must run after stow_packages so the symlinked config is in place.
+  if command -v mise &>/dev/null; then
+    info "installing mise tools"
+    mise install
+    ok "mise tools"
+  fi
 
   if [[ "$OS" == "Darwin" ]] && command -v duti &>/dev/null; then
     info "applying default app associations"
