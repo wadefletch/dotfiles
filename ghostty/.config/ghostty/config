@@ -12,6 +12,7 @@ background-opacity = "0.95"
 background-blur-radius = "10"
 window-padding-x = "10"
 window-padding-y = "10"
+cursor-style = "bar"
 
 # macos-specific aesthetics
 macos-icon = "xray"
