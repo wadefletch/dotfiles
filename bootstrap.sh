@@ -139,6 +139,18 @@ install_deps() {
     ok "claude code"
   fi
 
+  # Switch login shell to zsh. Stowed config only loads if zsh is the
+  # actual login shell, but apt/brew installing zsh doesn't change that.
+  # On Coder workspaces `coder`'s password is locked, so chsh needs sudo.
+  if command -v zsh &>/dev/null && [[ "${SHELL:-}" != *"/zsh" ]]; then
+    zsh_path="$(command -v zsh)"
+    if ! grep -qx "$zsh_path" /etc/shells 2>/dev/null; then
+      echo "$zsh_path" | sudo tee -a /etc/shells >/dev/null
+    fi
+    sudo chsh -s "$zsh_path" "$USER"
+    ok "default shell -> zsh (relog to take effect)"
+  fi
+
   # macOS GUI apps
   if [[ "$OS" == "Darwin" ]]; then
     for app in "${CASKS[@]}"; do
@@ -178,7 +190,12 @@ stow_packages() {
       continue
     fi
 
-    stow --restow "$pkg"
+    # Pin target to $HOME. Stow's default target is the parent of the stow
+    # dir, which works when this repo is cloned at ~/dotfiles but not when
+    # it's elsewhere — e.g. Coder's dotfiles module clones to
+    # ~/.config/coderv2/dotfiles, which would dump symlinks into
+    # ~/.config/coderv2/ instead of $HOME.
+    stow -t "$HOME" --restow "$pkg"
     ok "$pkg"
   done
 }
