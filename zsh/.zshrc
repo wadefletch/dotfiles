@@ -3,21 +3,14 @@ if command -v nvim &> /dev/null; then
   export EDITOR="nvim"
 fi
 
-# Pyenv (Python)
-if command -v pyenv &> /dev/null; then
-  export PYENV_ROOT="$HOME/.pyenv"
-  [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-  eval "$(pyenv init - zsh)"
+# Mise (Node, Python, and other dev tools)
+if command -v mise &> /dev/null; then
+  eval "$(mise activate zsh)"
 fi
 
-# NVM (Node)
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
-
 # Rustup (Rust)
-if command -v brew &> /dev/null && brew list rustup &>/dev/null; then
-  export PATH="$(brew --prefix rustup)/bin:$PATH"
+if [[ -d "/opt/homebrew/opt/rustup/bin" ]]; then
+  export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 fi
 
 # AWS CLI
