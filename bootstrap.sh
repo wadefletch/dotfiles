@@ -201,6 +201,26 @@ install_deps() {
 
 # --- Stow packages ----------------------------------------------------------
 
+# Use stow's dry-run to discover real-file conflicts in $HOME, then move them
+# aside to <file>.bak so the actual stow can replace them with symlinks. This
+# defers to stow's own ignore rules (.stow-local-ignore) instead of walking
+# the package tree manually.
+backup_conflicts() {
+  local pkg="$1"
+  local out
+
+  out="$(stow -n -t "$HOME" --restow "$pkg" 2>&1 || true)"
+
+  while IFS= read -r rel; do
+    [[ -z "$rel" ]] && continue
+    local tgt="$HOME/$rel"
+    if [[ -e "$tgt" && ! -L "$tgt" && ! -d "$tgt" ]]; then
+      info "backing up $tgt -> $tgt.bak"
+      mv "$tgt" "$tgt.bak"
+    fi
+  done < <(sed -nE 's/.*existing target (.+) since neither a link.*/\1/p' <<<"$out")
+}
+
 stow_packages() {
   cd "$DOTFILES"
 
@@ -212,6 +232,8 @@ stow_packages() {
       info "skipping $pkg (macOS only)"
       continue
     fi
+
+    backup_conflicts "$pkg"
 
     # Pin target to $HOME. Stow's default target is the parent of the stow
     # dir, which works when this repo is cloned at ~/dotfiles but not when
