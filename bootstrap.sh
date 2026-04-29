@@ -176,7 +176,7 @@ install_deps() {
         ok "$app already installed"
       else
         info "installing $app"
-        brew install --cask "$app"
+        brew install --cask --adopt "$app"
         ok "$app"
       fi
     done
