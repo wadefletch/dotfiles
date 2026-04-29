@@ -171,11 +171,16 @@ install_deps() {
 
   # macOS GUI apps
   if [[ "$OS" == "Darwin" ]]; then
+    installed_casks="$(brew list --cask -1 2>/dev/null)"
     for app in "${CASKS[@]}"; do
-      if brew list --cask "$app" &>/dev/null; then
+      # Match the cask itself or any variant tap (e.g. ghostty@tip satisfies
+      # ghostty). Without this, brew errors on conflicting variants.
+      if grep -qE "^${app}(@|$)" <<<"$installed_casks"; then
         ok "$app already installed"
       else
         info "installing $app"
+        # --adopt takes ownership of an existing /Applications/<App>.app
+        # rather than erroring (e.g. app installed manually before bootstrap).
         brew install --cask --adopt "$app"
         ok "$app"
       fi
