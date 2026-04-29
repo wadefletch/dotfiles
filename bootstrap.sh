@@ -15,7 +15,7 @@ MACOS_ONLY="cursor duti nightly-maintenance vscode wallpapers"
 PACKAGES=(git neovim stow zsh)
 
 # macOS GUI apps (brew casks)
-CASKS=(cursor ghostty docker)
+CASKS=(cursor ghostty)
 
 info()  { printf '  [ .. ] %s\n' "$1"; }
 ok()    { printf '  [ OK ] %s\n' "$1"; }
