@@ -15,7 +15,7 @@ MACOS_ONLY="cursor duti nightly-maintenance vscode wallpapers"
 PACKAGES=(git neovim stow zsh)
 
 # macOS GUI apps (brew casks)
-CASKS=(cursor ghostty docker)
+CASKS=(cursor ghostty)
 
 info()  { printf '  [ .. ] %s\n' "$1"; }
 ok()    { printf '  [ OK ] %s\n' "$1"; }
@@ -171,12 +171,17 @@ install_deps() {
 
   # macOS GUI apps
   if [[ "$OS" == "Darwin" ]]; then
+    installed_casks="$(brew list --cask -1 2>/dev/null)"
     for app in "${CASKS[@]}"; do
-      if brew list --cask "$app" &>/dev/null; then
+      # Match the cask itself or any variant tap (e.g. ghostty@tip satisfies
+      # ghostty). Without this, brew errors on conflicting variants.
+      if grep -qE "^${app}(@|$)" <<<"$installed_casks"; then
         ok "$app already installed"
       else
         info "installing $app"
-        brew install --cask "$app"
+        # --adopt takes ownership of an existing /Applications/<App>.app
+        # rather than erroring (e.g. app installed manually before bootstrap).
+        brew install --cask --adopt "$app"
         ok "$app"
       fi
     done
@@ -196,6 +201,26 @@ install_deps() {
 
 # --- Stow packages ----------------------------------------------------------
 
+# Use stow's dry-run to discover real-file conflicts in $HOME, then move them
+# aside to <file>.bak so the actual stow can replace them with symlinks. This
+# defers to stow's own ignore rules (.stow-local-ignore) instead of walking
+# the package tree manually.
+backup_conflicts() {
+  local pkg="$1"
+  local out
+
+  out="$(stow -n -t "$HOME" --restow "$pkg" 2>&1 || true)"
+
+  while IFS= read -r rel; do
+    [[ -z "$rel" ]] && continue
+    local tgt="$HOME/$rel"
+    if [[ -e "$tgt" && ! -L "$tgt" && ! -d "$tgt" ]]; then
+      info "backing up $tgt -> $tgt.bak"
+      mv "$tgt" "$tgt.bak"
+    fi
+  done < <(sed -nE 's/.*existing target (.+) since neither a link.*/\1/p' <<<"$out")
+}
+
 stow_packages() {
   cd "$DOTFILES"
 
@@ -207,6 +232,8 @@ stow_packages() {
       info "skipping $pkg (macOS only)"
       continue
     fi
+
+    backup_conflicts "$pkg"
 
     # Pin target to $HOME. Stow's default target is the parent of the stow
     # dir, which works when this repo is cloned at ~/dotfiles but not when
