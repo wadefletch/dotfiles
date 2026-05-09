@@ -1,5 +1,14 @@
-# Default editor
-if command -v nvim &> /dev/null; then
+# Detect non-interactive AI agent shells (Cursor Agent, Claude Code, etc.)
+if [[ -n "$CURSOR_AGENT" || -n "$CLAUDECODE" ]]; then
+  AGENT_SHELL=1
+fi
+
+# Default editor — fall back to a non-interactive editor in agent shells so
+# commands that drop into $EDITOR (git commit, crontab, etc.) don't hang
+if [[ -n "$AGENT_SHELL" ]]; then
+  export EDITOR="true"
+  export AWS_PAGER=""  # disable paging so agents can consume output
+elif command -v nvim &> /dev/null; then
   export EDITOR="nvim"
 fi
 
@@ -12,9 +21,6 @@ fi
 if [[ -d "/opt/homebrew/opt/rustup/bin" ]]; then
   export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 fi
-
-# AWS CLI
-export AWS_PAGER=""  # disable paging so agents can consume
 
 # History
 HISTSIZE=50000
@@ -50,9 +56,7 @@ bindkey "^[<" beginning-of-buffer-or-history  # Alt+< (beginning)
 bindkey "^[>" end-of-buffer-or-history        # Alt+> (end)
 
 # Prompt
-if [[ -n "$CURSOR_AGENT" ]]; then
-  # Skip pretty terminal init when inside a Cursor Agent sandbox
-elif command -v starship &> /dev/null; then
+if [[ -z "$AGENT_SHELL" ]] && command -v starship &> /dev/null; then
   eval "$(starship init zsh)"
 fi
 
@@ -63,7 +67,8 @@ alias nvimconf="${EDITOR:-vi} ~/.dotfiles/nvim/.config/nvim/"
 # Aliases - directories
 alias cdd="cd ~/.dotfiles"
 alias cdcm="cd ~/Developer/Tractorbeam/client-carlyle/carlyle-monorepo"
-alias cdii="cd ~/Developer/Tractorbeam/internal-infra"
+alias cdtp="cd ~/Developer/Tractorbeam/platform"
+alias cdtc="cd ~/Developer/Tractorbeam/constellation"
 alias cdt="cd ~/Developer/Tractorbeam"
 alias cdo="cd ~/Obsidian/wadefletch/"
 
