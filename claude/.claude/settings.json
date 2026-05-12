@@ -359,18 +359,6 @@
         "repo": "kepano/obsidian-skills"
       }
     },
-    "cloudflare": {
-      "source": {
-        "source": "github",
-        "repo": "cloudflare/skills"
-      }
-    },
-    "agent-plugins-for-aws": {
-      "source": {
-        "source": "github",
-        "repo": "awslabs/agent-plugins"
-      }
-    },
     "shadcn-ui": {
       "source": {
         "source": "github",
