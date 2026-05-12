@@ -330,14 +330,16 @@
     "document-skills@anthropic-agent-skills": false,
     "rust-analyzer-lsp@claude-plugins-official": true,
     "writing@tractorbeam": true,
-    "documents@tractorbeam": false
+    "documents@tractorbeam": false,
+    "shadcn@shadcn-ui": true
   },
   "extraKnownMarketplaces": {
     "tractorbeam": {
       "source": {
         "source": "github",
         "repo": "tractorbeamai/skills"
-      }
+      },
+      "autoUpdate": true
     },
     "agent-browser": {
       "source": {
@@ -357,16 +359,10 @@
         "repo": "kepano/obsidian-skills"
       }
     },
-    "cloudflare": {
+    "shadcn-ui": {
       "source": {
         "source": "github",
-        "repo": "cloudflare/skills"
-      }
-    },
-    "agent-plugins-for-aws": {
-      "source": {
-        "source": "github",
-        "repo": "awslabs/agent-plugins"
+        "repo": "shadcn-ui/ui"
       }
     }
   },
