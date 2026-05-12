@@ -1,5 +1,6 @@
 .DS_Store
 **/settings.local.json
+**/*.local.md
 claude/.claude/memory/
 claude/.claude/references/
 superwhisper/Documents/superwhisper/recordings/
