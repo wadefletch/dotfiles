@@ -146,5 +146,7 @@ ghc() {
   gh config set -h github.com git_protocol ssh
 }
 
-# bun completions
-[ -s "/Users/wadefletcher/.bun/_bun" ] && source "/Users/wadefletcher/.bun/_bun"
+# Bun completions
+if [[ -s "$HOME/.bun/_bun" ]]; then
+  source "$HOME/.bun/_bun"
+fi
