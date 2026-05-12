@@ -108,7 +108,12 @@ install_deps() {
   ok "package index updated"
 
   for pkg in "${PACKAGES[@]}"; do
-    if command -v "$pkg" &>/dev/null; then
+    # Map package name -> binary name where they differ (e.g. neovim -> nvim).
+    case "$pkg" in
+      neovim) bin="nvim" ;;
+      *)      bin="$pkg" ;;
+    esac
+    if command -v "$bin" &>/dev/null; then
       ok "$pkg already installed"
     else
       info "installing $pkg"
