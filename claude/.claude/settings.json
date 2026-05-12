@@ -330,14 +330,16 @@
     "document-skills@anthropic-agent-skills": false,
     "rust-analyzer-lsp@claude-plugins-official": true,
     "writing@tractorbeam": true,
-    "documents@tractorbeam": false
+    "documents@tractorbeam": false,
+    "shadcn@shadcn-ui": true
   },
   "extraKnownMarketplaces": {
     "tractorbeam": {
       "source": {
         "source": "github",
         "repo": "tractorbeamai/skills"
-      }
+      },
+      "autoUpdate": true
     },
     "agent-browser": {
       "source": {
