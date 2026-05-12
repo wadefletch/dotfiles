@@ -140,3 +140,6 @@ ghc() {
   gh auth switch --user wadefletch
   gh config set -h github.com git_protocol ssh
 }
+
+# bun completions
+[ -s "/Users/wadefletcher/.bun/_bun" ] && source "/Users/wadefletcher/.bun/_bun"
