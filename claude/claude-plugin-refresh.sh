@@ -21,6 +21,8 @@ echo "  - frontend-design"
 claude plugin install frontend-design@claude-plugins-official
 echo "  - code-simplifier"
 claude plugin install code-simplifier@claude-plugins-official
+echo "  - figma"
+claude plugin install figma@claude-plugins-official
 echo "  - core"
 claude plugin install core@tractorbeam
 echo "  - git"
