@@ -304,6 +304,7 @@
       "Write(~/.claude/references/**)",
       "NotebookEdit(~/.claude/references/**)"
     ],
+    "defaultMode": "auto",
     "additionalDirectories": [
       "~/.claude/references"
     ]
@@ -316,7 +317,7 @@
     "code-simplifier@claude-plugins-official": false,
     "context7@claude-plugins-official": false,
     "frontend-design@claude-plugins-official": false,
-    "plugin-dev@claude-plugins-official": false,
+    "plugin-dev@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
     "interview@tractorbeam": true,
     "git@tractorbeam": true,
@@ -333,7 +334,8 @@
     "rust-analyzer-lsp@claude-plugins-official": true,
     "writing@tractorbeam": true,
     "documents@tractorbeam": false,
-    "shadcn@shadcn-ui": true
+    "shadcn@shadcn-ui": true,
+    "figma@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "tractorbeam": {
@@ -368,10 +370,12 @@
       }
     }
   },
-  "effortLevel": "medium",
+  "effortLevel": "high",
   "autoUpdatesChannel": "latest",
   "skipDangerousModePermissionPrompt": true,
-  "theme": "light",
+  "theme": "auto",
   "verbose": true,
-  "preferredNotifChannel": "ghostty"
+  "preferredNotifChannel": "ghostty",
+  "skipAutoPermissionPrompt": true,
+  "autoMemoryEnabled": false
 }
