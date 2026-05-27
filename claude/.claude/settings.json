@@ -315,14 +315,14 @@
   },
   "enabledPlugins": {
     "code-simplifier@claude-plugins-official": false,
-    "context7@claude-plugins-official": false,
+    "context7@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": false,
-    "plugin-dev@claude-plugins-official": true,
+    "plugin-dev@claude-plugins-official": false,
     "typescript-lsp@claude-plugins-official": true,
     "interview@tractorbeam": true,
     "git@tractorbeam": true,
     "linear@tractorbeam": true,
-    "project-updates@tractorbeam": true,
+    "project-updates@tractorbeam": false,
     "brd@tractorbeam": false,
     "references@tractorbeam": false,
     "reflect@tractorbeam": false,
@@ -370,12 +370,12 @@
       }
     }
   },
-  "effortLevel": "high",
+  "effortLevel": "auto",
   "autoUpdatesChannel": "latest",
+  "autoMemoryEnabled": false,
   "skipDangerousModePermissionPrompt": true,
   "theme": "auto",
   "verbose": true,
   "preferredNotifChannel": "ghostty",
-  "skipAutoPermissionPrompt": true,
-  "autoMemoryEnabled": false
+  "skipAutoPermissionPrompt": true
 }
