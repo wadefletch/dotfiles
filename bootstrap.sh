@@ -290,8 +290,12 @@ setup_tailnet_ssh() {
 
   # macOS needs Remote Login on to accept inbound SSH. Don't enable it here —
   # that needs sudo and an interactive prompt — just flag it if it's off.
+  # Reading the status also needs admin: run non-root, systemsetup prints an
+  # "administrator access" error to stderr and nothing to stdout, so match the
+  # explicit "Remote Login: Off" on combined output rather than the absence of
+  # "On" (which false-positives on the permission error).
   if [[ "$OS" == "Darwin" ]] && command -v systemsetup &>/dev/null; then
-    if ! systemsetup -getremotelogin 2>/dev/null | grep -qi 'On'; then
+    if [[ "$(systemsetup -getremotelogin 2>&1)" == *"Remote Login: Off"* ]]; then
       info "remote login is off — enable with: sudo systemsetup -setremotelogin on"
     fi
   fi
