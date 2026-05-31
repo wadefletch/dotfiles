@@ -258,6 +258,45 @@ setup_hooks() {
   ok "git hooks configured"
 }
 
+# --- Tailnet SSH -------------------------------------------------------------
+
+# Authorize this machine's GitHub key for passwordless host-to-host SSH across
+# the tailnet (corrino <-> arrakis). Both machines carry the same
+# id_github_wadefletch keypair, so appending its pubkey to authorized_keys lets
+# each accept the other. The keypair is intentionally not tracked in this repo,
+# so on a fresh machine it may be absent — skip gracefully rather than fail.
+setup_tailnet_ssh() {
+  local pub="$HOME/.ssh/id_github_wadefletch.pub"
+  local ak="$HOME/.ssh/authorized_keys"
+
+  if [[ ! -f "$pub" ]]; then
+    info "skipping tailnet ssh (no $pub)"
+    return
+  fi
+
+  mkdir -p "$HOME/.ssh"
+  chmod 700 "$HOME/.ssh"
+
+  # Append only if absent so repeated runs don't duplicate the entry. grep over
+  # a missing authorized_keys returns non-zero, which correctly triggers the
+  # first append.
+  if ! grep -qF "$(cat "$pub")" "$ak" 2>/dev/null; then
+    cat "$pub" >> "$ak"
+    ok "tailnet ssh key authorized"
+  else
+    ok "tailnet ssh key already authorized"
+  fi
+  chmod 600 "$ak"
+
+  # macOS needs Remote Login on to accept inbound SSH. Don't enable it here —
+  # that needs sudo and an interactive prompt — just flag it if it's off.
+  if [[ "$OS" == "Darwin" ]] && command -v systemsetup &>/dev/null; then
+    if ! systemsetup -getremotelogin 2>/dev/null | grep -qi 'On'; then
+      info "remote login is off — enable with: sudo systemsetup -setremotelogin on"
+    fi
+  fi
+}
+
 # --- Main --------------------------------------------------------------------
 
 main() {
@@ -272,6 +311,7 @@ main() {
   install_deps
   stow_packages
   setup_hooks
+  setup_tailnet_ssh
 
   # Install everything declared in the stowed mise config (node, python, …).
   # Must run after stow_packages so the symlinked config is in place.
