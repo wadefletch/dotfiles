@@ -24,6 +24,8 @@ My GitHub username is `wadefletch`. Repos in GitHub orgs `tractorbeamai/` and `w
 
 Squash merges break SHA- and patch-id-based comparisons — `git branch --merged`, `git cherry -v`, and three-dot `git diff main...<branch>` all falsely flag already-merged branches as unique. Use two-dot `git diff main..<branch>`: zero lines means fully merged. When non-empty, also diff the reverse (`<branch>..main`) — opposing changes in the same sections mean main superseded the branch via a different PR. Grepping main's log for the branch's commit titles is a fast first check.
 
+Every `tractorbeamai/*` repo auto-merges via [bulldozer](https://github.com/palantir/bulldozer): apply the `merge-when-ready` label and it squash-merges once the PR is mergeable, keeping the branch updated as main moves and deleting it after — so label and move on, don't sit on the merge button. The org default lives in `tractorbeamai/.github` (`bulldozer.yml` + `.policy.yml`) and merges even with no CI; a repo can override with its own `.bulldozer.yml` (constellation, e.g., gates on a green `policy-bot: main` status). The org policy-bot config auto-approves PRs I author (zero approvals required when `wadefletch` is the author), so for my own PRs the label is the entire flow and `gh pr checks --watch` just hangs on the never-blocking policy-bot check; others' PRs need one approval — a GitHub review or a `/approve` comment. This is `tractorbeamai/*` only; `wadefletch/*` repos (e.g. dotfiles) aren't wired to bulldozer.
+
 ## Linear
 
 When creating new Linear issues (1-4), unless I specify otherwise, default to assigning to me and the current cycle. Confirm this if we're creating a very large number of issues (10+) or scoping a whole project.
