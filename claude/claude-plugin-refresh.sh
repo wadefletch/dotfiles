@@ -13,8 +13,6 @@ claude plugin marketplace add anthropics/claude-plugins-official
 claude plugin marketplace add tractorbeamai/claude
 
 echo "==> Installing plugins"
-echo "  - context7"
-claude plugin install context7@claude-plugins-official
 echo "  - plugin-dev"
 claude plugin install plugin-dev@claude-plugins-official
 echo "  - frontend-design"
