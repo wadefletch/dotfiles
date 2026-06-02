@@ -332,7 +332,6 @@
     "agent-browser@agent-browser": true,
     "document-skills@anthropic-agent-skills": false,
     "rust-analyzer-lsp@claude-plugins-official": true,
-    "writing@tractorbeam": true,
     "documents@tractorbeam": false,
     "shadcn@shadcn-ui": true,
     "figma@claude-plugins-official": true
