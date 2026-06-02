@@ -192,7 +192,7 @@ install_deps() {
     done
 
     # macOS-only brew formulae
-    for formula in duti rtk; do
+    for formula in duti; do
       if command -v "$formula" &>/dev/null; then
         ok "$formula already installed"
       else
