@@ -322,6 +322,7 @@
     "reflect@tractorbeam": false,
     "code-style@tractorbeam": true,
     "optimize-dev-stack@tractorbeam": false,
+    "turboreview@tractorbeam": true,
     "agent-browser@agent-browser": true,
     "document-skills@anthropic-agent-skills": false,
     "rust-analyzer-lsp@claude-plugins-official": true,
