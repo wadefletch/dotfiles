@@ -1,0 +1,25 @@
+# Command definitions (New in skhd.zig!) - these must be defined before use.
+# {{1}}, {{2}}, ... are the positional args passed at the call site.
+.define yabai_focus : yabai -m window --focus {{1}} || yabai -m display --focus {{1}}
+.define yabai_swap : yabai -m window --swap {{1}} || (yabai -m window --display {{1}} && yabai -m display --focus {{1}})
+.define resize_window : yabai -m window --resize {{1}}:{{2}}:{{3}}
+
+# Focus windows using command definitions
+cmd - h : @yabai_focus("west")
+cmd - j : @yabai_focus("south")
+cmd - k : @yabai_focus("north")
+cmd - l : @yabai_focus("east")
+
+# Move/swap windows using command definitions
+cmd + shift - h : @yabai_swap("west")
+cmd + shift - j : @yabai_swap("south")
+cmd + shift - k : @yabai_swap("north")
+cmd + shift - l : @yabai_swap("east")
+
+# Resize windows using command definitions
+cmd + ctrl - h : @resize_window("left", "-20", "0")
+cmd + ctrl - l : @resize_window("right", "20", "0")
+
+# Switch spaces
+cmd - 1 : yabai -m space --focus 1
+cmd - 2 : yabai -m space --focus 2

@@ -1,0 +1,114 @@
+#!/usr/bin/env bash
+
+# yabai-integrated SketchyBar, themed to match Xcode Dark HC.
+# Left:  yabai spaces + focused app.  Right: clock, battery, volume, wifi.
+
+CONFIG_DIR="$HOME/.config/sketchybar"
+PLUGIN_DIR="$CONFIG_DIR/plugins"
+source "$CONFIG_DIR/colors.sh"
+source "$CONFIG_DIR/icons.sh"
+
+# The native macOS system font (San Francisco) — the exact face the stock menu
+# bar uses. ".AppleSystemUIFont" is the only reliably-resolving name without
+# installing Apple's SF Pro package; "SF Pro"/"System Font"/".SF NS" either fail
+# or fall back to Times New Roman. Symbols Nerd Font supplies the status glyphs;
+# app icons use sketchybar-app-font.
+FONT=".AppleSystemUIFont"
+ICON_FONT="Symbols Nerd Font"
+
+##### Bar #####
+sketchybar --bar height=32 \
+                 position=top \
+                 color="$BAR_COLOR" \
+                 padding_left=10 \
+                 padding_right=10 \
+                 sticky=on \
+                 blur_radius=20
+
+##### Defaults applied to every item #####
+sketchybar --default updates=when_shown \
+                     icon.font="$FONT:Bold:14.0" \
+                     icon.color="$WHITE" \
+                     icon.padding_left=8 \
+                     icon.padding_right=4 \
+                     label.font="$FONT:Semibold:13.0" \
+                     label.color="$WHITE" \
+                     label.padding_left=4 \
+                     label.padding_right=8 \
+                     background.color="$ITEM_BG" \
+                     background.corner_radius=6 \
+                     background.height=24 \
+                     padding_left=4 \
+                     padding_right=4
+
+##### Spaces — one item per real yabai space #####
+for sid in $(yabai -m query --spaces | jq -r '.[].index'); do
+  sketchybar --add space space."$sid" left \
+             --set space."$sid" associated_space="$sid" \
+                                icon="$sid" \
+                                icon.font=".AppleSystemUIFont:Semibold:14.0" \
+                                label.font="sketchybar-app-font:Regular:15.0" \
+                                label.drawing=off \
+                                script="$PLUGIN_DIR/space.sh" \
+                                click_script="yabai -m space --focus $sid" \
+             --subscribe space."$sid" space_change
+done
+
+# Hidden listener that repaints every space's app icons. yabai triggers the
+# custom window_change event on window create/destroy/move (see .yabairc).
+sketchybar --add event window_change
+sketchybar --add item space_windows left \
+           --set space_windows drawing=off \
+                               updates=on \
+                               script="$PLUGIN_DIR/space_windows.sh" \
+           --subscribe space_windows window_change space_change front_app_switched
+
+##### Focused application #####
+sketchybar --add item front_app left \
+           --set front_app icon.drawing=off \
+                           label.font="$FONT:Semibold:13.0" \
+                           background.drawing=off \
+                           script="$PLUGIN_DIR/front_app.sh" \
+           --subscribe front_app front_app_switched
+
+##### Right side #####
+sketchybar --add item clock right \
+           --set clock update_freq=10 \
+                       icon="$ICON_CLOCK" \
+                       icon.font="$ICON_FONT:Regular:16.0" \
+                       icon.color="$PURPLE" \
+                       click_script="open -a Calendar" \
+                       script="$PLUGIN_DIR/clock.sh" \
+           --subscribe clock system_woke
+
+sketchybar --add item battery right \
+           --set battery update_freq=120 \
+                         icon.font="$ICON_FONT:Regular:16.0" \
+                         click_script="$PLUGIN_DIR/cc_click.sh Battery" \
+                         script="$PLUGIN_DIR/battery.sh" \
+           --subscribe battery power_source_change system_woke
+
+sketchybar --add item volume right \
+           --set volume icon.font="$ICON_FONT:Regular:16.0" \
+                        icon.color="$ORANGE" \
+                        click_script="$PLUGIN_DIR/cc_click.sh Sound" \
+                        script="$PLUGIN_DIR/volume.sh" \
+           --subscribe volume volume_change
+
+sketchybar --add item wifi right \
+           --set wifi update_freq=60 \
+                      icon.font="$ICON_FONT:Regular:16.0" \
+                      click_script="$PLUGIN_DIR/cc_click.sh Wi" \
+                      script="$PLUGIN_DIR/wifi.sh" \
+           --subscribe wifi wifi_change system_woke
+
+sketchybar --add item tailscale right \
+           --set tailscale update_freq=15 \
+                           icon=":tailscale:" \
+                           icon.font="sketchybar-app-font:Regular:15.0" \
+                           click_script="$PLUGIN_DIR/tailscale_click.sh" \
+                           script="$PLUGIN_DIR/tailscale.sh" \
+           --subscribe tailscale system_woke
+
+##### Render #####
+sketchybar --update

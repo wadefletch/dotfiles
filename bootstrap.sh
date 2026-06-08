@@ -9,13 +9,16 @@ OS="$(uname -s)"
 export PATH="$HOME/.local/bin:$PATH"
 
 # macOS-only stow packages (contain Library/ paths or macOS-only tools)
-MACOS_ONLY="cursor duti nightly-maintenance vscode wallpapers"
+MACOS_ONLY="cursor duti nightly-maintenance sketchybar skhd-zig vscode wallpapers yabai"
+
+# macOS-only Homebrew taps
+MACOS_TAPS=(felixkratz/formulae koekeishiya/formulae)
 
 # CLI packages to install (must exist in brew + apt/dnf/yum/pacman)
 PACKAGES=(git neovim stow zsh)
 
-# macOS GUI apps (brew casks)
-CASKS=(cursor ghostty)
+# macOS apps and fonts (brew casks)
+CASKS=(cursor ghostty font-sketchybar-app-font)
 
 info()  { printf '  [ .. ] %s\n' "$1"; }
 ok()    { printf '  [ OK ] %s\n' "$1"; }
@@ -176,6 +179,16 @@ install_deps() {
 
   # macOS GUI apps
   if [[ "$OS" == "Darwin" ]]; then
+    for tap in "${MACOS_TAPS[@]}"; do
+      if brew tap | grep -qx "$tap"; then
+        ok "$tap already tapped"
+      else
+        info "tapping $tap"
+        brew tap "$tap"
+        ok "$tap"
+      fi
+    done
+
     installed_casks="$(brew list --cask -1 2>/dev/null)"
     for app in "${CASKS[@]}"; do
       # Match the cask itself or any variant tap (e.g. ghostty@tip satisfies
@@ -192,7 +205,7 @@ install_deps() {
     done
 
     # macOS-only brew formulae
-    for formula in duti; do
+    for formula in duti sketchybar skhd yabai; do
       if command -v "$formula" &>/dev/null; then
         ok "$formula already installed"
       else
@@ -301,6 +314,21 @@ setup_tailnet_ssh() {
   fi
 }
 
+# --- macOS defaults ----------------------------------------------------------
+
+# Preferences that can't be stowed because they live in OS-managed plists.
+# Idempotent: re-running just re-asserts the values.
+setup_macos_defaults() {
+  [[ "$OS" == "Darwin" ]] || return
+
+  # Always show Sound in the menu bar so the sketchybar volume item can open its
+  # Control Center popover (see sketchybar/.config/sketchybar/plugins/cc_click.sh).
+  defaults write com.apple.controlcenter "NSStatusItem Visible Sound" -bool true
+  defaults write com.apple.controlcenter Sound -int 18
+  killall ControlCenter 2>/dev/null || true
+  ok "macOS defaults applied"
+}
+
 # --- Main --------------------------------------------------------------------
 
 main() {
@@ -316,6 +344,7 @@ main() {
   stow_packages
   setup_hooks
   setup_tailnet_ssh
+  setup_macos_defaults
 
   # Install everything declared in the stowed mise config (node, python, …).
   # Must run after stow_packages so the symlinked config is in place.
