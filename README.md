@@ -9,6 +9,7 @@ GNU Stow-based dotfiles for macOS. Each top-level directory is a stow package wh
 | alacritty | Alacritty terminal |
 | cargo | Cargo (Rust) |
 | claude | Claude Code settings and permissions |
+| codex | Codex config and instructions |
 | crowdcontrol | CrowdControl config |
 | cursor | Cursor editor settings and keybindings |
 | docker | Docker daemon config |
