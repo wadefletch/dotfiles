@@ -6,7 +6,12 @@ source "$CONFIG_DIR/colors.sh"
 source "$CONFIG_DIR/icons.sh"
 
 PERCENT=$(pmset -g batt | grep -Eo '[0-9]+%' | head -1 | tr -d '%')
-[ -z "$PERCENT" ] && exit 0
+# Desktops report no battery percentage. Hide the item entirely so it doesn't
+# render as an empty rounded box between volume and the clock.
+if [ -z "$PERCENT" ]; then
+  sketchybar --set "$NAME" drawing=off
+  exit 0
+fi
 
 if pmset -g batt | grep -q 'AC Power'; then
   ICON="$ICON_BATT_CHARGING"
@@ -28,4 +33,4 @@ else
   COLOR="$GREEN"
 fi
 
-sketchybar --set "$NAME" icon="$ICON" icon.color="$COLOR" label="${PERCENT}%"
+sketchybar --set "$NAME" drawing=on icon="$ICON" icon.color="$COLOR" label="${PERCENT}%"

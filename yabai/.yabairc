@@ -63,4 +63,12 @@ yabai -m signal --add event=window_moved action="sketchybar --trigger window_cha
 yabai -m signal --add event=application_launched action="sketchybar --trigger window_change" 2>/dev/null
 yabai -m signal --add event=application_terminated action="sketchybar --trigger window_change" 2>/dev/null
 
+# Rebuild sketchybar now that yabai is fully loaded and its spaces are
+# queryable. sketchybarrc enumerates spaces via `yabai -m query --spaces` at
+# load time, so when launchd starts sketchybar before yabai at login that loop
+# comes up empty and no per-space items are ever created. Reloading here closes
+# that race from the yabai side (no-op if sketchybar isn't up yet, in which case
+# sketchybar starts later with yabai already running and builds spaces itself).
+sketchybar --reload 2>/dev/null
+
 echo "yabai configuration loaded.."
