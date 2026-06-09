@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+# yabai-fix-sa — repair yabai's scripting-addition injection on Apple Silicon Sequoia.
+#
+# Symptom this fixes:
+#   sudo yabai --load-sa
+#   could not spawn remote thread: (os/kern) protection failure
+#   yabai: scripting-addition failed to inject payload into Dock.app!
+#
+# Root cause (https://github.com/asmvik/yabai/issues/2686): the maintainer builds
+# the universal binary on macOS Tahoe with a newer clang that stamps the arm64e
+# `loader` with PAC ABI v1 (Mach-O cpu `capabilities 0x81`). Sequoia's Dock.app is
+# still PAC ABI v0 (`0x80`), and the kernel refuses to inject a v1 binary into a v0
+# process. Tahoe's Dock is v1, so Tahoe users never hit this — which is why upstream
+# can't reproduce it and ships no fix.
+#
+# The fix (credit @Razboy20): rewrite the loader's `capabilities` byte from 0x81 to
+# 0x80 in both the fat header and the arm64e slice, then ad-hoc re-sign. There is no
+# assembly difference between the two ABI versions, so flipping the header flag is
+# enough to make the kernel allow the injection.
+#
+# Re-run this after every `brew upgrade yabai` (or any `yabai --install-sa`), since
+# reinstalling the scripting addition restores the unpatched v1 loader.
+#
+# Must run as root (writes to /Library and re-signs). Usage: sudo yabai-fix-sa
+set -euo pipefail
+
+LOADER=/Library/ScriptingAdditions/yabai.osax/Contents/MacOS/loader
+
+if [[ $EUID -ne 0 ]]; then
+  echo "yabai-fix-sa: must run as root — re-run with: sudo yabai-fix-sa" >&2
+  exit 1
+fi
+
+if [[ ! -f "$LOADER" ]]; then
+  echo "yabai-fix-sa: loader not found at $LOADER — run 'yabai --install-sa' first." >&2
+  exit 1
+fi
+
+# Locate the arm64e slice flagged with the incompatible PAC ABI v1 (caps 0x81).
+# `otool -f` prints, per arch: an `architecture N` header, then its `capabilities`
+# and file `offset`. We want the index (for the fat-header math) and offset (for the
+# slice math) of the slice whose capabilities are 0x81.
+read -r ARCH_INDEX SLICE_OFFSET < <(
+  otool -f "$LOADER" |
+    awk '/architecture/{i=$2} /capabilities 0x81/{f=1} f&&/offset/{print i, $2; exit}'
+)
+
+if [[ -z "${SLICE_OFFSET:-}" ]]; then
+  echo "yabai-fix-sa: no PAC ABI v1 (caps 0x81) slice found — loader already patched. Nothing to do."
+  exit 0
+fi
+
+# Two bytes hold the capabilities flag and both must be cleared to 0x80:
+#  - Fat header: 8-byte header (magic + nfat_arch) then 20-byte fat_arch structs.
+#    cpusubtype is big-endian here, so its high byte (caps) is the first of its
+#    4 bytes: 8 + ARCH_INDEX*20 + 4.
+#  - Mach-O slice: little-endian mach_header, cpusubtype at bytes 8..11, so the
+#    caps high byte is the last: SLICE_OFFSET + 11.
+printf '\x80' | dd of="$LOADER" bs=1 seek=$((8 + ARCH_INDEX * 20 + 4)) count=1 conv=notrunc 2>/dev/null
+printf '\x80' | dd of="$LOADER" bs=1 seek=$((SLICE_OFFSET + 11))       count=1 conv=notrunc 2>/dev/null
+
+# Re-sign ad-hoc; editing the binary invalidated the original signature.
+codesign -f -s - "$LOADER" >/dev/null 2>&1
+
+echo "yabai-fix-sa: patched loader (arch $ARCH_INDEX) to PAC ABI v0 and re-signed."
+
+# Inject straight away so the fix takes effect without waiting for a Dock restart.
+yabai --load-sa && echo "yabai-fix-sa: scripting addition injected successfully."
