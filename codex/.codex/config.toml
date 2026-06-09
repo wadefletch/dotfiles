@@ -1,0 +1,147 @@
+# Source of truth: ~/.dotfiles/codex/.codex/config.toml
+# Live path: ~/.codex/config.toml should be a symlink to this file.
+
+notify = ["/Users/wadefletcher/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+model = "gpt-5.5"
+model_reasoning_effort = "high"
+service_tier = "default"
+approval_policy = "on-request"
+approvals_reviewer = "auto_review"
+sandbox_mode = "workspace-write"
+
+[sandbox_workspace_write]
+network_access = true
+
+[projects."/Users/wadefletcher"]
+trust_level = "trusted"
+
+[projects."/Users/wadefletcher/Developer/Tractorbeam/platform"]
+trust_level = "trusted"
+
+[projects."/Users/wadefletcher/Developer/Tractorbeam/skills"]
+trust_level = "trusted"
+
+[projects."/Users/wadefletcher/Documents/Codex/2026-06-08/pls-fix-mise-error-error-parsing"]
+trust_level = "trusted"
+
+[projects."/Users/wadefletcher/Developer/Tractorbeam/constellation"]
+trust_level = "trusted"
+
+[projects."/Users/wadefletcher/.dotfiles"]
+trust_level = "trusted"
+
+[tui.model_availability_nux]
+"gpt-5.5" = 1
+
+[desktop]
+conversationDetailMode = "STEPS_COMMANDS"
+ambient-suggestions-enabled = false
+
+[desktop.open-in-target-preferences]
+global = "cursor"
+
+[desktop.open-in-target-preferences.perPath]
+"/Users/wadefletcher/.codex/worktrees/d9d6/platform" = "cursor"
+
+[marketplaces.openai-bundled]
+last_updated = "2026-06-08T20:09:45Z"
+source_type = "local"
+source = "/Users/wadefletcher/.codex/.tmp/bundled-marketplaces/openai-bundled"
+
+[marketplaces.openai-primary-runtime]
+last_updated = "2026-06-08T19:22:58Z"
+source_type = "local"
+source = "/Users/wadefletcher/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
+
+[marketplaces.tractorbeam]
+last_updated = "2026-06-09T00:05:06Z"
+last_revision = "27c9d43dadc973c235114c297bfa857b495e253f"
+source_type = "git"
+source = "https://github.com/tractorbeamai/skills.git"
+
+[marketplaces.agent-browser]
+last_updated = "2026-06-08T20:17:14Z"
+last_revision = "328ce8a98560ac7bac8fa81f53a718822550b94e"
+source_type = "git"
+source = "https://github.com/vercel-labs/agent-browser.git"
+
+[marketplaces.mintlify-marketplace]
+last_updated = "2026-06-08T20:17:15Z"
+last_revision = "0436f38141238860186f48d9918c39bc94fe5b59"
+source_type = "git"
+source = "https://github.com/mintlify/mintlify-claude-plugin.git"
+
+[plugins."documents@openai-primary-runtime"]
+enabled = false
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = true
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = false
+
+[plugins."team-kit@tractorbeam"]
+enabled = true
+
+[plugins."linear@tractorbeam"]
+enabled = true
+
+[plugins."mise@tractorbeam"]
+enabled = true
+
+[plugins."git@tractorbeam"]
+enabled = true
+
+[plugins."code-style@tractorbeam"]
+enabled = true
+
+[plugins."linear@openai-curated"]
+enabled = true
+
+[plugins."browser@openai-bundled"]
+enabled = true
+
+[features]
+js_repl = false
+
+[apps.connector_76869538009648d5b282a4bb21c3d157]
+enabled = false
+
+[mcp_servers.node_repl]
+args = []
+command = "/Applications/Codex.app/Contents/Resources/node_repl"
+startup_timeout_sec = 120
+
+[mcp_servers.node_repl.env]
+NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
+NODE_REPL_NODE_MODULE_DIRS = ""
+NODE_REPL_NODE_PATH = "/Applications/Codex.app/Contents/Resources/node"
+NODE_REPL_TRUSTED_CODE_PATHS = "/Users/wadefletcher/.codex"
+CODEX_HOME = "/Users/wadefletcher/.codex"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "2de792ebdf729e85542c94275f6654821dddce546d9c7374c915f2297529e313"
+BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
+NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
+NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
+BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
+BROWSER_USE_CODEX_APP_VERSION = "26.602.40724"
+CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
+
+[[skills.config]]
+path = "/Users/wadefletcher/.codex/skills/.system/skill-installer/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/wadefletcher/.codex/skills/.system/skill-creator/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/Users/wadefletcher/.codex/skills/migrate-to-codex/SKILL.md"
+enabled = false
+
+[hooks.state]
+
+[hooks.state."mise@tractorbeam:hooks/hooks.json:pre_tool_use:0:0"]
+trusted_hash = "sha256:43bd9706d2406b7302eec683610f60abebf13749ee7db4a12b73008b2931c882"
+
+[hooks.state."mise@tractorbeam:hooks/hooks.json:session_start:0:0"]
+trusted_hash = "sha256:8c667ae2504b74d166ab91f9543cc2eccadc1afd940accb985bff198c1c483f5"
