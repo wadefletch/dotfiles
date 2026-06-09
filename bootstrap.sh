@@ -18,7 +18,9 @@ MACOS_TAPS=(felixkratz/formulae koekeishiya/formulae)
 PACKAGES=(git neovim stow zsh)
 
 # macOS apps and fonts (brew casks)
-CASKS=(cursor ghostty font-sketchybar-app-font)
+# font-sketchybar-app-font renders SketchyBar's per-app icons; font-symbols-only-nerd-font
+# (family "Symbols Nerd Font") supplies the status glyphs (clock, wifi, battery, volume).
+CASKS=(cursor ghostty font-sketchybar-app-font font-symbols-only-nerd-font)
 
 info()  { printf '  [ .. ] %s\n' "$1"; }
 ok()    { printf '  [ OK ] %s\n' "$1"; }
