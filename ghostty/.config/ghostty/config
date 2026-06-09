@@ -29,8 +29,8 @@ keybind = "alt+ctrl+l=new_split:right"
 # quick terminal (⌘` = command + grave (backtick))
 # TIL a backtick is also called a grave?
 keybind = global:cmd+grave_accent=toggle_quick_terminal
-quick-terminal-position = top
-quick-terminal-size = 20%,80%
+quick-terminal-position = center
+quick-terminal-size = 33%,33%
 
 # claude code keybind fix
 keybind = shift+enter=text:\x1b\r
