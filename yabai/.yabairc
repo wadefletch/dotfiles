@@ -43,11 +43,10 @@ yabai -m config                                 \
 # and other Finder system dialogs instead of tiling them.
 yabai -m rule --add app="^Finder$" subrole="AXSystemDialog" manage=off
 
-# Float + center the Bitwarden extension popout window. It shares the browser's
-# app name and looks like AXStandardWindow, so the window title (which equals the
-# extension name) is the only discriminator.
-# grid=rows:cols:x:y:w:h places a centered box; tune w:h to resize.
-yabai -m rule --add app="^(Dia|Arc|Google Chrome)$" title="^Bitwarden$" manage=off grid=9:9:3:2:3:5
+# Float the Bitwarden extension popout window (leave its size/position alone). It
+# shares the browser's app name and looks like AXStandardWindow, so the window
+# title (which equals the extension name) is the only discriminator.
+yabai -m rule --add app="^(Dia|Arc|Google Chrome)$" title="^Bitwarden$" manage=off
 
 # sketchybar integration: refresh space highlight on focus changes, and rebuild
 # the bar when spaces are created/destroyed so its items track yabai's spaces.
