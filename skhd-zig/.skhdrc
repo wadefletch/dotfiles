@@ -14,7 +14,11 @@ cmd - l : @yabai_focus("east")
 cmd + shift - h : @yabai_swap("west")
 cmd + shift - j : @yabai_swap("south")
 cmd + shift - k : @yabai_swap("north")
-cmd + shift - l : @yabai_swap("east")
+# Pass cmd+shift+l through to Dia (Bitwarden autofill); swap east everywhere else.
+cmd + shift - l [
+    "dia" ~
+    *     : @yabai_swap("east")
+]
 
 # Resize windows using command definitions
 cmd + ctrl - h : @resize_window("left", "-20", "0")
