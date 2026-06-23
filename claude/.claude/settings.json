@@ -322,6 +322,7 @@
     "document-skills@anthropic-agent-skills": false,
     "rust-analyzer-lsp@claude-plugins-official": true,
     "documents@tractorbeam": false,
+    "legal-docs@tractorbeam": true,
     "shadcn@shadcn-ui": true,
     "figma@claude-plugins-official": true
   },
@@ -358,13 +359,13 @@
       }
     }
   },
+  "showClearContextOnPlanAccept": true,
   "autoUpdatesChannel": "latest",
   "autoMemoryEnabled": false,
   "skipDangerousModePermissionPrompt": true,
   "theme": "auto",
   "verbose": true,
   "preferredNotifChannel": "ghostty",
-  "skipAutoPermissionPrompt": true,
   "agentPushNotifEnabled": true,
-  "showClearContextOnPlanAccept": true
+  "skipAutoPermissionPrompt": true
 }
