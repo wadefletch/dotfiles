@@ -1,29 +1,38 @@
-# Command definitions (New in skhd.zig!) - these must be defined before use.
+# Command definitions - these must be defined before use.
 # {{1}}, {{2}}, ... are the positional args passed at the call site.
 .define yabai_focus : yabai -m window --focus {{1}} || yabai -m display --focus {{1}}
 .define yabai_swap : yabai -m window --swap {{1}} || (yabai -m window --display {{1}} && yabai -m display --focus {{1}})
-.define resize_window : yabai -m window --resize {{1}}:{{2}}:{{3}}
+# Resize by expand/contract along an axis. Which physical edge moves is a
+# product of the bsp layout: try the primary handle, and if it has no fence
+# (e.g. it's a screen boundary, exit 1), fall back to the opposite handle with
+# the sign flipped so the grow/shrink direction is preserved either way.
+.define resize : yabai -m window --resize {{1}} || yabai -m window --resize {{2}}
 
 # Focus windows using command definitions
-cmd - h : @yabai_focus("west")
-cmd - j : @yabai_focus("south")
-cmd - k : @yabai_focus("north")
-cmd - l : @yabai_focus("east")
+ctrl - h : @yabai_focus("west")
+ctrl - j : @yabai_focus("south")
+ctrl - k : @yabai_focus("north")
+ctrl - l : @yabai_focus("east")
 
 # Move/swap windows using command definitions
-cmd + shift - h : @yabai_swap("west")
-cmd + shift - j : @yabai_swap("south")
-cmd + shift - k : @yabai_swap("north")
-# Pass cmd+shift+l through to Dia (Bitwarden autofill); swap east everywhere else.
-cmd + shift - l [
-    "dia" ~
-    *     : @yabai_swap("east")
-]
+ctrl + shift - h : @yabai_swap("west")
+ctrl + shift - j : @yabai_swap("south")
+ctrl + shift - k : @yabai_swap("north")
+ctrl + shift - l : @yabai_swap("east")
 
-# Resize windows using command definitions
-cmd + ctrl - h : @resize_window("left", "-20", "0")
-cmd + ctrl - l : @resize_window("right", "20", "0")
+# Resize windows: h/l contract/expand width, k/j contract/expand height.
+ctrl + alt - h : @resize("right:-20:0", "left:20:0")
+ctrl + alt - l : @resize("right:20:0", "left:-20:0")
+ctrl + alt - k : @resize("bottom:0:-20", "top:0:20")
+ctrl + alt - j : @resize("bottom:0:20", "top:0:-20")
 
 # Switch spaces
-cmd - 1 : yabai -m space --focus 1
-cmd - 2 : yabai -m space --focus 2
+ctrl - 1 : yabai -m space --focus 1
+ctrl - 2 : yabai -m space --focus 2
+ctrl - 3 : yabai -m space --focus 3
+ctrl - 4 : yabai -m space --focus 4
+ctrl - 5 : yabai -m space --focus 5
+ctrl - 6 : yabai -m space --focus 6
+ctrl - 7 : yabai -m space --focus 7
+ctrl - 8 : yabai -m space --focus 8
+ctrl - 9 : yabai -m space --focus 9

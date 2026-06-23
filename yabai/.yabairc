@@ -11,7 +11,7 @@ yabai -m config                                 \
     mouse_follows_focus          off            \
     focus_follows_mouse          off            \
     display_arrangement_order    default        \
-    window_origin_display        default        \
+    window_origin_display        focused        \
     window_placement             second_child   \
     window_insertion_point       focused        \
     window_zoom_persist          on             \
@@ -47,6 +47,15 @@ yabai -m rule --add app="^Finder$" subrole="AXSystemDialog" manage=off
 # shares the browser's app name and looks like AXStandardWindow, so the window
 # title (which equals the extension name) is the only discriminator.
 yabai -m rule --add app="^(Dia|Arc|Google Chrome)$" title="^Bitwarden$" manage=off
+
+# Ghostty native macOS tabs: macOS exposes each AppKit tab as a separate window
+# to the Accessibility API, so yabai tiles every new tab into a split. There is
+# no fix on either project's side (confirmed by both maintainers). Ghostty's
+# official workaround (ghostty.org/docs/help/macos-tiling-wms) re-applies the bsp
+# layout whenever Ghostty creates/destroys a window, collapsing the spurious
+# split back down. Expect a brief flash on new-tab.
+yabai -m signal --add app="^Ghostty$" event=window_created action="yabai -m space --layout bsp"
+yabai -m signal --add app="^Ghostty$" event=window_destroyed action="yabai -m space --layout bsp"
 
 # sketchybar integration: refresh space highlight on focus changes, and rebuild
 # the bar when spaces are created/destroyed so its items track yabai's spaces.
