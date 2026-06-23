@@ -44,12 +44,12 @@ global = "cursor"
 "/Users/wadefletcher/.codex/worktrees/d9d6/platform" = "cursor"
 
 [marketplaces.openai-bundled]
-last_updated = "2026-06-08T20:09:45Z"
+last_updated = "2026-06-09T19:13:10Z"
 source_type = "local"
 source = "/Users/wadefletcher/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
 [marketplaces.openai-primary-runtime]
-last_updated = "2026-06-08T19:22:58Z"
+last_updated = "2026-06-23T03:06:45Z"
 source_type = "local"
 source = "/Users/wadefletcher/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
@@ -101,6 +101,12 @@ enabled = true
 [plugins."browser@openai-bundled"]
 enabled = true
 
+[plugins."pdf@openai-primary-runtime"]
+enabled = true
+
+[plugins."template-creator@openai-primary-runtime"]
+enabled = true
+
 [features]
 js_repl = false
 
@@ -118,12 +124,12 @@ NODE_REPL_NODE_MODULE_DIRS = ""
 NODE_REPL_NODE_PATH = "/Applications/Codex.app/Contents/Resources/node"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/wadefletcher/.codex"
 CODEX_HOME = "/Users/wadefletcher/.codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "2de792ebdf729e85542c94275f6654821dddce546d9c7374c915f2297529e313"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "4946b004b23af02244ece97240aceb8d123475207fa6a6fc399486bd7086049f"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.602.40724"
+BROWSER_USE_CODEX_APP_VERSION = "26.602.71036"
 CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
 
 [[skills.config]]
@@ -144,4 +150,4 @@ enabled = false
 trusted_hash = "sha256:43bd9706d2406b7302eec683610f60abebf13749ee7db4a12b73008b2931c882"
 
 [hooks.state."mise@tractorbeam:hooks/hooks.json:session_start:0:0"]
-trusted_hash = "sha256:8c667ae2504b74d166ab91f9543cc2eccadc1afd940accb985bff198c1c483f5"
+trusted_hash = "sha256:cfeb9eb38008a0d9682a561bb7d6693a1164482400aba1c4555c2b474a544fef"
