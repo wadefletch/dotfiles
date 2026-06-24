@@ -35,3 +35,12 @@ fi
 if [[ -d "$HOME/.local/bin" ]]; then
   export PATH="$HOME/.local/bin:$PATH"
 fi
+
+# Force OSC 8 terminal hyperlinks in Ghostty. Claude Code (and other
+# supports-hyperlinks-based CLIs) gate clickable links on TERM_PROGRAM, which
+# Ghostty doesn't reliably set, so markdown/PR links render as dead plain text.
+# Keyed off $TERM (reliably xterm-ghostty) rather than the missing TERM_PROGRAM.
+# See anthropics/claude-code#70423.
+if [[ "$TERM" == "xterm-ghostty" ]]; then
+  export FORCE_HYPERLINK=1
+fi
