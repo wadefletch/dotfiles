@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "plugins": {
+    "core@factory-plugins": [
+      {
+        "scope": "user",
+        "installPath": "/Users/wadefletcher/.factory/plugins/cache/factory-plugins/core/0c10b397a80c",
+        "version": "0c10b397a80c",
+        "installedAt": "2026-06-24T03:19:14.297Z",
+        "lastUpdated": "2026-06-24T03:19:14.297Z",
+        "source": "factory-plugins"
+      }
+    ],
+    "droid-control@factory-plugins": [
+      {
+        "scope": "user",
+        "installPath": "/Users/wadefletcher/.factory/plugins/cache/factory-plugins/droid-control/0c10b397a80c",
+        "version": "0c10b397a80c",
+        "installedAt": "2026-06-24T03:19:14.688Z",
+        "lastUpdated": "2026-06-24T03:19:14.688Z",
+        "source": "factory-plugins"
+      }
+    ],
+    "code-style@skills": [
+      {
+        "scope": "user",
+        "installPath": "/Users/wadefletcher/.factory/plugins/cache/skills/code-style/a35962f148f4",
+        "version": "a35962f148f4",
+        "installedAt": "2026-06-24T03:58:13.590Z",
+        "lastUpdated": "2026-06-24T03:58:13.590Z",
+        "source": "skills"
+      }
+    ],
+    "git@skills": [
+      {
+        "scope": "user",
+        "installPath": "/Users/wadefletcher/.factory/plugins/cache/skills/git/a35962f148f4",
+        "version": "a35962f148f4",
+        "installedAt": "2026-06-24T03:58:15.552Z",
+        "lastUpdated": "2026-06-24T03:58:15.552Z",
+        "source": "skills"
+      }
+    ],
+    "linear@skills": [
+      {
+        "scope": "user",
+        "installPath": "/Users/wadefletcher/.factory/plugins/cache/skills/linear/a35962f148f4",
+        "version": "a35962f148f4",
+        "installedAt": "2026-06-24T03:58:17.538Z",
+        "lastUpdated": "2026-06-24T03:58:17.538Z",
+        "source": "skills"
+      }
+    ],
+    "references@skills": [
+      {
+        "scope": "user",
+        "installPath": "/Users/wadefletcher/.factory/plugins/cache/skills/references/a35962f148f4",
+        "version": "a35962f148f4",
+        "installedAt": "2026-06-24T03:58:19.665Z",
+        "lastUpdated": "2026-06-24T03:58:19.665Z",
+        "source": "skills"
+      }
+    ],
+    "reflect@skills": [
+      {
+        "scope": "user",
+        "installPath": "/Users/wadefletcher/.factory/plugins/cache/skills/reflect/a35962f148f4",
+        "version": "a35962f148f4",
+        "installedAt": "2026-06-24T03:58:21.618Z",
+        "lastUpdated": "2026-06-24T03:58:21.618Z",
+        "source": "skills"
+      }
+    ],
+    "documents@skills": [
+      {
+        "scope": "user",
+        "installPath": "/Users/wadefletcher/.factory/plugins/cache/skills/documents/a35962f148f4",
+        "version": "a35962f148f4",
+        "installedAt": "2026-06-24T03:58:23.419Z",
+        "lastUpdated": "2026-06-24T03:58:23.419Z",
+        "source": "skills"
+      }
+    ],
+    "mise@skills": [
+      {
+        "scope": "user",
+        "installPath": "/Users/wadefletcher/.factory/plugins/cache/skills/mise/a35962f148f4",
+        "version": "a35962f148f4",
+        "installedAt": "2026-06-24T03:58:25.461Z",
+        "lastUpdated": "2026-06-24T03:58:25.461Z",
+        "source": "skills"
+      }
+    ],
+    "team-kit@skills": [
+      {
+        "scope": "user",
+        "installPath": "/Users/wadefletcher/.factory/plugins/cache/skills/team-kit/a35962f148f4",
+        "version": "a35962f148f4",
+        "installedAt": "2026-06-24T03:58:27.669Z",
+        "lastUpdated": "2026-06-24T03:58:27.669Z",
+        "source": "skills"
+      }
+    ],
+    "legal-docs@skills": [
+      {
+        "scope": "user",
+        "installPath": "/Users/wadefletcher/.factory/plugins/cache/skills/legal-docs/a35962f148f4",
+        "version": "a35962f148f4",
+        "installedAt": "2026-06-24T03:58:30.009Z",
+        "lastUpdated": "2026-06-24T03:58:30.009Z",
+        "source": "skills"
+      }
+    ]
+  }
+}
