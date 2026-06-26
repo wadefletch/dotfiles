@@ -26,6 +26,9 @@ ctrl + alt - l : @resize("right:20:0", "left:-20:0")
 ctrl + alt - k : @resize("bottom:0:-20", "top:0:20")
 ctrl + alt - j : @resize("bottom:0:20", "top:0:-20")
 
+# Equalize all splits on the current space
+ctrl + alt - e : yabai -m space --balance
+
 # Switch spaces
 ctrl - 1 : yabai -m space --focus 1
 ctrl - 2 : yabai -m space --focus 2
