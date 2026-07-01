@@ -26,10 +26,11 @@ Plugin configuration for [Factory Droid](https://factory.ai).
 
 ## Setup
 
-Symlinks are created by `bootstrap.sh`:
+`bootstrap.sh` stows this package, symlinking the plugin configs into
+`~/.factory/plugins/`. The package mirrors the home layout under `.factory/`
+so stow maps it correctly:
 ```bash
-ln -sf ~/.dotfiles/factory/plugins/installed_plugins.json ~/.factory/plugins/
-ln -sf ~/.dotfiles/factory/plugins/known_marketplaces.json ~/.factory/plugins/
+stow factory   # ~/.factory/plugins/{installed_plugins,known_marketplaces}.json -> here
 ```
 
 ## Adding New Plugins
