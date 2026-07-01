@@ -50,6 +50,16 @@
         "lastUpdated": "2026-07-01T15:05:00.426Z",
         "source": "factory-plugins"
       }
+    ],
+    "mise@skills": [
+      {
+        "scope": "user",
+        "installPath": "/Users/wadefletcher/.factory/plugins/cache/skills/mise/b839d9a3a8f9",
+        "version": "b839d9a3a8f9",
+        "installedAt": "2026-07-01T19:06:58.915Z",
+        "lastUpdated": "2026-07-01T19:06:58.915Z",
+        "source": "skills"
+      }
     ]
   }
 }

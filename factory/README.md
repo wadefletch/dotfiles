@@ -18,13 +18,20 @@ Plugin configuration for [Factory Droid](https://factory.ai).
 - `linear@skills` - Linear integration skill
 - `terraform@skills` - Terraform conventions
 - `references@skills` - Reference documentation skill
+- `mise@skills` - Puts pinned mise tools on PATH for shell tool sessions
 
 ## Enabled vs Disabled
 
-`enabledPlugins` in `settings.json` is the on/off switch. `references@skills`
-ships a `SessionStart` hook (clones/updates reference repos, injects a version
-table); it and `reflect@skills` / `documents@skills` are set to `false` so their
-hooks don't run — mirroring the Claude Code config.
+`enabledPlugins` in `settings.json` is the on/off switch. Two enabled plugins
+ship hooks:
+
+- `mise@skills` — `SessionStart` hook puts the project's pinned mise tools on
+  PATH (enabled).
+- `references@skills` — `SessionStart` hook clones/updates reference repos and
+  injects a version table (disabled).
+
+`references@skills`, `reflect@skills`, and `documents@skills` are set to `false`
+so their hooks don't run — mirroring the Claude Code config.
 
 ## Setup
 
