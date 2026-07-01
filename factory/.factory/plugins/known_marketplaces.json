@@ -5,7 +5,7 @@
       "repo": "Factory-AI/factory-plugins"
     },
     "installLocation": "/Users/wadefletcher/.factory/plugins/marketplaces/factory-plugins",
-    "lastUpdated": "2026-06-24T03:37:18.585Z",
+    "lastUpdated": "2026-07-01T15:05:00.340Z",
     "autoUpdate": true
   },
   "skills": {
@@ -14,7 +14,7 @@
       "repo": "tractorbeamai/skills"
     },
     "installLocation": "/Users/wadefletcher/.factory/plugins/marketplaces/skills",
-    "lastUpdated": "2026-06-24T03:57:59.642Z",
+    "lastUpdated": "2026-02-27T22:39:38.885Z",
     "autoUpdate": true
   }
 }

@@ -4,6 +4,7 @@ Plugin configuration for [Factory Droid](https://factory.ai).
 
 ## Files
 
+- `settings.json` - Factory settings (theme, `enabledPlugins` toggles)
 - `plugins/installed_plugins.json` - Installed plugins and their versions
 - `plugins/known_marketplaces.json` - Registered plugin marketplaces
 
@@ -11,18 +12,19 @@ Plugin configuration for [Factory Droid](https://factory.ai).
 
 ### Factory Official
 - `core@factory-plugins` - Core review and simplify skills
-- `droid-control@factory-plugins` - Terminal, browser, and desktop automation
 
 ### Tractorbeam Skills
-- `code-style@skills` - Linting, formatting, testing, and comment conventions
 - `git@skills` - Git workflows (commits, PRs, conflicts)
 - `linear@skills` - Linear integration skill
+- `terraform@skills` - Terraform conventions
 - `references@skills` - Reference documentation skill
-- `reflect@skills` - Session reflection and improvement
-- `documents@skills` - Document management skill
-- `mise@skills` - Mise tool version management
-- `team-kit@skills` - Team collaboration tools
-- `legal-docs@skills` - Legal document organization
+
+## Enabled vs Disabled
+
+`enabledPlugins` in `settings.json` is the on/off switch. `references@skills`
+ships a `SessionStart` hook (clones/updates reference repos, injects a version
+table); it and `reflect@skills` / `documents@skills` are set to `false` so their
+hooks don't run — mirroring the Claude Code config.
 
 ## Setup
 
