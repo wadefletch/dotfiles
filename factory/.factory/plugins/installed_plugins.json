@@ -60,6 +60,36 @@
         "lastUpdated": "2026-07-01T19:06:58.915Z",
         "source": "skills"
       }
+    ],
+    "droid-control@factory-plugins": [
+      {
+        "scope": "user",
+        "installPath": "/Users/wadefletcher/.factory/plugins/cache/factory-plugins/droid-control/0c10b397a80c",
+        "version": "0c10b397a80c",
+        "installedAt": "2026-07-01T19:17:51.812Z",
+        "lastUpdated": "2026-07-01T19:17:51.812Z",
+        "source": "factory-plugins"
+      }
+    ],
+    "code-style@skills": [
+      {
+        "scope": "user",
+        "installPath": "/Users/wadefletcher/.factory/plugins/cache/skills/code-style/b839d9a3a8f9",
+        "version": "b839d9a3a8f9",
+        "installedAt": "2026-07-01T19:17:53.209Z",
+        "lastUpdated": "2026-07-01T19:17:53.209Z",
+        "source": "skills"
+      }
+    ],
+    "team-kit@skills": [
+      {
+        "scope": "user",
+        "installPath": "/Users/wadefletcher/.factory/plugins/cache/skills/team-kit/b839d9a3a8f9",
+        "version": "b839d9a3a8f9",
+        "installedAt": "2026-07-01T19:17:54.618Z",
+        "lastUpdated": "2026-07-01T19:17:54.618Z",
+        "source": "skills"
+      }
     ]
   }
 }

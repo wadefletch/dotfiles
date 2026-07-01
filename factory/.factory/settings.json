@@ -8,7 +8,10 @@
     "references@skills": false,
     "reflect@skills": false,
     "documents@skills": false,
-    "mise@skills": true
+    "mise@skills": true,
+    "droid-control@factory-plugins": true,
+    "code-style@skills": true,
+    "team-kit@skills": true
   },
   "theme": "factory-light"
 }
