@@ -5,8 +5,12 @@ Plugin configuration for [Factory Droid](https://factory.ai).
 ## Files
 
 - `settings.json` - Factory settings (theme, `enabledPlugins` toggles)
-- `plugins/installed_plugins.json` - Installed plugins and their versions
 - `plugins/known_marketplaces.json` - Registered plugin marketplaces
+
+`plugins/installed_plugins.json` is intentionally **not** tracked (gitignored).
+It pins per-machine plugin versions and cache paths that churn on `autoUpdate`,
+so each machine manages its own real copy. `settings.json` (`enabledPlugins`) is
+the shared source of truth for what's on.
 
 ## Installed Plugins
 
@@ -37,11 +41,11 @@ so their hooks don't run — mirroring the Claude Code config.
 
 ## Setup
 
-`bootstrap.sh` stows this package, symlinking the plugin configs into
-`~/.factory/plugins/`. The package mirrors the home layout under `.factory/`
+`bootstrap.sh` stows this package, symlinking the tracked configs into
+`~/.factory/`. The package mirrors the home layout under `.factory/`
 so stow maps it correctly:
 ```bash
-stow factory   # ~/.factory/plugins/{installed_plugins,known_marketplaces}.json -> here
+stow factory   # ~/.factory/settings.json + plugins/known_marketplaces.json -> here
 ```
 
 ## Adding New Plugins
@@ -54,4 +58,5 @@ droid plugin marketplace add https://github.com/owner/repo
 droid plugin install -s user plugin-name@marketplace
 ```
 
-The plugin configs will automatically update in this dotfiles directory via symlinks.
+The tracked configs (`settings.json`, `known_marketplaces.json`) update in this
+dotfiles directory via symlinks. `installed_plugins.json` stays machine-local.
