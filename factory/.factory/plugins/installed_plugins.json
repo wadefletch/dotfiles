@@ -1,46 +1,6 @@
 {
   "schemaVersion": 1,
   "plugins": {
-    "linear@skills": [
-      {
-        "scope": "user",
-        "installPath": "/Users/wadefletcher/.factory/plugins/cache/skills/linear/92e1424f4173",
-        "version": "92e1424f4173",
-        "installedAt": "2026-07-01T15:05:00.361Z",
-        "lastUpdated": "2026-07-01T15:05:00.361Z",
-        "source": "skills"
-      }
-    ],
-    "git@skills": [
-      {
-        "scope": "user",
-        "installPath": "/Users/wadefletcher/.factory/plugins/cache/skills/git/92e1424f4173",
-        "version": "92e1424f4173",
-        "installedAt": "2026-07-01T15:05:00.378Z",
-        "lastUpdated": "2026-07-01T15:05:00.378Z",
-        "source": "skills"
-      }
-    ],
-    "terraform@skills": [
-      {
-        "scope": "user",
-        "installPath": "/Users/wadefletcher/.factory/plugins/cache/skills/terraform/92e1424f4173",
-        "version": "92e1424f4173",
-        "installedAt": "2026-07-01T15:05:00.394Z",
-        "lastUpdated": "2026-07-01T15:05:00.394Z",
-        "source": "skills"
-      }
-    ],
-    "references@skills": [
-      {
-        "scope": "user",
-        "installPath": "/Users/wadefletcher/.factory/plugins/cache/skills/references/92e1424f4173",
-        "version": "92e1424f4173",
-        "installedAt": "2026-07-01T15:05:00.410Z",
-        "lastUpdated": "2026-07-01T15:05:00.410Z",
-        "source": "skills"
-      }
-    ],
     "core@factory-plugins": [
       {
         "scope": "user",
@@ -88,6 +48,36 @@
         "version": "b839d9a3a8f9",
         "installedAt": "2026-07-01T19:17:54.618Z",
         "lastUpdated": "2026-07-01T19:17:54.618Z",
+        "source": "skills"
+      }
+    ],
+    "git@skills": [
+      {
+        "scope": "user",
+        "installPath": "/Users/wadefletcher/.factory/plugins/cache/skills/git/b839d9a3a8f9",
+        "version": "b839d9a3a8f9",
+        "installedAt": "2026-07-01T19:23:58.425Z",
+        "lastUpdated": "2026-07-01T19:23:58.425Z",
+        "source": "skills"
+      }
+    ],
+    "linear@skills": [
+      {
+        "scope": "user",
+        "installPath": "/Users/wadefletcher/.factory/plugins/cache/skills/linear/b839d9a3a8f9",
+        "version": "b839d9a3a8f9",
+        "installedAt": "2026-07-01T19:24:08.117Z",
+        "lastUpdated": "2026-07-01T19:24:08.117Z",
+        "source": "skills"
+      }
+    ],
+    "references@skills": [
+      {
+        "scope": "user",
+        "installPath": "/Users/wadefletcher/.factory/plugins/cache/skills/references/b839d9a3a8f9",
+        "version": "b839d9a3a8f9",
+        "installedAt": "2026-07-01T19:24:17.502Z",
+        "lastUpdated": "2026-07-01T19:24:17.502Z",
         "source": "skills"
       }
     ]

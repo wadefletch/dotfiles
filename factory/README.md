@@ -17,8 +17,7 @@ Plugin configuration for [Factory Droid](https://factory.ai).
 ### Tractorbeam Skills
 - `git@skills` - Git workflows (commits, PRs, conflicts)
 - `linear@skills` - Linear integration skill
-- `terraform@skills` - Terraform conventions
-- `code-style@skills` - Linting, formatting, testing, and comment conventions
+- `code-style@skills` - Linting, formatting, testing, comments, and terraform
 - `team-kit@skills` - Team collaboration tools
 - `references@skills` - Reference documentation skill
 - `mise@skills` - Puts pinned mise tools on PATH for shell tool sessions
