@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "plugins": {
+    "linear@skills": [
+      {
+        "scope": "user",
+        "installPath": "/Users/wadefletcher/.factory/plugins/cache/skills/linear/92e1424f4173",
+        "version": "92e1424f4173",
+        "installedAt": "2026-07-01T15:05:00.361Z",
+        "lastUpdated": "2026-07-01T15:05:00.361Z",
+        "source": "skills"
+      }
+    ],
+    "git@skills": [
+      {
+        "scope": "user",
+        "installPath": "/Users/wadefletcher/.factory/plugins/cache/skills/git/92e1424f4173",
+        "version": "92e1424f4173",
+        "installedAt": "2026-07-01T15:05:00.378Z",
+        "lastUpdated": "2026-07-01T15:05:00.378Z",
+        "source": "skills"
+      }
+    ],
+    "terraform@skills": [
+      {
+        "scope": "user",
+        "installPath": "/Users/wadefletcher/.factory/plugins/cache/skills/terraform/92e1424f4173",
+        "version": "92e1424f4173",
+        "installedAt": "2026-07-01T15:05:00.394Z",
+        "lastUpdated": "2026-07-01T15:05:00.394Z",
+        "source": "skills"
+      }
+    ],
+    "references@skills": [
+      {
+        "scope": "user",
+        "installPath": "/Users/wadefletcher/.factory/plugins/cache/skills/references/92e1424f4173",
+        "version": "92e1424f4173",
+        "installedAt": "2026-07-01T15:05:00.410Z",
+        "lastUpdated": "2026-07-01T15:05:00.410Z",
+        "source": "skills"
+      }
+    ],
+    "core@factory-plugins": [
+      {
+        "scope": "user",
+        "installPath": "/Users/wadefletcher/.factory/plugins/cache/factory-plugins/core/0c10b397a80c",
+        "version": "0c10b397a80c",
+        "installedAt": "2026-07-01T15:05:00.426Z",
+        "lastUpdated": "2026-07-01T15:05:00.426Z",
+        "source": "factory-plugins"
+      }
+    ],
+    "mise@skills": [
+      {
+        "scope": "user",
+        "installPath": "/Users/wadefletcher/.factory/plugins/cache/skills/mise/b839d9a3a8f9",
+        "version": "b839d9a3a8f9",
+        "installedAt": "2026-07-01T19:06:58.915Z",
+        "lastUpdated": "2026-07-01T19:06:58.915Z",
+        "source": "skills"
+      }
+    ]
+  }
+}

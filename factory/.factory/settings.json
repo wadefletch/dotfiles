@@ -1,0 +1,14 @@
+{
+  "logoAnimation": "off",
+  "enabledPlugins": {
+    "linear@skills": true,
+    "git@skills": true,
+    "terraform@skills": true,
+    "core@factory-plugins": true,
+    "references@skills": false,
+    "reflect@skills": false,
+    "documents@skills": false,
+    "mise@skills": true
+  },
+  "theme": "factory-light"
+}
