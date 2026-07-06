@@ -12,5 +12,6 @@
     "code-style@skills": true,
     "team-kit@skills": true
   },
-  "theme": "factory-light"
+  "theme": "factory-light",
+  "hasSeenMissionOnboarding": true
 }

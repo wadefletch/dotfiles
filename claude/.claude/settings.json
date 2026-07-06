@@ -302,6 +302,7 @@
       "~/.claude/references"
     ]
   },
+  "model": "claude-fable-5[1m]",
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh"
