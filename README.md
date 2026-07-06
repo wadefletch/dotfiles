@@ -1,6 +1,6 @@
 # dotfiles
 
-GNU Stow-based dotfiles for macOS. Each top-level directory is a stow package whose contents are symlinked into `~`.
+GNU Stow-based dotfiles for macOS (with Linux support for the CLI packages). Each top-level directory is a stow package whose contents are symlinked into `~`.
 
 ## Packages
 
@@ -13,14 +13,22 @@ GNU Stow-based dotfiles for macOS. Each top-level directory is a stow package wh
 | crowdcontrol | CrowdControl config |
 | cursor | Cursor editor settings and keybindings |
 | docker | Docker daemon config |
+| duti | Default app associations (macOS) |
+| factory | Factory settings and plugin marketplaces |
 | gh | GitHub CLI config (XDG) |
 | ghostty | Ghostty terminal |
 | git | Git config (XDG) |
-| nightly-maintenance | LaunchAgent for nightly maintenance script |
+| mise | Mise tool versions (node, python, …) |
+| nightly-maintenance | LaunchAgent for nightly maintenance script (macOS) |
 | nvim | Neovim config and markdownlint |
+| sketchybar | SketchyBar menu bar (macOS) |
+| skhd-zig | skhd hotkeys — window focus/swap/resize, alt-num space switching (macOS) |
 | ssh | SSH config |
 | starship | Starship prompt |
+| terraform | Terraform CLI config |
 | vscode | VS Code settings |
+| wallpapers | Desktop wallpaper images (macOS) |
+| yabai | yabai tiling window manager rules and signals (macOS) |
 | zsh | Shell config, aliases, functions |
 
 ## Setup
@@ -31,7 +39,7 @@ cd ~/.dotfiles
 ./bootstrap.sh
 ```
 
-`bootstrap.sh` installs stow (via brew/apt/dnf/yum/pacman), stows all packages, and configures git hooks. Safe to re-run. macOS-only packages (cursor, vscode, nightly-maintenance) are skipped on Linux.
+`bootstrap.sh` installs dependencies (stow, zsh, neovim, gh, starship, mise, Claude Code; plus brew casks and the yabai/skhd/sketchybar stack on macOS), stows all packages, configures git hooks, authorizes tailnet SSH between machines, and applies macOS defaults. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, sketchybar, skhd-zig, vscode, wallpapers, yabai) are skipped on Linux.
 
 To stow manually:
 
@@ -40,8 +48,10 @@ stow git zsh ghostty   # individual packages
 stow */                # everything
 ```
 
+## Deploying changes
+
+Changes land on machines by merging to `main`, then pulling on each machine, restowing changed packages, and restarting affected services (skhd, yabai, sketchybar, …). The repo-committed Claude Code skill at `.claude/skills/deploy/SKILL.md` automates this across arrakis and corrino — ask Claude to "deploy dotfiles".
+
 ## Other scripts
 
-**`charlie.sh`** — Full-machine bootstrap for new team members. Installs Homebrew, Cursor, Ghostty, Node (via nvm), and configures git/zsh/starship from scratch. Run on a fresh Mac.
-
-**`fresh.sh`** — Legacy bootstrap (Homebrew, nvm, Brewfile).
+**`check-brew-availability.sh`** — Lists apps installed in `/Applications` and `~/Applications` and searches Homebrew formulae/casks for matches, to find apps that could be managed by brew.

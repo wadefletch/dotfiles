@@ -11,8 +11,8 @@ GNU Stow-based dotfiles for macOS. Each top-level directory is a stow package mi
   .claude/          # claude code settings (claude/)
   .cargo/, .docker/ # tool config (cargo/, docker/)
 .githooks/          # git hooks (core.hooksPath); post-merge updates submodules
-bootstrap.sh        # installs deps, stows packages, sets up git hooks (macOS + Linux)
-ORGANIZATION.md     # rules for organizing ~/Documents and ~/Downloads
+.claude/skills/     # repo-committed Claude Code skills (deploy — roll main out to all machines)
+bootstrap.sh        # installs deps, stows packages, git hooks, tailnet ssh, macOS defaults (macOS + Linux)
 ```
 
 ## Key files
