@@ -47,10 +47,11 @@ fi
 
 # >>> mise shims (tractorbeam mise plugin) >>>
 # Keep this block last in this file: the shims dir must land ahead of every
-# other PATH prepend so repo-pinned tools shadow globals. Interactive shells
-# re-prepend the real tool dirs via `mise activate zsh` at each prompt; this
-# covers non-interactive shells (agent tools, scripts, SSH commands), which
-# otherwise inherit the parent's PATH — stale by whenever it last activated.
+# other PATH prepend so repo-pinned tools shadow globals. Shims re-resolve
+# the version pinned for the working directory at exec time, so every shell
+# — interactive, agent tool, script, SSH command — gets pinned tools even
+# when nothing else runs. Layers that do run (an interactive `mise activate
+# zsh` in .zshrc, an agent env-file hook) prepend ahead of these and win.
 if command -v mise >/dev/null 2>&1; then
   eval "$(mise activate zsh --shims)"
 elif [ -x /opt/homebrew/bin/mise ]; then
