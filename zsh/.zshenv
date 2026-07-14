@@ -52,11 +52,11 @@ fi
 # — interactive, agent tool, script, SSH command — gets pinned tools even
 # when nothing else runs. Layers that do run (an interactive `mise activate
 # zsh` in .zshrc, an agent env-file hook) prepend ahead of these and win.
-if command -v mise >/dev/null 2>&1; then
-  eval "$(mise activate zsh --shims)"
-elif [ -x /opt/homebrew/bin/mise ]; then
-  eval "$(/opt/homebrew/bin/mise activate zsh --shims)"
-elif [ -x "$HOME/.local/bin/mise" ]; then
-  eval "$("$HOME/.local/bin/mise" activate zsh --shims)"
-fi
+# A literal prepend, not `eval "$(mise activate zsh --shims)"`: identical
+# output, without forking mise at every shell spawn. Unconditional, because
+# an inherited PATH may already carry the shims dir buried behind stale
+# tool-version dirs — prepending moves it back in front.
+_mise_shims="${MISE_DATA_DIR:-$HOME/.local/share/mise}/shims"
+[ -d "$_mise_shims" ] && export PATH="$_mise_shims:$PATH"
+unset _mise_shims
 # <<< mise shims (tractorbeam mise plugin) <<<
