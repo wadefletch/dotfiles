@@ -44,3 +44,18 @@ fi
 if [[ "$TERM" == "xterm-ghostty" ]]; then
   export FORCE_HYPERLINK=1
 fi
+
+# >>> mise shims (tractorbeam mise plugin) >>>
+# Keep this block last in this file: the shims dir must land ahead of every
+# other PATH prepend so repo-pinned tools shadow globals. Interactive shells
+# re-prepend the real tool dirs via `mise activate zsh` at each prompt; this
+# covers non-interactive shells (agent tools, scripts, SSH commands), which
+# otherwise inherit the parent's PATH — stale by whenever it last activated.
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise activate zsh --shims)"
+elif [ -x /opt/homebrew/bin/mise ]; then
+  eval "$(/opt/homebrew/bin/mise activate zsh --shims)"
+elif [ -x "$HOME/.local/bin/mise" ]; then
+  eval "$("$HOME/.local/bin/mise" activate zsh --shims)"
+fi
+# <<< mise shims (tractorbeam mise plugin) <<<
