@@ -105,6 +105,22 @@ install_gh() {
   ok "gh"
 }
 
+# Codex desktop discovers Coder workspaces through concrete OpenSSH aliases.
+# Feature detection keeps the CLI new enough to generate those aliases without
+# pinning bootstrap to a release number.
+install_coder() {
+  if command -v coder &>/dev/null \
+    && coder config-ssh --help 2>&1 | grep -q -- "--no-wildcard"; then
+    ok "coder already installed"
+    return
+  fi
+
+  info "installing coder"
+  curl -fsSL https://coder.com/install.sh \
+    | sh -s -- --mainline --method standalone --prefix "$HOME/.local"
+  ok "coder"
+}
+
 # --- Install dependencies ----------------------------------------------------
 
 install_deps() {
@@ -128,6 +144,10 @@ install_deps() {
   done
 
   install_gh
+
+  if [[ "$OS" == "Darwin" ]]; then
+    install_coder
+  fi
 
   # starship (curl installer — not reliably packaged across distros)
   if command -v starship &>/dev/null; then
