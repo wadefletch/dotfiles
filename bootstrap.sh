@@ -381,11 +381,11 @@ setup_tailnet_ssh() {
 # CoreWLAN helper app that carries its own grant. Its first run pops a
 # one-time Location permission prompt — approve it and the grant persists.
 build_wifi_helper() {
-  [[ "$OS" == "Darwin" ]] || return
+  [[ "$OS" == "Darwin" ]] || return 0
 
   if ! command -v swiftc &>/dev/null; then
     info "skipping wifi-ssid helper (swiftc not found — install Xcode CLT)"
-    return
+    return 0
   fi
 
   "$DOTFILES/sketchybar/.config/sketchybar/helpers/wifi-ssid/build.sh"
