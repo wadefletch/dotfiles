@@ -1,7 +1,10 @@
 [tools]
+bun = "latest"
 "cargo:sccache" = "0.15.0"
 node = "22"
+pnpm = "latest"
 python = "3.13"
+uv = "latest"
 
 [settings]
 trusted_config_paths = [
