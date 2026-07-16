@@ -17,10 +17,13 @@ The following are a list of rules and preferences that must be followed. Excepti
 - Always use PNPM, not NPM or Yarn.
 - Use `turborepo` when building a TypeScript monorepo.
 - Use [Mise](https://mise.jdx.dev/) when you need a task runner.
+- When running under Codex, never use `agent-browser`.
 
 ## Git
 
 My GitHub username is `wadefletch`. Repos in GitHub orgs `tractorbeamai/` and `wadefletch/` (in local folders `~/Developer/Tractorbeam/` and `~/Developer/`) maintain a linear history on main. Strongly prefer squash merge (most cases) or rebase merge (when the PR has meticulous, meaningful commits) over merge commits.
+
+When creating Git worktrees manually, keep them under the agent's hidden managed-worktree directory: `~/.codex/worktrees/manual/<repository>/<task>` for Codex and `<repository>/.claude/worktrees/<task>` for Claude Code. Never create copy-adjacent worktrees such as `../<repository>-<task>`.
 
 Squash merges break SHA- and patch-id-based comparisons — `git branch --merged`, `git cherry -v`, and three-dot `git diff main...<branch>` all falsely flag already-merged branches as unique. Use two-dot `git diff main..<branch>`: zero lines means fully merged. When non-empty, also diff the reverse (`<branch>..main`) — opposing changes in the same sections mean main superseded the branch via a different PR. Grepping main's log for the branch's commit titles is a fast first check.
 

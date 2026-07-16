@@ -8,6 +8,7 @@ service_tier = "default"
 approval_policy = "on-request"
 approvals_reviewer = "auto_review"
 sandbox_mode = "workspace-write"
+project_doc_fallback_filenames = ["CLAUDE.md"]
 
 [sandbox_workspace_write]
 network_access = true
