@@ -121,6 +121,15 @@ install_coder() {
   ok "coder"
 }
 
+install_tb() {
+  info "installing tb"
+  TB_RELEASE_BASE_URL="https://d2u1bxly0whilp.cloudfront.net/1a558fccd95178c35ca275006f50b981" \
+    TB_RELEASE_VERSION="0.1.0" \
+    "$DOTFILES/install-tb.sh"
+  "$HOME/.local/bin/tb" env doctor
+  ok "tb"
+}
+
 # --- Install dependencies ----------------------------------------------------
 
 install_deps() {
@@ -147,6 +156,7 @@ install_deps() {
 
   if [[ "$OS" == "Darwin" ]]; then
     install_coder
+    install_tb
   fi
 
   # starship (curl installer — not reliably packaged across distros)
