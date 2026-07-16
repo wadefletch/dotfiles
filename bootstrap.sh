@@ -346,6 +346,24 @@ setup_tailnet_ssh() {
   fi
 }
 
+# --- SketchyBar wifi helper ---------------------------------------------------
+
+# macOS redacts the Wi-Fi SSID from every plain CLI unless the caller holds a
+# Location Services grant, so the sketchybar wifi item reads it through a tiny
+# CoreWLAN helper app that carries its own grant. Its first run pops a
+# one-time Location permission prompt — approve it and the grant persists.
+build_wifi_helper() {
+  [[ "$OS" == "Darwin" ]] || return
+
+  if ! command -v swiftc &>/dev/null; then
+    info "skipping wifi-ssid helper (swiftc not found — install Xcode CLT)"
+    return
+  fi
+
+  "$DOTFILES/sketchybar/.config/sketchybar/helpers/wifi-ssid/build.sh"
+  ok "wifi-ssid helper"
+}
+
 # --- macOS defaults ----------------------------------------------------------
 
 # Preferences that can't be stowed because they live in OS-managed plists.
@@ -376,6 +394,7 @@ main() {
   stow_packages
   setup_hooks
   setup_tailnet_ssh
+  build_wifi_helper
   setup_macos_defaults
 
   # Install everything declared in the stowed mise config (node, python, …).
