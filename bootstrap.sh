@@ -328,7 +328,6 @@ backup_conflicts() {
 
 stow_packages() {
   local pkg
-  local -a stow_args
 
   cd "$DOTFILES"
 
@@ -341,21 +340,18 @@ stow_packages() {
       continue
     fi
 
-    stow_args=()
+    # Pin target to $HOME. Stow's default target is the parent of the stow
+    # dir, which works when this repo is cloned at ~/dotfiles but not when
+    # it's elsewhere.
     if [[ "$pkg" == "codex" ]]; then
       # Codex owns mutable host state under ~/.codex. Link individual global
       # instructions without ever replacing the host-local directory.
-      stow_args+=(--no-folding)
+      backup_conflicts "$pkg" --no-folding
+      stow -t "$HOME" --restow --no-folding "$pkg"
+    else
+      backup_conflicts "$pkg"
+      stow -t "$HOME" --restow "$pkg"
     fi
-
-    backup_conflicts "$pkg" "${stow_args[@]}"
-
-    # Pin target to $HOME. Stow's default target is the parent of the stow
-    # dir, which works when this repo is cloned at ~/dotfiles but not when
-    # it's elsewhere — e.g. Coder's dotfiles module clones to
-    # ~/.config/coderv2/dotfiles, which would dump symlinks into
-    # ~/.config/coderv2/ instead of $HOME.
-    stow -t "$HOME" --restow "${stow_args[@]}" "$pkg"
     ok "$pkg"
   done
 
