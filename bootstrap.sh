@@ -90,18 +90,6 @@ pkg_update() {
   esac
 }
 
-macos_formula_satisfied() {
-  local formula="$1"
-
-  if command -v "$formula" &>/dev/null; then
-    return 0
-  fi
-
-  # Both Tailscale app variants bundle the CLI, so an existing app satisfies
-  # this dependency without a duplicate Homebrew installation.
-  [[ "$formula" == "tailscale" && -d "/Applications/Tailscale.app" ]]
-}
-
 # --- gh (GitHub CLI) ---------------------------------------------------------
 # Needs its own repo on Linux — not in default apt/dnf/yum repos.
 # https://github.com/cli/cli/blob/trunk/docs/install_linux.md
@@ -302,7 +290,8 @@ install_deps() {
 
     # macOS-only brew formulae
     for formula in duti sketchybar skhd tailscale yabai; do
-      if macos_formula_satisfied "$formula"; then
+      if command -v "$formula" &>/dev/null ||
+        [[ "$formula" == "tailscale" && -d "/Applications/Tailscale.app" ]]; then
         ok "$formula already installed"
       else
         info "installing $formula"
