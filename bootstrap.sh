@@ -24,6 +24,7 @@ CASKS=(cursor ghostty font-sketchybar-app-font font-symbols-only-nerd-font)
 
 info()  { printf '  [ .. ] %s\n' "$1"; }
 ok()    { printf '  [ OK ] %s\n' "$1"; }
+warn()  { printf '  [WARN] %s\n' "$1" >&2; }
 fail()  { printf '  [FAIL] %s\n' "$1" >&2; exit 1; }
 
 # --- Package manager helpers -------------------------------------------------
@@ -341,11 +342,10 @@ stow_packages() {
     fi
 
     stow_args=()
-    if [[ "$OS" == "Linux" && "$pkg" == "codex" ]]; then
-      # Codex rewrites marketplace metadata in config.toml. Keep the global
-      # instructions linked while preventing runtime state from dirtying the
-      # Coder-managed checkout; --no-folding keeps .codex itself host-local.
-      stow_args+=(--no-folding --ignore='^\.codex/config\.toml$')
+    if [[ "$pkg" == "codex" ]]; then
+      # Codex owns mutable host state under ~/.codex. Link individual global
+      # instructions without ever replacing the host-local directory.
+      stow_args+=(--no-folding)
     fi
 
     backup_conflicts "$pkg" "${stow_args[@]}"
@@ -359,16 +359,64 @@ stow_packages() {
     ok "$pkg"
   done
 
-  if [[ "$OS" == "Linux" ]]; then
-    local codex_config="$HOME/.codex/config.toml"
+}
 
-    if [[ -L "$codex_config" ]]; then
-      rm "$codex_config"
-    fi
+# --- Codex configuration ----------------------------------------------------
 
-    install -D -m 0644 "$DOTFILES/codex/.codex/config.toml" "$codex_config"
-    ok "codex config (host-local)"
+install_codex_system_config() {
+  local source="$DOTFILES/codex/system/config.toml"
+  local target="/etc/codex/config.toml"
+
+  if [[ -f "$target" ]] && cmp -s "$source" "$target"; then
+    ok "codex portable defaults already installed"
+    return
   fi
+
+  info "installing codex portable defaults"
+  sudo install -d -m 0755 /etc/codex
+  sudo install -m 0644 "$source" "$target"
+  ok "codex portable defaults"
+}
+
+wait_for_codex() {
+  local attempt
+
+  if command -v codex &>/dev/null; then
+    return
+  fi
+
+  if [[ -z "${CODER:-}" ]]; then
+    warn "codex not found; skipping plugin reconciliation"
+    return 1
+  fi
+
+  info "waiting for the Coder-managed codex installation"
+  for ((attempt = 1; attempt <= 60; attempt++)); do
+    if command -v codex &>/dev/null; then
+      return
+    fi
+    sleep 1
+  done
+
+  fail "codex was not available after waiting 60 seconds in Coder"
+}
+
+reconcile_codex_plugins() {
+  local plugin
+  local plugins="$DOTFILES/codex/system/plugins.txt"
+
+  wait_for_codex || return 0
+
+  info "updating the Tractorbeam codex marketplace"
+  codex plugin marketplace add https://github.com/tractorbeamai/skills.git
+  codex plugin marketplace upgrade tractorbeam
+
+  while IFS= read -r plugin; do
+    [[ -z "$plugin" ]] && continue
+    codex plugin add "$plugin"
+  done < "$plugins"
+
+  ok "codex plugins"
 }
 
 # --- Git hooks ---------------------------------------------------------------
@@ -424,7 +472,9 @@ main() {
   fi
 
   install_deps
+  install_codex_system_config
   stow_packages
+  reconcile_codex_plugins
   setup_hooks
   build_wifi_helper
   setup_macos_defaults
