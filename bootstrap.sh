@@ -323,7 +323,12 @@ backup_conflicts() {
       info "backing up $tgt -> $tgt.bak"
       mv "$tgt" "$tgt.bak"
     fi
-  done < <(sed -nE 's/.*existing target (.+) since neither a link.*/\1/p' <<<"$out")
+  done < <(
+    sed -nE \
+      -e 's/.*existing target (.+) since neither a link.*/\1/p' \
+      -e 's/.*existing target is neither a link nor a directory: (.+)$/\1/p' \
+      <<<"$out"
+  )
 }
 
 stow_packages() {
