@@ -429,6 +429,7 @@ setup_macos_defaults() {
   [[ "$OS" == "Darwin" ]] || return 0
 
   defaults write NSGlobalDomain _HIHideMenuBar -bool false
+  defaults write NSGlobalDomain AppleMenuBarVisibleInFullscreen -bool true
 
   # Always show Sound in the menu bar so the sketchybar volume item can open its
   # Control Center popover (see sketchybar/.config/sketchybar/plugins/cc_click.sh).
