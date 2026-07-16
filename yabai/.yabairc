@@ -6,7 +6,7 @@ sudo yabai --load-sa
 
 # global config
 yabai -m config                                 \
-    external_bar                 all:32:0       \
+    external_bar                 all:0:0        \
     menubar_opacity              1.0            \
     mouse_follows_focus          off            \
     focus_follows_mouse          off            \
@@ -56,27 +56,5 @@ yabai -m rule --add app="^(Dia|Arc|Google Chrome)$" title="^Bitwarden$" manage=o
 # split back down. Expect a brief flash on new-tab.
 yabai -m signal --add app="^Ghostty$" event=window_created action="yabai -m space --layout bsp"
 yabai -m signal --add app="^Ghostty$" event=window_destroyed action="yabai -m space --layout bsp"
-
-# sketchybar integration: refresh space highlight on focus changes, and rebuild
-# the bar when spaces are created/destroyed so its items track yabai's spaces.
-yabai -m signal --add event=space_changed action="sketchybar --trigger space_change" 2>/dev/null
-yabai -m signal --add event=display_changed action="sketchybar --trigger space_change" 2>/dev/null
-yabai -m signal --add event=space_created action="sketchybar --reload" 2>/dev/null
-yabai -m signal --add event=space_destroyed action="sketchybar --reload" 2>/dev/null
-
-# Repaint per-space app icons when windows come, go, or move between spaces.
-yabai -m signal --add event=window_created action="sketchybar --trigger window_change" 2>/dev/null
-yabai -m signal --add event=window_destroyed action="sketchybar --trigger window_change" 2>/dev/null
-yabai -m signal --add event=window_moved action="sketchybar --trigger window_change" 2>/dev/null
-yabai -m signal --add event=application_launched action="sketchybar --trigger window_change" 2>/dev/null
-yabai -m signal --add event=application_terminated action="sketchybar --trigger window_change" 2>/dev/null
-
-# Rebuild sketchybar now that yabai is fully loaded and its spaces are
-# queryable. sketchybarrc enumerates spaces via `yabai -m query --spaces` at
-# load time, so when launchd starts sketchybar before yabai at login that loop
-# comes up empty and no per-space items are ever created. Reloading here closes
-# that race from the yabai side (no-op if sketchybar isn't up yet, in which case
-# sketchybar starts later with yabai already running and builds spaces itself).
-sketchybar --reload 2>/dev/null
 
 echo "yabai configuration loaded.."
