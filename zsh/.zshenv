@@ -45,6 +45,11 @@ if [[ "$TERM" == "xterm-ghostty" ]]; then
   export FORCE_HYPERLINK=1
 fi
 
+if [[ -r ~/.zshenv.local ]]; then
+  # shellcheck disable=SC1090
+  source ~/.zshenv.local
+fi
+
 # >>> mise shims (tractorbeam mise plugin) >>>
 # Keep this block last in this file: the shims dir must land ahead of every
 # other PATH prepend so repo-pinned tools shadow globals. Shims re-resolve
