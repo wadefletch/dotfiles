@@ -9,7 +9,7 @@ GNU Stow-based dotfiles for macOS (with Linux support for the CLI packages). Eac
 | alacritty | Alacritty terminal |
 | cargo | Cargo (Rust) |
 | claude | Claude Code settings and permissions |
-| codex | Codex config and instructions |
+| codex | Codex global instructions, portable defaults, and core plugins |
 | crowdcontrol | CrowdControl config |
 | cursor | Cursor editor settings and keybindings |
 | docker | Docker daemon config |
@@ -40,6 +40,8 @@ cd ~/.dotfiles
 ```
 
 `bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, gh, starship, mise, and Claude Code). On macOS it also installs the Coder CLI, brew casks, and the yabai/skhd/sketchybar stack. It then stows all packages, configures git hooks, authorizes tailnet SSH between machines, and applies macOS defaults. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, sketchybar, skhd-zig, vscode, wallpapers, yabai) are skipped on Linux.
+
+Codex portable defaults live in `codex/system/config.toml` and bootstrap installs them as `/etc/codex/config.toml`. Codex owns `~/.codex/config.toml` as host-local mutable state for project trust, UI preferences, local runtimes, connectors, and plugin metadata; dotfiles never links or edits it. Bootstrap updates the Tractorbeam plugin marketplace and ensures the five plugins in `codex/system/plugins.txt` are installed and enabled.
 
 To stow manually:
 
