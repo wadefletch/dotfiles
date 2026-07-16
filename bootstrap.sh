@@ -28,12 +28,40 @@ fail()  { printf '  [FAIL] %s\n' "$1" >&2; exit 1; }
 
 # --- Package manager helpers -------------------------------------------------
 
+apt_get() {
+  local attempt
+  local output
+  local status=0
+
+  for ((attempt = 1; attempt <= 60; attempt++)); do
+    if output="$(sudo apt-get "$@" 2>&1)"; then
+      [[ -z "$output" ]] || printf '%s\n' "$output"
+      return 0
+    else
+      status=$?
+    fi
+
+    if [[ "$output" != *"Could not get lock"* && "$output" != *"Unable to lock"* ]]; then
+      printf '%s\n' "$output" >&2
+      return "$status"
+    fi
+
+    if ((attempt == 1)); then
+      info "waiting for another apt process"
+    fi
+    sleep 2
+  done
+
+  printf '%s\n' "$output" >&2
+  return "$status"
+}
+
 pkg_install() {
   case "$OS" in
     Darwin) brew install "$@" ;;
     Linux)
       if command -v apt-get &>/dev/null; then
-        sudo apt-get install -y -qq "$@"
+        apt_get install -y -qq "$@"
       elif command -v dnf &>/dev/null; then
         sudo dnf install -y "$@"
       elif command -v yum &>/dev/null; then
@@ -52,7 +80,7 @@ pkg_update() {
     Darwin) brew update ;;
     Linux)
       if command -v apt-get &>/dev/null; then
-        sudo apt-get update -qq
+        apt_get update -qq
       elif command -v dnf &>/dev/null; then
         sudo dnf check-update -q || true
       elif command -v yum &>/dev/null; then
@@ -86,8 +114,8 @@ install_gh() {
         sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
         echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
           | sudo tee /etc/apt/sources.list.d/github-cli.list >/dev/null
-        sudo apt-get update -qq
-        sudo apt-get install -y -qq gh
+        apt_get update -qq
+        apt_get install -y -qq gh
       elif command -v dnf &>/dev/null; then
         sudo dnf install -y 'dnf-command(config-manager)'
         sudo dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
@@ -316,7 +344,7 @@ setup_tailnet_ssh() {
 
   if [[ ! -f "$pub" ]]; then
     info "skipping tailnet ssh (no $pub)"
-    return
+    return 0
   fi
 
   mkdir -p "$HOME/.ssh"
@@ -351,7 +379,7 @@ setup_tailnet_ssh() {
 # Preferences that can't be stowed because they live in OS-managed plists.
 # Idempotent: re-running just re-asserts the values.
 setup_macos_defaults() {
-  [[ "$OS" == "Darwin" ]] || return
+  [[ "$OS" == "Darwin" ]] || return 0
 
   # Always show Sound in the menu bar so the sketchybar volume item can open its
   # Control Center popover (see sketchybar/.config/sketchybar/plugins/cc_click.sh).
