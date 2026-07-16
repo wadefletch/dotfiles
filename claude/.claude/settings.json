@@ -285,7 +285,6 @@
       "Skill(reflect:diary)",
       "Skill(reflect:reflect-skills)",
       "Read(~/.claude/memory/**)",
-      "Write(~/.claude/memory/**)",
       "Edit(~/.claude/memory/**)"
     ],
     "deny": [
@@ -293,9 +292,7 @@
       "Bash(find * -exec rm*)",
       "Bash(sed -i:*)",
       "Bash(chmod 000:*)",
-      "Edit(~/.claude/references/**)",
-      "Write(~/.claude/references/**)",
-      "NotebookEdit(~/.claude/references/**)"
+      "Edit(~/.claude/references/**)"
     ],
     "defaultMode": "auto",
     "additionalDirectories": [
