@@ -45,6 +45,17 @@ if [[ "$TERM" == "xterm-ghostty" ]]; then
   export FORCE_HYPERLINK=1
 fi
 
+# Machine-local environment values use NAME=value format outside the repository.
+_local_env="${XDG_CONFIG_HOME:-$HOME/.config}/zsh/env.local"
+if [[ -r "$_local_env" ]]; then
+  while IFS='=' read -r _local_name _local_value; do
+    [[ "$_local_name" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]] || continue
+    export "$_local_name=$_local_value"
+  done <"$_local_env"
+  unset _local_name _local_value
+fi
+unset _local_env
+
 # >>> mise shims (tractorbeam mise plugin) >>>
 # Keep this block last in this file: the shims dir must land ahead of every
 # other PATH prepend so repo-pinned tools shadow globals. Shims re-resolve
