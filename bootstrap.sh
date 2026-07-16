@@ -149,6 +149,39 @@ install_coder() {
   ok "coder"
 }
 
+install_rustup() {
+  if [[ "$OS" == "Linux" ]]; then
+    if command -v apt-get &>/dev/null; then
+      apt_get install -y -qq build-essential libssl-dev pkg-config
+    elif command -v dnf &>/dev/null; then
+      sudo dnf install -y gcc gcc-c++ make openssl-devel pkgconf-pkg-config
+    elif command -v yum &>/dev/null; then
+      sudo yum install -y gcc gcc-c++ make openssl-devel pkgconfig
+    elif command -v pacman &>/dev/null; then
+      sudo pacman -S --needed --noconfirm base-devel openssl pkgconf
+    fi
+  fi
+
+  if ! command -v rustup &>/dev/null; then
+    info "installing rustup"
+    case "$OS" in
+      Darwin) brew install rustup ;;
+      Linux)
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+          | sh -s -- -y --no-modify-path
+        ;;
+    esac
+  fi
+
+  export PATH="$HOME/.cargo/bin:/opt/homebrew/opt/rustup/bin:$PATH"
+
+  if ! rustup toolchain list | grep -q '^stable'; then
+    rustup toolchain install stable
+  fi
+  rustup default stable
+  ok "rustup stable toolchain"
+}
+
 # --- Install dependencies ----------------------------------------------------
 
 install_deps() {
@@ -172,6 +205,7 @@ install_deps() {
   done
 
   install_gh
+  install_rustup
 
   if [[ "$OS" == "Darwin" ]]; then
     install_coder
