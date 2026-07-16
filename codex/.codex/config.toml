@@ -8,6 +8,7 @@ service_tier = "default"
 approval_policy = "on-request"
 approvals_reviewer = "guardian_subagent"
 sandbox_mode = "workspace-write"
+project_doc_fallback_filenames = ["CLAUDE.md"]
 
 [projects."/Users/wadefletcher"]
 trust_level = "trusted"
