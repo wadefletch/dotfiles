@@ -325,7 +325,8 @@
     "documents@tractorbeam": false,
     "legal-docs@tractorbeam": true,
     "shadcn@shadcn-ui": true,
-    "figma@claude-plugins-official": true
+    "figma@claude-plugins-official": true,
+    "swift-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "tractorbeam": {
