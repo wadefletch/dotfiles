@@ -378,34 +378,14 @@ install_codex_system_config() {
   ok "codex portable defaults"
 }
 
-wait_for_codex() {
-  local attempt
-
-  if command -v codex &>/dev/null; then
-    return
-  fi
-
-  if [[ -z "${CODER:-}" ]]; then
-    warn "codex not found; skipping plugin reconciliation"
-    return 1
-  fi
-
-  info "waiting for the Coder-managed codex installation"
-  for ((attempt = 1; attempt <= 60; attempt++)); do
-    if command -v codex &>/dev/null; then
-      return
-    fi
-    sleep 1
-  done
-
-  fail "codex was not available after waiting 60 seconds in Coder"
-}
-
 reconcile_codex_plugins() {
   local plugin
   local plugins="$DOTFILES/codex/system/plugins.txt"
 
-  wait_for_codex || return 0
+  if ! command -v codex &>/dev/null; then
+    warn "codex not found; skipping plugin reconciliation"
+    return
+  fi
 
   info "updating the Tractorbeam codex marketplace"
   codex plugin marketplace add https://github.com/tractorbeamai/skills.git
