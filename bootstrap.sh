@@ -309,9 +309,10 @@ install_deps() {
 # the package tree manually.
 backup_conflicts() {
   local pkg="$1"
+  shift
   local out
 
-  out="$(stow -n -t "$HOME" --restow "$pkg" 2>&1 || true)"
+  out="$(stow -n -t "$HOME" --restow "$@" "$pkg" 2>&1 || true)"
 
   while IFS= read -r rel; do
     [[ -z "$rel" ]] && continue
@@ -324,6 +325,9 @@ backup_conflicts() {
 }
 
 stow_packages() {
+  local pkg
+  local -a stow_args
+
   cd "$DOTFILES"
 
   for dir in */; do
@@ -335,16 +339,35 @@ stow_packages() {
       continue
     fi
 
-    backup_conflicts "$pkg"
+    stow_args=()
+    if [[ "$OS" == "Linux" && "$pkg" == "codex" ]]; then
+      # Codex rewrites marketplace metadata in config.toml. Keep the global
+      # instructions linked while preventing runtime state from dirtying the
+      # Coder-managed checkout; --no-folding keeps .codex itself host-local.
+      stow_args+=(--no-folding --ignore='^\.codex/config\.toml$')
+    fi
+
+    backup_conflicts "$pkg" "${stow_args[@]}"
 
     # Pin target to $HOME. Stow's default target is the parent of the stow
     # dir, which works when this repo is cloned at ~/dotfiles but not when
     # it's elsewhere — e.g. Coder's dotfiles module clones to
     # ~/.config/coderv2/dotfiles, which would dump symlinks into
     # ~/.config/coderv2/ instead of $HOME.
-    stow -t "$HOME" --restow "$pkg"
+    stow -t "$HOME" --restow "${stow_args[@]}" "$pkg"
     ok "$pkg"
   done
+
+  if [[ "$OS" == "Linux" ]]; then
+    local codex_config="$HOME/.codex/config.toml"
+
+    if [[ -L "$codex_config" ]]; then
+      rm "$codex_config"
+    fi
+
+    install -D -m 0644 "$DOTFILES/codex/.codex/config.toml" "$codex_config"
+    ok "codex config (host-local)"
+  fi
 }
 
 # --- Git hooks ---------------------------------------------------------------
