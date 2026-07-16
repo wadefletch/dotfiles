@@ -59,7 +59,6 @@ Both are macOS. Run `hostname` to learn which machine you're on: deploy there di
 | --------------- | ------ |
 | `skhd-zig` | `launchctl kickstart -k gui/$(id -u)/com.jackielii.skhd` (`skhd --reload` is unreliable — no PID file) |
 | `yabai` | `yabai --restart-service` |
-| `sketchybar` | `sketchybar --reload` |
 | `nightly-maintenance` | `launchctl bootout gui/$(id -u)/com.wadefletcher.nightly-maintenance 2>/dev/null; launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.wadefletcher.nightly-maintenance.plist` |
 | `duti` | `duti ~/.config/duti/default-apps` |
 | `ghostty` | No CLI reload — tell the user open Ghostty windows need cmd+shift+, (Reload Configuration). |
