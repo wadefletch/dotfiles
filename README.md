@@ -21,7 +21,6 @@ GNU Stow-based dotfiles for macOS (with Linux support for the CLI packages). Eac
 | mise | Mise tool versions (node, python, …) |
 | nightly-maintenance | LaunchAgent for nightly maintenance script (macOS) |
 | nvim | Neovim config and markdownlint |
-| sketchybar | SketchyBar menu bar (macOS) |
 | skhd-zig | skhd hotkeys — window focus/swap/resize, alt-num space switching (macOS) |
 | ssh | SSH config |
 | starship | Starship prompt |
@@ -39,7 +38,7 @@ cd ~/.dotfiles
 ./bootstrap.sh
 ```
 
-`bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, gh, starship, mise, and Claude Code). On macOS it also installs the Coder CLI, brew casks, and the yabai/skhd/sketchybar stack. It then stows all packages, configures git hooks, authorizes tailnet SSH between machines, and applies macOS defaults. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, sketchybar, skhd-zig, vscode, wallpapers, yabai) are skipped on Linux.
+`bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, gh, starship, mise, and Claude Code). On macOS it also installs the Coder CLI, brew casks, and the yabai/skhd stack. It then stows all packages, configures git hooks, and authorizes tailnet SSH between machines. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, skhd-zig, vscode, wallpapers, yabai) are skipped on Linux.
 
 Codex portable defaults live in `codex/system/config.toml` and bootstrap installs them as `/etc/codex/config.toml`. Codex owns `~/.codex/config.toml` as host-local mutable state for project trust, UI preferences, local runtimes, connectors, and plugin metadata; dotfiles never links or edits it. Bootstrap updates the Tractorbeam plugin marketplace and ensures the five plugins in `codex/system/plugins.txt` are installed and enabled.
 
@@ -52,7 +51,7 @@ stow */                # everything
 
 ## Deploying changes
 
-Changes land on machines by merging to `main`, then pulling on each machine, restowing changed packages, and restarting affected services (skhd, yabai, sketchybar, …). The repo-committed Claude Code skill at `.claude/skills/deploy/SKILL.md` automates this across arrakis and corrino — ask Claude to "deploy dotfiles".
+Changes land on machines by merging to `main`, then pulling on each machine, restowing changed packages, and restarting affected services such as skhd and yabai. The repo-committed Claude Code skill at `.claude/skills/deploy/SKILL.md` automates this across arrakis and corrino — ask Claude to "deploy dotfiles".
 
 ## Other scripts
 

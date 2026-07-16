@@ -9,18 +9,16 @@ OS="$(uname -s)"
 export PATH="$HOME/.local/bin:$PATH"
 
 # macOS-only stow packages (contain Library/ paths or macOS-only tools)
-MACOS_ONLY="cursor duti nightly-maintenance sketchybar skhd-zig vscode wallpapers yabai"
+MACOS_ONLY="cursor duti nightly-maintenance skhd-zig vscode wallpapers yabai"
 
 # macOS-only Homebrew taps
-MACOS_TAPS=(felixkratz/formulae koekeishiya/formulae)
+MACOS_TAPS=(koekeishiya/formulae)
 
 # CLI packages to install (must exist in brew + apt/dnf/yum/pacman)
 PACKAGES=(git neovim stow zsh)
 
 # macOS apps and fonts (brew casks)
-# font-sketchybar-app-font renders SketchyBar's per-app icons; font-symbols-only-nerd-font
-# (family "Symbols Nerd Font") supplies the status glyphs (clock, wifi, battery, volume).
-CASKS=(cursor ghostty font-sketchybar-app-font font-symbols-only-nerd-font)
+CASKS=(cursor ghostty font-symbols-only-nerd-font)
 
 info()  { printf '  [ .. ] %s\n' "$1"; }
 ok()    { printf '  [ OK ] %s\n' "$1"; }
@@ -290,7 +288,7 @@ install_deps() {
     done
 
     # macOS-only brew formulae
-    for formula in duti sketchybar skhd tailscale yabai; do
+    for formula in duti skhd tailscale yabai; do
       if command -v "$formula" &>/dev/null ||
         [[ "$formula" == "tailscale" && -d "/Applications/Tailscale.app" ]]; then
         ok "$formula already installed"
@@ -408,39 +406,6 @@ setup_hooks() {
   ok "git hooks configured"
 }
 
-# --- SketchyBar wifi helper ---------------------------------------------------
-
-# macOS redacts the Wi-Fi SSID from every plain CLI unless the caller holds a
-# Location Services grant, so the sketchybar wifi item reads it through a tiny
-# CoreWLAN helper app that carries its own grant. Its first run pops a
-# one-time Location permission prompt — approve it and the grant persists.
-build_wifi_helper() {
-  [[ "$OS" == "Darwin" ]] || return 0
-
-  if ! command -v swiftc &>/dev/null; then
-    info "skipping wifi-ssid helper (swiftc not found — install Xcode CLT)"
-    return 0
-  fi
-
-  "$DOTFILES/sketchybar/.config/sketchybar/helpers/wifi-ssid/build.sh"
-  ok "wifi-ssid helper"
-}
-
-# --- macOS defaults ----------------------------------------------------------
-
-# Preferences that can't be stowed because they live in OS-managed plists.
-# Idempotent: re-running just re-asserts the values.
-setup_macos_defaults() {
-  [[ "$OS" == "Darwin" ]] || return 0
-
-  # Always show Sound in the menu bar so the sketchybar volume item can open its
-  # Control Center popover (see sketchybar/.config/sketchybar/plugins/cc_click.sh).
-  defaults write com.apple.controlcenter "NSStatusItem Visible Sound" -bool true
-  defaults write com.apple.controlcenter Sound -int 18
-  killall ControlCenter 2>/dev/null || true
-  ok "macOS defaults applied"
-}
-
 # --- Main --------------------------------------------------------------------
 
 main() {
@@ -457,8 +422,6 @@ main() {
   stow_packages
   reconcile_codex_plugins
   setup_hooks
-  build_wifi_helper
-  setup_macos_defaults
 
   # Install everything declared in the stowed mise config (node, python, …).
   # Must run after stow_packages so the symlinked config is in place.
