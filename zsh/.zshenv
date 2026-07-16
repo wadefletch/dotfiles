@@ -45,10 +45,9 @@ if [[ "$TERM" == "xterm-ghostty" ]]; then
   export FORCE_HYPERLINK=1
 fi
 
-if [[ -r ~/.config/zsh/env.local ]]; then
-  set -a
-  eval "$(<~/.config/zsh/env.local)"
-  set +a
+if [[ -r ~/.zshenv.local ]]; then
+  # shellcheck disable=SC1090
+  source ~/.zshenv.local
 fi
 
 # >>> mise shims (tractorbeam mise plugin) >>>
