@@ -39,7 +39,7 @@ cd ~/.dotfiles
 ./bootstrap.sh
 ```
 
-`bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, gh, starship, mise, and Claude Code). On macOS it also installs the Coder CLI, the signature-verified `tb` CLI, brew casks, and the yabai/skhd/sketchybar stack. It then stows all packages, configures git hooks, authorizes tailnet SSH between machines, and applies macOS defaults. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, sketchybar, skhd-zig, vscode, wallpapers, yabai) are skipped on Linux.
+`bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, gh, starship, mise, and Claude Code). On macOS it also installs the Coder CLI, brew casks, and the yabai/skhd/sketchybar stack. It then stows all packages, configures git hooks, authorizes tailnet SSH between machines, and applies macOS defaults. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, sketchybar, skhd-zig, vscode, wallpapers, yabai) are skipped on Linux.
 
 To stow manually:
 
