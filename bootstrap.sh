@@ -289,8 +289,9 @@ install_deps() {
     done
 
     # macOS-only brew formulae
-    for formula in duti sketchybar skhd yabai; do
-      if command -v "$formula" &>/dev/null; then
+    for formula in duti sketchybar skhd tailscale yabai; do
+      if command -v "$formula" &>/dev/null ||
+        [[ "$formula" == "tailscale" && -d "/Applications/Tailscale.app" ]]; then
         ok "$formula already installed"
       else
         info "installing $formula"
