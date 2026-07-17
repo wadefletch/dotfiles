@@ -40,7 +40,7 @@ cd ~/.dotfiles
 
 `bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, gh, starship, mise, and Claude Code). On macOS it also installs the Coder CLI, brew casks, and the yabai/skhd stack. It then stows all packages, configures git hooks, and authorizes tailnet SSH between machines. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, skhd-zig, vscode, wallpapers, yabai) are skipped on Linux.
 
-Codex portable defaults live in `codex/system/config.toml` and bootstrap installs them as `/etc/codex/config.toml`. Codex owns `~/.codex/config.toml` as host-local mutable state for project trust, UI preferences, local runtimes, connectors, and plugin metadata; dotfiles never links or edits it. Bootstrap updates the Tractorbeam plugin marketplace and ensures the five plugins in `codex/system/plugins.txt` are installed and enabled.
+Codex portable defaults live in `codex/system/config.toml` and bootstrap installs them as `/etc/codex/config.toml`. Codex owns `~/.codex/config.toml` as host-local mutable state for project trust, UI preferences, local runtimes, connectors, and plugin metadata; dotfiles never links or edits it. Bootstrap updates the Tractorbeam plugin marketplace, removes Tractorbeam plugins absent from `codex/system/plugins.txt`, and installs every plugin listed there.
 
 To stow manually:
 

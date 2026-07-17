@@ -378,6 +378,8 @@ install_codex_system_config() {
 }
 
 reconcile_codex_plugins() {
+  local config="$HOME/.codex/config.toml"
+  local configured_plugins
   local plugin
   local plugins="$DOTFILES/codex/system/plugins.txt"
 
@@ -389,6 +391,19 @@ reconcile_codex_plugins() {
   info "updating the Tractorbeam codex marketplace"
   codex plugin marketplace add https://github.com/tractorbeamai/skills.git
   codex plugin marketplace upgrade tractorbeam
+
+  if [[ -f "$config" ]]; then
+    configured_plugins="$(
+      sed -n 's/^\[plugins\."\([^"]*@tractorbeam\)"\]$/\1/p' "$config"
+    )"
+
+    while IFS= read -r plugin; do
+      [[ -z "$plugin" ]] && continue
+      if ! grep -Fxq "$plugin" "$plugins"; then
+        codex plugin remove "$plugin"
+      fi
+    done <<<"$configured_plugins"
+  fi
 
   while IFS= read -r plugin; do
     [[ -z "$plugin" ]] && continue
