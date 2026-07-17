@@ -1,7 +1,5 @@
 [tools]
 bun = "latest"
-cargo-binstall = "1.18.1"
-"cargo:sccache" = "0.15.0"
 node = "22"
 pnpm = "latest"
 python = "3.13"
@@ -17,9 +15,6 @@ activate_aggressive = true
 idiomatic_version_file_enable_tools = ["node", "python"]
 lockfile = true
 minimum_release_age = "7d"
-
-[settings.cargo]
-binstall_only = true
 
 [settings.python]
 compile = false
