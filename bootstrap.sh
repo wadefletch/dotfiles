@@ -11,9 +11,6 @@ export PATH="$HOME/.local/bin:$PATH"
 # macOS-only stow packages (contain Library/ paths or macOS-only tools)
 MACOS_ONLY="cursor duti nightly-maintenance skhd-zig vscode wallpapers yabai"
 
-# macOS-only Homebrew taps
-MACOS_TAPS=(koekeishiya/formulae)
-
 # CLI packages to install (must exist in brew + apt/dnf/yum/pacman)
 PACKAGES=(git neovim stow zsh)
 
@@ -184,6 +181,8 @@ install_rustup() {
 # --- Install dependencies ----------------------------------------------------
 
 install_deps() {
+  local app bin formula installed_casks pkg zsh_path
+
   info "updating package index"
   pkg_update
   ok "package index updated"
@@ -262,15 +261,9 @@ install_deps() {
 
   # macOS GUI apps
   if [[ "$OS" == "Darwin" ]]; then
-    for tap in "${MACOS_TAPS[@]}"; do
-      if brew tap | grep -qx "$tap"; then
-        ok "$tap already tapped"
-      else
-        info "tapping $tap"
-        brew tap "$tap"
-        ok "$tap"
-      fi
-    done
+    info "tapping koekeishiya/formulae"
+    brew tap koekeishiya/formulae
+    ok "koekeishiya/formulae"
 
     installed_casks="$(brew list --cask -1 2>/dev/null)"
     for app in "${CASKS[@]}"; do
@@ -325,11 +318,12 @@ backup_conflicts() {
     sed -nE \
       -e 's/.*existing target (.+) since neither a link.*/\1/p' \
       -e 's/.*existing target is neither a link nor a directory: (.+)$/\1/p' \
+      -e 's/.*existing target is not owned by stow: (.+)$/\1/p' \
       <<<"$out"
   )
 }
 
-stow_packages() {
+stow_packages() (
   local pkg
 
   cd "$DOTFILES"
@@ -338,7 +332,7 @@ stow_packages() {
     pkg="${dir%/}"
 
     # skip macOS-only packages on Linux
-    if [[ "$OS" != "Darwin" ]] && echo "$MACOS_ONLY" | grep -qw "$pkg"; then
+    if [[ "$OS" != "Darwin" && " $MACOS_ONLY " == *" $pkg "* ]]; then
       info "skipping $pkg (macOS only)"
       continue
     fi
@@ -358,7 +352,7 @@ stow_packages() {
     ok "$pkg"
   done
 
-}
+)
 
 # --- Codex configuration ----------------------------------------------------
 
@@ -378,6 +372,7 @@ install_codex_system_config() {
 }
 
 reconcile_codex_plugins() {
+  local config="$HOME/.codex/config.toml"
   local plugin
   local plugins="$DOTFILES/codex/system/plugins.txt"
 
@@ -386,9 +381,21 @@ reconcile_codex_plugins() {
     return
   fi
 
+  [[ -r "$plugins" ]] || fail "codex plugin list is not readable: $plugins"
+
   info "updating the Tractorbeam codex marketplace"
   codex plugin marketplace add https://github.com/tractorbeamai/skills.git
   codex plugin marketplace upgrade tractorbeam
+
+  if [[ -f "$config" ]]; then
+    while IFS= read -r plugin; do
+      if ! grep -Fxq "$plugin" "$plugins"; then
+        codex plugin remove "$plugin"
+      fi
+    done < <(
+      sed -n 's/^\[plugins\."\([^"]*@tractorbeam\)"\]$/\1/p' "$config"
+    )
+  fi
 
   while IFS= read -r plugin; do
     [[ -z "$plugin" ]] && continue
@@ -401,8 +408,7 @@ reconcile_codex_plugins() {
 # --- Git hooks ---------------------------------------------------------------
 
 setup_hooks() {
-  cd "$DOTFILES"
-  git config core.hooksPath .githooks
+  git -C "$DOTFILES" config core.hooksPath .githooks
   ok "git hooks configured"
 }
 
