@@ -1,16 +1,12 @@
 {
   "logoAnimation": "off",
   "enabledPlugins": {
-    "linear@skills": true,
-    "git@skills": true,
+    "tractorbeam@skills": true,
+    "experimental@skills": true,
     "core@factory-plugins": true,
-    "references@skills": false,
-    "reflect@skills": false,
-    "documents@skills": false,
     "mise@skills": true,
     "droid-control@factory-plugins": true,
-    "code-style@skills": true,
-    "team-kit@skills": true
+    "code-style@skills": true
   },
   "theme": "factory-light",
   "hasSeenMissionOnboarding": true
