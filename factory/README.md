@@ -19,25 +19,16 @@ the shared source of truth for what's on.
 - `droid-control@factory-plugins` - Terminal, browser, and desktop automation
 
 ### Tractorbeam Skills
-- `git@skills` - Git workflows (commits, PRs, conflicts)
-- `linear@skills` - Linear integration skill
+- `tractorbeam@skills` - Core Git, Linear, planning, research, and review workflows
+- `experimental@skills` - Development-stack, instruction, skill-authoring, and document tooling
 - `code-style@skills` - Linting, formatting, testing, comments, and terraform
-- `team-kit@skills` - Team collaboration tools
-- `references@skills` - Reference documentation skill
 - `mise@skills` - Puts pinned mise tools on PATH for shell tool sessions
 
 ## Enabled vs Disabled
 
-`enabledPlugins` in `settings.json` is the on/off switch. Two enabled plugins
-ship hooks:
-
-- `mise@skills` — `SessionStart` hook puts the project's pinned mise tools on
-  PATH (enabled).
-- `references@skills` — `SessionStart` hook clones/updates reference repos and
-  injects a version table (disabled).
-
-`references@skills`, `reflect@skills`, and `documents@skills` are set to `false`
-so their hooks don't run — mirroring the Claude Code config.
+`enabledPlugins` in `settings.json` is the shared source of truth. The
+`mise@skills` plugin's `SessionStart` hook puts the project's pinned tools on
+PATH for shell sessions.
 
 ## Setup
 
