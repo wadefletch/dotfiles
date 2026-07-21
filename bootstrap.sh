@@ -383,9 +383,11 @@ reconcile_codex_plugins() {
 
   [[ -r "$plugins" ]] || fail "codex plugin list is not readable: $plugins"
 
-  info "updating the Tractorbeam codex marketplace"
+  info "updating codex plugin marketplaces"
   codex plugin marketplace add https://github.com/tractorbeamai/skills.git
+  codex plugin marketplace add aws/agent-toolkit-for-aws
   codex plugin marketplace upgrade tractorbeam
+  codex plugin marketplace upgrade agent-toolkit-for-aws
 
   if [[ -f "$config" ]]; then
     while IFS= read -r plugin; do
