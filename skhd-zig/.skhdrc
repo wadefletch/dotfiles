@@ -20,6 +20,9 @@ ctrl + shift - j : @yabai_swap("south")
 ctrl + shift - k : @yabai_swap("north")
 ctrl + shift - l : @yabai_swap("east")
 
+# Toggle floating for the current window
+ctrl + shift - space : yabai -m window --toggle float
+
 # Resize windows: h/l contract/expand width, k/j contract/expand height.
 ctrl + alt - h : @resize("right:-20:0", "left:20:0")
 ctrl + alt - l : @resize("right:20:0", "left:-20:0")
