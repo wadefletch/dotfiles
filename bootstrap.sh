@@ -354,6 +354,25 @@ stow_packages() (
 
 )
 
+# --- SSH host verification --------------------------------------------------
+
+install_claude_ssh_host_keys() {
+  local source="$DOTFILES/ssh/.ssh/known_hosts.tailnet"
+  local target="$HOME/.ssh/known_hosts"
+
+  [[ "$OS" == "Darwin" ]] || return
+
+  install -d -m 700 "$HOME/.ssh"
+  touch "$target"
+  chmod 600 "$target"
+
+  # Claude Desktop's embedded SSH client resolves Host aliases but reads only
+  # the default known_hosts file, so mirror any managed pins missing from it.
+  grep -Fvx -f "$target" "$source" >>"$target" || [[ $? -eq 1 ]]
+
+  ok "Claude Desktop tailnet host keys"
+}
+
 # --- Codex configuration ----------------------------------------------------
 
 install_codex_system_config() {
@@ -428,6 +447,7 @@ main() {
   install_deps
   install_codex_system_config
   stow_packages
+  install_claude_ssh_host_keys
   reconcile_codex_plugins
   setup_hooks
 
