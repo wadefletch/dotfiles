@@ -357,39 +357,18 @@ stow_packages() (
 # --- SSH host verification --------------------------------------------------
 
 install_claude_ssh_host_keys() {
-  local existing_keys host key key_type line
   local source="$DOTFILES/ssh/.ssh/known_hosts.tailnet"
   local target="$HOME/.ssh/known_hosts"
 
   [[ "$OS" == "Darwin" ]] || return
-  [[ -r "$source" ]] || fail "tailnet host-key pins are not readable: $source"
 
   install -d -m 700 "$HOME/.ssh"
   touch "$target"
   chmod 600 "$target"
 
   # Claude Desktop's embedded SSH client resolves Host aliases but reads only
-  # the default known_hosts file. Mirror the managed pins there so it can
-  # verify canonical tailnet hostnames without disabling strict verification.
-  while IFS= read -r line; do
-    [[ -z "$line" || "$line" == \#* ]] && continue
-    read -r host key_type key _ <<<"$line"
-    [[ -n "$host" && -n "$key_type" && -n "$key" ]] ||
-      fail "invalid tailnet host-key pin: $line"
-
-    existing_keys="$(
-      ssh-keygen -F "$host" -f "$target" 2>/dev/null |
-        awk '!/^#/ { print $2, $3 }' || true
-    )"
-    if grep -Fxq "$key_type $key" <<<"$existing_keys"; then
-      continue
-    fi
-    if [[ -n "$existing_keys" ]]; then
-      fail "refusing conflicting SSH host key for $host in $target"
-    fi
-
-    printf '%s\n' "$line" >>"$target"
-  done <"$source"
+  # the default known_hosts file, so mirror any managed pins missing from it.
+  grep -Fvx -f "$target" "$source" >>"$target" || [[ $? -eq 1 ]]
 
   ok "Claude Desktop tailnet host keys"
 }
