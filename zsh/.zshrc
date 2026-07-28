@@ -17,11 +17,6 @@ if command -v mise &> /dev/null; then
   eval "$(mise activate zsh)"
 fi
 
-# Rustup (Rust)
-if [[ -d "/opt/homebrew/opt/rustup/bin" ]]; then
-  export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-fi
-
 # History
 HISTSIZE=50000
 SAVEHIST=50000
