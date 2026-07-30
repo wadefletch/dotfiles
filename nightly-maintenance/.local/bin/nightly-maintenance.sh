@@ -19,6 +19,14 @@ brew update >> "$LOG" 2>&1
 brew upgrade >> "$LOG" 2>&1
 brew cleanup --prune=all >> "$LOG" 2>&1
 
+# Remove installed tool versions that no tracked mise config or tool stub needs.
+echo "Pruning unused mise tool versions..." >> "$LOG"
+if command -v mise >/dev/null 2>&1; then
+  mise prune --tools --yes >> "$LOG" 2>&1
+else
+  echo "mise not on PATH, skipping tool prune" >> "$LOG"
+fi
+
 # Keep Fleet's CLI current, then prune pnpm's store. pnpm is mise-managed;
 # skip both cleanly if its global shim is unavailable.
 echo "Updating fleetctl..." >> "$LOG"
