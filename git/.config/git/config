@@ -42,5 +42,11 @@ ff = only
 [url "git@github.com:wadefletch/"]
 	insteadOf = https://github.com/wadefletch/
 
+[tag]
+	gpgsign = true
+
+[includeIf "gitdir:~/Developer/Tractorbeam/"]
+	path = ~/.config/git/gitconfig-tractorbeam
+
 [includeIf "gitdir:~/Developer/Tractorbeam/client-carlyle/"]
 	path = ~/.config/git/gitconfig-carlyle

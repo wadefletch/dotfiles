@@ -65,3 +65,8 @@ _mise_shims="${MISE_DATA_DIR:-$HOME/.local/share/mise}/shims"
 [ -d "$_mise_shims" ] && export PATH="$_mise_shims:$PATH"
 unset _mise_shims
 # <<< mise shims (tractorbeam mise plugin) <<<
+
+# Vite+ bin
+if [[ -f "$HOME/.vite-plus/env" ]]; then
+  source "$HOME/.vite-plus/env"
+fi

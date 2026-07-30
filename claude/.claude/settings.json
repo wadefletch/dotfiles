@@ -229,7 +229,6 @@
       "Bash(pgrep:*)",
       "Bash(node --check:*)",
       "Bash(claude mcp list:*)",
-      "Bash(agent-browser:*)",
       "Bash(aws sts get-caller-identity)",
       "Read(~/.claude/plugins/**)",
       "Read(~/.claude/references/**)",
@@ -274,10 +273,6 @@
       "Skill(code-style:testing)",
       "Skill(code-style:eslint)",
       "Skill(code-style:github-actions)",
-      "Skill(agent-browser)",
-      "Skill(dogfood)",
-      "Skill(agent-browser:agent-browser)",
-      "Skill(agent-browser:dogfood)",
       "Read(~/.claude/memory/**)",
       "Edit(~/.claude/memory/**)"
     ],
@@ -294,6 +289,19 @@
     ]
   },
   "model": "opus[1m]",
+  "hooks": {
+    "SubagentStart": [
+      {
+        "matcher": "tldraw-offline",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -f \"$HOME/skills/tldraw-offline/inject-server-context.sh\" ]; then sh \"$HOME/skills/tldraw-offline/inject-server-context.sh\" SubagentStart; fi"
+          }
+        ]
+      }
+    ]
+  },
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh"
@@ -302,33 +310,26 @@
     "aws-core@claude-plugins-official": true,
     "code-simplifier@claude-plugins-official": false,
     "frontend-design@claude-plugins-official": false,
-    "plugin-dev@claude-plugins-official": true,
+    "plugin-dev@claude-plugins-official": false,
     "typescript-lsp@claude-plugins-official": true,
     "tractorbeam@tractorbeam": true,
-    "experimental@tractorbeam": true,
+    "experimental@tractorbeam": false,
     "code-style@tractorbeam": true,
     "mise@tractorbeam": true,
-    "agent-browser@agent-browser": true,
     "document-skills@anthropic-agent-skills": false,
     "rust-analyzer-lsp@claude-plugins-official": true,
-    "legal-docs@tractorbeam": true,
-    "shadcn@shadcn-ui": true,
-    "figma@claude-plugins-official": true,
+    "legal-docs@tractorbeam": false,
+    "shadcn@shadcn-ui": false,
+    "figma@claude-plugins-official": false,
     "diligence@tractorbeam": true
   },
   "extraKnownMarketplaces": {
     "tractorbeam": {
       "source": {
-        "source": "github",
-        "repo": "tractorbeamai/skills"
+        "source": "git",
+        "url": "https://github.com/tractorbeamai/skills.git"
       },
       "autoUpdate": true
-    },
-    "agent-browser": {
-      "source": {
-        "source": "github",
-        "repo": "vercel-labs/agent-browser"
-      }
     },
     "anthropic-agent-skills": {
       "source": {
@@ -356,6 +357,7 @@
   "theme": "auto",
   "verbose": true,
   "preferredNotifChannel": "ghostty",
+  "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true
 }
