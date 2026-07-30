@@ -145,6 +145,28 @@ install_coder() {
   ok "coder"
 }
 
+install_fleetctl() {
+  if ! command -v pnpm &>/dev/null; then
+    warn "pnpm not found; skipping fleetctl"
+    return
+  fi
+
+  if [[ -z "${PNPM_HOME:-}" ]]; then
+    case "$OS" in
+      Darwin) export PNPM_HOME="$HOME/Library/pnpm" ;;
+      Linux)  export PNPM_HOME="$HOME/.local/share/pnpm" ;;
+    esac
+  fi
+
+  mkdir -p "$PNPM_HOME/bin"
+  export PATH="$PNPM_HOME/bin:$PNPM_HOME:$PATH"
+
+  info "installing latest fleetctl"
+  pnpm add --global fleetctl@latest
+  "$PNPM_HOME/bin/fleetctl" --version >/dev/null
+  ok "fleetctl"
+}
+
 # --- Install dependencies ----------------------------------------------------
 
 install_deps() {
@@ -323,6 +345,7 @@ stow_packages() (
 # --- SSH host verification --------------------------------------------------
 
 install_claude_ssh_host_keys() {
+  local host_key
   local source="$DOTFILES/ssh/.ssh/known_hosts.tailnet"
   local target="$HOME/.ssh/known_hosts"
 
@@ -334,7 +357,9 @@ install_claude_ssh_host_keys() {
 
   # Claude Desktop's embedded SSH client resolves Host aliases but reads only
   # the default known_hosts file, so mirror any managed pins missing from it.
-  grep -Fvx -f "$target" "$source" >>"$target" || [[ $? -eq 1 ]]
+  while IFS= read -r host_key; do
+    grep -Fxq "$host_key" "$target" || printf '%s\n' "$host_key" >>"$target"
+  done <"$source"
 
   ok "Claude Desktop tailnet host keys"
 }
@@ -424,6 +449,8 @@ main() {
     mise install
     ok "mise tools"
   fi
+
+  install_fleetctl
 
   if [[ "$OS" == "Darwin" ]] && command -v duti &>/dev/null; then
     info "applying default app associations"
