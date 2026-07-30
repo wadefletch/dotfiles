@@ -1,9 +1,10 @@
 #!/bin/zsh
 # Nightly macOS maintenance script
 
-# launchd starts us with a bare PATH; put mise shims, Homebrew, and the
-# cargo bindir up front so brew/pnpm/cargo-sweep/git all resolve.
-export PATH="$HOME/.local/share/mise/shims:/opt/homebrew/bin:$HOME/.cargo/bin:$PATH"
+# launchd starts us with a bare PATH; put mise shims, pnpm globals, Homebrew,
+# and the cargo bindir up front so every maintenance command resolves.
+export PNPM_HOME="$HOME/Library/pnpm"
+export PATH="$HOME/.local/share/mise/shims:$PNPM_HOME/bin:$PNPM_HOME:/opt/homebrew/bin:$HOME/.cargo/bin:$PATH"
 
 LOG=/tmp/nightly-maintenance.log
 CARGO_SWEEP="$HOME/.cargo/bin/cargo-sweep"
@@ -18,12 +19,17 @@ brew update >> "$LOG" 2>&1
 brew upgrade >> "$LOG" 2>&1
 brew cleanup --prune=all >> "$LOG" 2>&1
 
-# pnpm store prune (pnpm is mise-managed; skip cleanly if no global shim)
-echo "Pruning pnpm store..." >> "$LOG"
+# Keep Fleet's CLI current, then prune pnpm's store. pnpm is mise-managed;
+# skip both cleanly if its global shim is unavailable.
+echo "Updating fleetctl..." >> "$LOG"
 if command -v pnpm >/dev/null 2>&1; then
+  mkdir -p "$PNPM_HOME/bin"
+  pnpm add --global fleetctl@latest >> "$LOG" 2>&1
+  "$PNPM_HOME/bin/fleetctl" --version >> "$LOG" 2>&1
+  echo "Pruning pnpm store..." >> "$LOG"
   pnpm store prune >> "$LOG" 2>&1
 else
-  echo "pnpm not on PATH, skipping store prune" >> "$LOG"
+  echo "pnpm not on PATH, skipping fleetctl update and store prune" >> "$LOG"
 fi
 
 # Drop the rust/target of any constellation worktree whose branch is fully
