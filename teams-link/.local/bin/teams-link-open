@@ -13,6 +13,21 @@ case "${1:-}" in
   *) exit 0 ;;
 esac
 
+# The Teams join page fires msteams: at the OS on load, which lands back here.
+# Without a guard that re-entry opens another tab, whose page fires again — an
+# endless cascade. Drop any repeat of the same URL, and anything at all in the
+# first seconds after an open, so a click yields exactly one tab.
+state="${TMPDIR:-/tmp}/teams-link-last"
+now=$(date +%s)
+if [ -f "$state" ]; then
+  read -r last_time last_url < "$state" || true
+  age=$((now - ${last_time:-0}))
+  if [ "$age" -lt 5 ] || { [ "$url" = "${last_url:-}" ] && [ "$age" -lt 120 ]; }; then
+    exit 0
+  fi
+fi
+printf '%s %s\n' "$now" "$url" > "$state"
+
 # msteams:/l/…, msteams://l/… and msteams://teams.microsoft.com/l/… all reduce
 # to the same /l/… path.
 path=${url#msteams:}
@@ -21,8 +36,9 @@ path=${path#teams.microsoft.com}
 path=/${path#/}
 
 case "$path" in
-  # The v2 deep link lands in the web client, instead of on the join page that
-  # offers to hand the meeting off to the desktop app.
+  # The v2 deep link goes to the web client rather than the launcher page. It
+  # still fires msteams: on load, so the guard above is what actually keeps the
+  # meeting in the browser.
   /l/meetup-join/*) target="https://teams.microsoft.com/v2/?meetingjoin=true#$path" ;;
   *) target="https://teams.microsoft.com$path" ;;
 esac
