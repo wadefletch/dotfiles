@@ -457,6 +457,11 @@ install_teams_link_handler() {
   # Editing Info.plist invalidates osacompile's ad-hoc signature.
   codesign --force --sign - "$app"
   /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$app"
+
+  # lsregister returns before the bundle is bindable, and duti reports success
+  # either way — so without a settle the duti pass below leaves msteams: on
+  # whatever handled it before, silently.
+  sleep 2
   ok "Teams link handler"
 }
 
