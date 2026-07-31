@@ -86,6 +86,9 @@ if command -v git &> /dev/null; then
   }
 fi
 
+# Better ls (eza)
+alias ll="exa -l"
+
 # mkdir and cd into it
 mkcd() { mkdir -p "$1" && cd "$1"; }
 

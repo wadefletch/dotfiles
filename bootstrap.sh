@@ -12,15 +12,18 @@ export PATH="$HOME/.local/bin:$PATH"
 MACOS_ONLY="cursor duti nightly-maintenance skhd-zig teams-link vscode wallpapers yabai"
 
 # CLI packages to install (must exist in brew + apt/dnf/yum/pacman)
-PACKAGES=(git neovim stow zsh)
+PACKAGES=(git neovim stow zsh eza)
 
 # macOS apps and fonts (brew casks)
 CASKS=(cursor ghostty font-symbols-only-nerd-font)
 
-info()  { printf '  [ .. ] %s\n' "$1"; }
-ok()    { printf '  [ OK ] %s\n' "$1"; }
-warn()  { printf '  [WARN] %s\n' "$1" >&2; }
-fail()  { printf '  [FAIL] %s\n' "$1" >&2; exit 1; }
+info() { printf '  [ .. ] %s\n' "$1"; }
+ok() { printf '  [ OK ] %s\n' "$1"; }
+warn() { printf '  [WARN] %s\n' "$1" >&2; }
+fail() {
+  printf '  [FAIL] %s\n' "$1" >&2
+  exit 1
+}
 
 # --- Package manager helpers -------------------------------------------------
 
@@ -54,35 +57,35 @@ apt_get() {
 
 pkg_install() {
   case "$OS" in
-    Darwin) brew install "$@" ;;
-    Linux)
-      if command -v apt-get &>/dev/null; then
-        apt_get install -y -qq "$@"
-      elif command -v dnf &>/dev/null; then
-        sudo dnf install -y "$@"
-      elif command -v yum &>/dev/null; then
-        sudo yum install -y "$@"
-      elif command -v pacman &>/dev/null; then
-        sudo pacman -S --noconfirm "$@"
-      else
-        fail "unsupported package manager"
-      fi
-      ;;
+  Darwin) brew install "$@" ;;
+  Linux)
+    if command -v apt-get &>/dev/null; then
+      apt_get install -y -qq "$@"
+    elif command -v dnf &>/dev/null; then
+      sudo dnf install -y "$@"
+    elif command -v yum &>/dev/null; then
+      sudo yum install -y "$@"
+    elif command -v pacman &>/dev/null; then
+      sudo pacman -S --noconfirm "$@"
+    else
+      fail "unsupported package manager"
+    fi
+    ;;
   esac
 }
 
 pkg_update() {
   case "$OS" in
-    Darwin) brew update ;;
-    Linux)
-      if command -v apt-get &>/dev/null; then
-        apt_get update -qq
-      elif command -v dnf &>/dev/null; then
-        sudo dnf check-update -q || true
-      elif command -v yum &>/dev/null; then
-        sudo yum check-update -q || true
-      fi
-      ;;
+  Darwin) brew update ;;
+  Linux)
+    if command -v apt-get &>/dev/null; then
+      apt_get update -qq
+    elif command -v dnf &>/dev/null; then
+      sudo dnf check-update -q || true
+    elif command -v yum &>/dev/null; then
+      sudo yum check-update -q || true
+    fi
+    ;;
   esac
 }
 
@@ -99,31 +102,31 @@ install_gh() {
   info "installing gh"
 
   case "$OS" in
-    Darwin)
-      brew install gh
-      ;;
-    Linux)
-      if command -v apt-get &>/dev/null; then
-        sudo mkdir -p -m 755 /etc/apt/keyrings
-        wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg \
-          | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg >/dev/null
-        sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
-        echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
-          | sudo tee /etc/apt/sources.list.d/github-cli.list >/dev/null
-        apt_get update -qq
-        apt_get install -y -qq gh
-      elif command -v dnf &>/dev/null; then
-        sudo dnf install -y 'dnf-command(config-manager)'
-        sudo dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
-        sudo dnf install -y gh --repo gh-cli
-      elif command -v yum &>/dev/null; then
-        sudo yum install -y yum-utils
-        sudo yum-config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
-        sudo yum install -y gh
-      elif command -v pacman &>/dev/null; then
-        sudo pacman -S --noconfirm github-cli
-      fi
-      ;;
+  Darwin)
+    brew install gh
+    ;;
+  Linux)
+    if command -v apt-get &>/dev/null; then
+      sudo mkdir -p -m 755 /etc/apt/keyrings
+      wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg |
+        sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg >/dev/null
+      sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+      echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" |
+        sudo tee /etc/apt/sources.list.d/github-cli.list >/dev/null
+      apt_get update -qq
+      apt_get install -y -qq gh
+    elif command -v dnf &>/dev/null; then
+      sudo dnf install -y 'dnf-command(config-manager)'
+      sudo dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
+      sudo dnf install -y gh --repo gh-cli
+    elif command -v yum &>/dev/null; then
+      sudo yum install -y yum-utils
+      sudo yum-config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
+      sudo yum install -y gh
+    elif command -v pacman &>/dev/null; then
+      sudo pacman -S --noconfirm github-cli
+    fi
+    ;;
   esac
 
   ok "gh"
@@ -133,15 +136,15 @@ install_gh() {
 # Feature detection keeps the CLI new enough to generate those aliases without
 # pinning bootstrap to a release number.
 install_coder() {
-  if command -v coder &>/dev/null \
-    && coder config-ssh --help 2>&1 | grep -q -- "--no-wildcard"; then
+  if command -v coder &>/dev/null &&
+    coder config-ssh --help 2>&1 | grep -q -- "--no-wildcard"; then
     ok "coder already installed"
     return
   fi
 
   info "installing coder"
-  curl -fsSL https://coder.com/install.sh \
-    | sh -s -- --mainline --method standalone --prefix "$HOME/.local"
+  curl -fsSL https://coder.com/install.sh |
+    sh -s -- --mainline --method standalone --prefix "$HOME/.local"
   ok "coder"
 }
 
@@ -153,8 +156,8 @@ install_fleetctl() {
 
   if [[ -z "${PNPM_HOME:-}" ]]; then
     case "$OS" in
-      Darwin) export PNPM_HOME="$HOME/Library/pnpm" ;;
-      Linux)  export PNPM_HOME="$HOME/.local/share/pnpm" ;;
+    Darwin) export PNPM_HOME="$HOME/Library/pnpm" ;;
+    Linux) export PNPM_HOME="$HOME/.local/share/pnpm" ;;
     esac
   fi
 
@@ -179,8 +182,8 @@ install_deps() {
   for pkg in "${PACKAGES[@]}"; do
     # Map package name -> binary name where they differ (e.g. neovim -> nvim).
     case "$pkg" in
-      neovim) bin="nvim" ;;
-      *)      bin="$pkg" ;;
+    neovim) bin="nvim" ;;
+    *) bin="$pkg" ;;
     esac
     if command -v "$bin" &>/dev/null; then
       ok "$pkg already installed"
@@ -229,8 +232,8 @@ install_deps() {
   else
     info "installing mise"
     case "$OS" in
-      Darwin) brew install mise ;;
-      Linux)  curl -fsSL https://mise.run | sh ;;
+    Darwin) brew install mise ;;
+    Linux) curl -fsSL https://mise.run | sh ;;
     esac
     ok "mise"
   fi
@@ -412,7 +415,7 @@ reconcile_codex_plugins() {
   while IFS= read -r plugin; do
     [[ -z "$plugin" ]] && continue
     codex plugin add "$plugin"
-  done < "$plugins"
+  done <"$plugins"
 
   ok "codex plugins"
 }
