@@ -6,8 +6,8 @@
 #
 # Roles: all, viewer, editor, shell, none
 
-# Arc — URL schemes
-company.thebrowser.Browser    msteams
+# Teams Link Redirect — msteams: links go to the default browser, not the app
+com.wadefletch.teamslink    msteams
 
 # Cursor — code and text files
 com.todesktop.230313mzl4w4u92    .c          all
