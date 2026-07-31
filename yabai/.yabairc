@@ -42,6 +42,7 @@ yabai -m config                                 \
 # Float Finder file-operation progress popups (the gray copy/move/delete boxes)
 # and other Finder system dialogs instead of tiling them.
 yabai -m rule --add app="^Finder$" subrole="AXSystemDialog" manage=off
+yabai -m rule --add app="^Finder$" title="^Trash$" manage=off
 
 # Float the Bitwarden extension popout window (leave its size/position alone). It
 # shares the browser's app name and looks like AXStandardWindow, so the window
