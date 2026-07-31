@@ -191,4 +191,12 @@
   "terraform.languageServer.enable": true,
   "cursorpyright.analysis.autoImportCompletions": true,
   "update.mode": "silentlyApplyOnQuit",
+  "yaml.disableSchemaDetection": [
+    "**/.github/workflows/*.yml",
+    "**/.github/workflows/*.yaml",
+    "**/.gitea/workflows/*.yml",
+    "**/.gitea/workflows/*.yaml",
+    "**/.forgejo/workflows/*.yml",
+    "**/.forgejo/workflows/*.yaml",
+  ],
 }
