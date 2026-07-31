@@ -306,6 +306,13 @@
     "type": "command",
     "command": "~/.claude/statusline.sh"
   },
+  "sshConfigs": [
+    {
+      "id": "52e9ca66-7b0e-4466-b3a5-a76b3af0f0c6",
+      "name": "Coder (wade-ec2)",
+      "sshHost": "wade-ec2.coder"
+    }
+  ],
   "enabledPlugins": {
     "aws-core@claude-plugins-official": true,
     "code-simplifier@claude-plugins-official": false,
@@ -321,7 +328,7 @@
     "legal-docs@tractorbeam": false,
     "shadcn@shadcn-ui": false,
     "figma@claude-plugins-official": false,
-    "diligence@tractorbeam": true
+    "diligence@tractorbeam": false
   },
   "extraKnownMarketplaces": {
     "tractorbeam": {
