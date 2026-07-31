@@ -9,7 +9,7 @@ OS="$(uname -s)"
 export PATH="$HOME/.local/bin:$PATH"
 
 # macOS-only stow packages (contain Library/ paths or macOS-only tools)
-MACOS_ONLY="cursor duti nightly-maintenance skhd-zig vscode wallpapers yabai"
+MACOS_ONLY="cursor duti nightly-maintenance skhd-zig teams-link vscode wallpapers yabai"
 
 # CLI packages to install (must exist in brew + apt/dnf/yum/pacman)
 PACKAGES=(git neovim stow zsh)
@@ -424,6 +424,38 @@ setup_hooks() {
   ok "git hooks configured"
 }
 
+# Compile the msteams: handler app from the stowed AppleScript source. duti
+# then points the scheme at it (see .config/duti/default-apps), so Teams links
+# land in the default browser instead of a specific browser or the Teams app.
+install_teams_link_handler() {
+  [[ "$OS" == "Darwin" ]] || return 0
+
+  local src="$HOME/.local/share/teams-link/TeamsLinkRedirect.applescript"
+  local app="$HOME/Applications/Teams Link Redirect.app"
+  local plist="$app/Contents/Info.plist"
+
+  [[ -f "$src" ]] || return 0
+
+  info "building Teams link handler"
+  mkdir -p "$HOME/Applications"
+  rm -rf "$app"
+  osacompile -o "$app" "$src"
+
+  /usr/libexec/PlistBuddy \
+    -c "Add :CFBundleIdentifier string com.wadefletch.teamslink" \
+    -c "Add :LSUIElement bool true" \
+    -c "Add :CFBundleURLTypes array" \
+    -c "Add :CFBundleURLTypes:0:CFBundleURLName string Microsoft Teams" \
+    -c "Add :CFBundleURLTypes:0:CFBundleURLSchemes array" \
+    -c "Add :CFBundleURLTypes:0:CFBundleURLSchemes:0 string msteams" \
+    "$plist" >/dev/null
+
+  # Editing Info.plist invalidates osacompile's ad-hoc signature.
+  codesign --force --sign - "$app"
+  /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$app"
+  ok "Teams link handler"
+}
+
 # --- Main --------------------------------------------------------------------
 
 main() {
@@ -451,6 +483,8 @@ main() {
   fi
 
   install_fleetctl
+
+  install_teams_link_handler
 
   if [[ "$OS" == "Darwin" ]] && command -v duti &>/dev/null; then
     info "applying default app associations"
