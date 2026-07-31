@@ -424,25 +424,29 @@ setup_hooks() {
   ok "git hooks configured"
 }
 
-# Compile the msteams: handler app from the stowed AppleScript source. duti
-# then points the scheme at it (see .config/duti/default-apps), so Teams links
-# land in the default browser instead of a specific browser or the Teams app.
+# A URL scheme handler has to be an app bundle, so build the thinnest possible
+# one — it just forwards the URL to teams-link-open. duti points the msteams:
+# scheme at it (see .config/duti/default-apps).
 install_teams_link_handler() {
   [[ "$OS" == "Darwin" ]] || return 0
 
-  local src="$HOME/.local/share/teams-link/TeamsLinkRedirect.applescript"
-  local app="$HOME/Applications/Teams Link Redirect.app"
+  local app="${HOME:?}/Applications/Teams Link Redirect.app"
   local plist="$app/Contents/Info.plist"
-
-  [[ -f "$src" ]] || return 0
 
   info "building Teams link handler"
   mkdir -p "$HOME/Applications"
+
+  # Rebuilt from scratch each run: PlistBuddy's Add fails on keys that already
+  # exist, so the plist has to be the one osacompile just generated.
   rm -rf "$app"
-  osacompile -o "$app" "$src"
+  osacompile -o "$app" \
+    -e 'on open location this_URL' \
+    -e '  set helper to POSIX path of (path to home folder) & ".local/bin/teams-link-open"' \
+    -e '  do shell script quoted form of helper & " " & quoted form of this_URL' \
+    -e 'end open location'
 
   /usr/libexec/PlistBuddy \
-    -c "Add :CFBundleIdentifier string com.wadefletch.teamslink" \
+    -c "Add :CFBundleIdentifier string com.wadefletcher.teams-link" \
     -c "Add :LSUIElement bool true" \
     -c "Add :CFBundleURLTypes array" \
     -c "Add :CFBundleURLTypes:0:CFBundleURLName string Microsoft Teams" \

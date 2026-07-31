@@ -61,7 +61,7 @@ Both are macOS. Run `hostname` to learn which machine you're on: deploy there di
 | `yabai` | `yabai --restart-service` |
 | `nightly-maintenance` | `launchctl bootout gui/$(id -u)/com.wadefletcher.nightly-maintenance 2>/dev/null; launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.wadefletcher.nightly-maintenance.plist` |
 | `duti` | `duti ~/.config/duti/default-apps` |
-| `teams-link` | `./bootstrap.sh` (rebuilds the handler app), or nothing if only the shell script changed. |
+| `teams-link` | Nothing — the stowed script is what runs. The handler app only needs rebuilding (`./bootstrap.sh`) if `install_teams_link_handler` itself changed. |
 | `ghostty` | No CLI reload — tell the user open Ghostty windows need cmd+shift+, (Reload Configuration). |
 | `zsh`, `starship`, `git`, `gh`, `ssh`, `mise`, `cargo` | Nothing — next shell picks it up. |
 | `nvim`, `claude`, `codex`, `factory`, `cursor`, `vscode`, `alacritty`, `docker`, `crowdcontrol`, `terraform`, `wallpapers` | Nothing — next app launch. |

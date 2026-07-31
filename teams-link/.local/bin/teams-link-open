@@ -1,18 +1,27 @@
 #!/bin/sh
-# Rewrite an msteams: URL to its Teams web-client equivalent and hand it to the
-# default browser. Registered as the system msteams: handler so meeting links
-# open in whatever browser is default, and never launch the Teams desktop app.
+# Rewrite an msteams: URL to its Teams web-client equivalent and hand it to
+# `open`, which follows whatever browser is default. Registered as the system
+# msteams: handler (see .config/duti/default-apps) so Teams links never launch
+# the Teams desktop app. If that app is ever wanted, drop this handler rather
+# than leaving the two to fight over the scheme.
 set -eu
 
-url=${1:-}
-[ -n "$url" ] || exit 0
+# LaunchServices only ever passes msteams: URLs; the guard keeps a stray
+# hand-run argument from being turned into a teams.microsoft.com URL.
+case "${1:-}" in
+  msteams:*) url=$1 ;;
+  *) exit 0 ;;
+esac
 
 # msteams:/l/…, msteams://l/… and msteams://teams.microsoft.com/l/… all reduce
 # to the same /l/… path.
-path=$(printf '%s' "$url" | sed -E 's|^msteams:(//)?(teams\.microsoft\.com)?||; s|^/*|/|')
+path=${url#msteams:}
+path=${path#//}
+path=${path#teams.microsoft.com}
+path=/${path#/}
 
 case "$path" in
-  # The v2 deep link drops straight into the web client, so the join page never
+  # The v2 deep link lands in the web client, instead of on the join page that
   # offers to hand the meeting off to the desktop app.
   /l/meetup-join/*) target="https://teams.microsoft.com/v2/?meetingjoin=true#$path" ;;
   *) target="https://teams.microsoft.com$path" ;;
