@@ -14,7 +14,7 @@ Roll merged `main` out to every machine: pull, restow what changed, restart the 
 | arrakis | `Arrakis.local` | local, or `ssh arrakis` over tailnet  |
 | corrino | `Corrino-2.local` | local, or `ssh corrino` over tailnet |
 
-Both are macOS. Run `hostname` to learn which machine you're on: deploy there directly, and reach the others with `ssh -o BatchMode=yes <host> '<commands>'` (key auth between the machines is set up by `bootstrap.sh`'s `setup_tailnet_ssh`). Non-interactive SSH still sources `~/.zshenv`, so brew binaries (`yabai`, `sketchybar`) are on PATH; if one isn't found, use `/opt/homebrew/bin/<bin>`.
+Both are macOS. Run `hostname` to learn which machine you're on: deploy there directly, and reach the others with `ssh -o BatchMode=yes <host> '<commands>'` (key auth between the machines is set up by `bootstrap.sh`'s `setup_tailnet_ssh`). Non-interactive SSH still sources `~/.zshenv`, so brew binaries (`stow`, `duti`) are on PATH; if one isn't found, use `/opt/homebrew/bin/<bin>`.
 
 ## Preconditions
 
@@ -57,8 +57,6 @@ Both are macOS. Run `hostname` to learn which machine you're on: deploy there di
 
 | Package changed | Action |
 | --------------- | ------ |
-| `skhd-zig` | `launchctl kickstart -k gui/$(id -u)/com.jackielii.skhd` (`skhd --reload` is unreliable — no PID file) |
-| `yabai` | `yabai --restart-service` |
 | `nightly-maintenance` | `launchctl bootout gui/$(id -u)/com.wadefletcher.nightly-maintenance 2>/dev/null; launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.wadefletcher.nightly-maintenance.plist` |
 | `duti` | `duti ~/.config/duti/default-apps` |
 | `teams-link` | Nothing — the stowed script is what runs. The handler app only needs rebuilding (`./bootstrap.sh`) if `install_teams_link_handler` itself changed. |
