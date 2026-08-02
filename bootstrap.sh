@@ -9,7 +9,7 @@ OS="$(uname -s)"
 export PATH="$HOME/.local/bin:$PATH"
 
 # macOS-only stow packages (contain Library/ paths or macOS-only tools)
-MACOS_ONLY="cursor duti nightly-maintenance skhd-zig teams-link vscode wallpapers yabai"
+MACOS_ONLY="cursor duti nightly-maintenance teams-link vscode wallpapers"
 
 # CLI packages to install (must exist in brew + apt/dnf/yum/pacman)
 PACKAGES=(git neovim stow zsh eza)
@@ -252,10 +252,6 @@ install_deps() {
 
   # macOS GUI apps
   if [[ "$OS" == "Darwin" ]]; then
-    info "tapping koekeishiya/formulae"
-    brew tap koekeishiya/formulae
-    ok "koekeishiya/formulae"
-
     installed_casks="$(brew list --cask -1 2>/dev/null)"
     for app in "${CASKS[@]}"; do
       # Match the cask itself or any variant tap (e.g. ghostty@tip satisfies
@@ -272,7 +268,7 @@ install_deps() {
     done
 
     # macOS-only brew formulae
-    for formula in duti skhd tailscale yabai; do
+    for formula in duti tailscale; do
       if command -v "$formula" &>/dev/null ||
         [[ "$formula" == "tailscale" && -d "/Applications/Tailscale.app" ]]; then
         ok "$formula already installed"

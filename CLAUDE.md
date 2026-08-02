@@ -12,6 +12,7 @@ GNU Stow-based dotfiles for macOS. Each top-level directory is a stow package mi
   .cargo/, .docker/ # tool config (cargo/, docker/)
 .githooks/          # git hooks (core.hooksPath); post-merge updates submodules
 .claude/skills/     # repo-committed Claude Code skills (deploy — roll main out to all machines)
+.retired/           # reference-only packages (yabai, skhd-zig); dot-dirs aren't stowed
 bootstrap.sh        # installs deps, stows packages, git hooks, tailnet ssh, macOS defaults (macOS + Linux)
 ```
 
