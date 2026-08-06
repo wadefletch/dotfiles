@@ -11,6 +11,11 @@ export PATH="$HOME/.local/bin:$PATH"
 # macOS-only stow packages (contain Library/ paths or macOS-only tools)
 MACOS_ONLY="cursor duti nightly-maintenance teams-link vscode wallpapers"
 
+# Stow packages whose target directory also holds host-local state, so the
+# tracked files must be linked individually rather than by folding the
+# directory itself into a symlink.
+NO_FOLDING="agent-config aws claude codex cursor pi"
+
 # CLI packages to install (must exist in brew + apt/dnf/yum/pacman)
 PACKAGES=(git neovim ripgrep stow zsh eza)
 
@@ -297,9 +302,11 @@ stow_packages() (
     # Pin target to $HOME. Stow's default target is the parent of the stow
     # dir, which works when this repo is cloned at ~/dotfiles but not when
     # it's elsewhere.
-    if [[ "$pkg" == "agent-config" || "$pkg" == "claude" || "$pkg" == "codex" || "$pkg" == "cursor" || "$pkg" == "pi" ]]; then
-      # Agent harnesses own mutable state alongside the managed files. Link
-      # individual files without ever replacing those host-local directories.
+    if [[ " $NO_FOLDING " == *" $pkg "* ]]; then
+      # These packages sit beside mutable host state — agent harnesses under
+      # ~/.claude, ~/.codex, ~/.cursor, and ~/.pi, plus the AWS CLI's SSO token
+      # cache and credentials under ~/.aws. Link the tracked files individually
+      # so stow never replaces the host-local directory with a symlink.
       backup_conflicts "$pkg" --no-folding
       stow -t "$HOME" --restow --no-folding "$pkg"
     else
