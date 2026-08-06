@@ -7,6 +7,7 @@ GNU Stow-based dotfiles for macOS (with Linux support for the CLI packages). Eac
 | Package | What it configures |
 |---------|--------------------|
 | alacritty | Alacritty terminal |
+| aws | AWS CLI profiles and Identity Center session |
 | cargo | Cargo (Rust) |
 | claude | Claude Code settings and permissions |
 | codex | Codex global instructions, portable defaults, and core plugins |
@@ -41,6 +42,8 @@ cd ~/.dotfiles
 ```
 
 `bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, gh, starship, mise, and Claude Code). On macOS it also installs the Coder CLI and brew casks. It then stows all packages, configures git hooks, and authorizes tailnet SSH between machines. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, teams-link, vscode, wallpapers) are skipped on Linux.
+
+The `aws` package tracks only `~/.aws/config`. Credentials and the Identity Center token cache stay host-local and untracked, so bootstrap stows this package without folding, like `codex`. Account IDs mirror the infra repo's `data/accounts.json`, which is their source of truth.
 
 Codex portable defaults live in `codex/system/config.toml` and bootstrap installs them as `/etc/codex/config.toml`. Codex owns `~/.codex/config.toml` as host-local mutable state for project trust, UI preferences, local runtimes, connectors, and plugin metadata; dotfiles never links or edits it. Bootstrap updates the AWS and Tractorbeam plugin marketplaces, removes Tractorbeam plugins absent from `codex/system/plugins.txt`, and installs every plugin listed there for the ChatGPT desktop app and Codex CLI.
 
