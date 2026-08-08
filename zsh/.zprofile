@@ -1,7 +1,15 @@
 source ~/.orbstack/shell/init.zsh 2>/dev/null || :
 
-# macOS: load Keychain identities only for local login shells. Incoming SSH
-# sessions use the source agent when the tailnet host permits forwarding.
+# Local macOS shells use launchd's current agent; incoming SSH sessions keep
+# their forwarded agent.
 if [[ "$OSTYPE" == darwin* && -z "${SSH_CONNECTION:-}" ]]; then
-  ssh-add --apple-load-keychain --apple-use-keychain 2>/dev/null
+  if [[ ! -S "${SSH_AUTH_SOCK:-}" ]]; then
+    SSH_AUTH_SOCK=$(
+      launchctl print "gui/$UID/com.openssh.ssh-agent" 2>/dev/null |
+        awk '$1 == "SSH_AUTH_SOCK" && $2 == "=>" { print $3; exit }'
+    )
+    export SSH_AUTH_SOCK
+  fi
+
+  ssh-add --apple-load-keychain 2>/dev/null
 fi
