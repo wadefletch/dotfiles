@@ -8,6 +8,15 @@
 	<array>
 		<string>/Users/wadefletcher/.local/bin/nightly-maintenance.sh</string>
 	</array>
+	<key>WorkingDirectory</key>
+	<string>/Users/wadefletcher</string>
+	<key>EnvironmentVariables</key>
+	<dict>
+		<key>NIGHTLY_MAINTENANCE_MIN_FREE_GIB</key>
+		<string>150</string>
+		<key>TMPDIR</key>
+		<string>/tmp</string>
+	</dict>
 	<key>StartCalendarInterval</key>
 	<dict>
 		<key>Hour</key>
