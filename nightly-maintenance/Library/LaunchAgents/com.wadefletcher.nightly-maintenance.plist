@@ -8,6 +8,8 @@
 	<array>
 		<string>/Users/wadefletcher/.local/bin/nightly-maintenance.sh</string>
 	</array>
+	<key>WorkingDirectory</key>
+	<string>/Users/wadefletcher</string>
 	<key>StartCalendarInterval</key>
 	<dict>
 		<key>Hour</key>

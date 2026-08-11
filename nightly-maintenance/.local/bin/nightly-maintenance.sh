@@ -1,71 +1,235 @@
 #!/bin/zsh
 # Nightly macOS maintenance script
 
-# launchd starts us with a bare PATH; put mise shims, pnpm globals, Homebrew,
-# and the cargo bindir up front so every maintenance command resolves.
+setopt pipe_fail
+
+# Schedulers provide a minimal PATH, so set tool and temporary paths explicitly.
 export PNPM_HOME="$HOME/Library/pnpm"
 export PATH="$HOME/.local/share/mise/shims:$PNPM_HOME/bin:$PNPM_HOME:/opt/homebrew/bin:$HOME/.cargo/bin:$PATH"
+export TMPDIR="${TMPDIR:-/tmp}"
 
 LOG=/tmp/nightly-maintenance.log
+LOG_MAX_BYTES=10485760
 CARGO_SWEEP="$HOME/.cargo/bin/cargo-sweep"
 DEVELOPER="$HOME/Developer"
+CODEX_WORKTREES="$HOME/.codex/worktrees"
 CONSTELLATION="$DEVELOPER/Tractorbeam/constellation"
+DATA_VOLUME=/System/Volumes/Data
+MIN_FREE_GIB=150
 
-echo "=== Nightly Maintenance: $(date) ===" >> "$LOG"
+mkdir -p "$TMPDIR" || exit 1
+cd "$HOME" || exit 1
+if [[ -f "$LOG" ]]; then
+	log_size="$(stat -f %z "$LOG" 2>/dev/null)"
+	if [[ "$log_size" == <-> ]] && (( log_size > LOG_MAX_BYTES )); then
+		mv -f -- "$LOG" "$LOG.1" || exit 1
+	fi
+fi
+exec >> "$LOG" 2>&1
 
-# Homebrew update and cleanup
-echo "Updating Homebrew..." >> "$LOG"
-brew update >> "$LOG" 2>&1
-brew upgrade >> "$LOG" 2>&1
-brew cleanup --prune=all >> "$LOG" 2>&1
+integer failures=0
+typeset -A active_worktrees
 
-# Remove installed tool versions that no tracked mise config or tool stub needs.
-echo "Pruning unused mise tool versions..." >> "$LOG"
-if command -v mise >/dev/null 2>&1; then
-  mise prune --tools --yes >> "$LOG" 2>&1
+run_step() {
+	local label="$1"
+	shift
+
+	echo "$label"
+	"$@"
+	local step_status=$?
+	if (( step_status != 0 )); then
+		echo "  FAILED ($step_status): $label"
+		(( failures += 1 ))
+	fi
+	return 0
+}
+
+measure_available_kib() {
+	local value
+	value="$(df -k "$DATA_VOLUME" | awk 'NR == 2 { print $4 }')"
+	local measure_status=$?
+	if (( measure_status != 0 )) || [[ "$value" != <-> ]]; then
+		echo "Unable to measure available space on $DATA_VOLUME" >&2
+		return 1
+	fi
+	print -r -- "$value"
+}
+
+format_gib() {
+	awk -v kib="$1" 'BEGIN { printf "%.1f GiB", kib / 1024 / 1024 }'
+}
+
+worktree_is_active() {
+	local scope="${1:A}"
+	if [[ "${active_worktrees[$scope]}" == 1 ]]; then
+		return 0
+	fi
+
+	if ! command -v lsof >/dev/null 2>&1; then
+		echo "  unable to inspect open files; treating $scope as active"
+		active_worktrees[$scope]=1
+		return 0
+	fi
+
+	local output
+	output="$(lsof -n -t -a +D "$scope" 2>&1)"
+	local result=$?
+	if [[ -n "$output" ]]; then
+		if [[ "$output" != <->* ]]; then
+			echo "  unable to inspect $scope; treating it as active: $output"
+		fi
+		active_worktrees[$scope]=1
+		return 0
+	elif (( result != 1 )); then
+		echo "  unable to inspect $scope; treating it as active (lsof exited $result)"
+		active_worktrees[$scope]=1
+		return 0
+	fi
+
+	return 1
+}
+
+run_if_available() {
+	local tool="$1"
+	shift
+	if ! command -v "$tool" >/dev/null 2>&1; then
+		echo "  $tool not on PATH, skipping"
+		return 0
+	fi
+	"$@"
+}
+
+update_fleetctl() {
+	if ! command -v pnpm >/dev/null 2>&1; then
+		echo "  pnpm not on PATH, skipping fleetctl update"
+		return 0
+	fi
+
+	mkdir -p "$PNPM_HOME/bin" || return
+	pnpm add --global fleetctl@latest || return
+	"$PNPM_HOME/bin/fleetctl" --version
+}
+
+clean_merged_constellation_targets() {
+	[[ -d "$CONSTELLATION" ]] || return 0
+
+	git -C "$CONSTELLATION" fetch --quiet origin main || return
+
+	local -a worktrees
+	worktrees=("${(@f)$(git -C "$CONSTELLATION" worktree list --porcelain | awk '/^worktree / { print substr($0, 10) }')}")
+
+	local worktree branch target
+	integer cleanup_failed=0
+	for worktree in "${worktrees[@]}"; do
+		target="$worktree/target"
+		[[ -d "$target" ]] || continue
+
+		branch="$(git -C "$worktree" symbolic-ref --quiet --short HEAD 2>/dev/null)"
+		[[ -n "$branch" && "$branch" != main ]] || continue
+
+		if worktree_is_active "$worktree"; then
+			echo "  active: skipping $target"
+			continue
+		fi
+
+		if [[ "$(git -C "$CONSTELLATION" rev-list --count "origin/main..$branch" 2>/dev/null)" == 0 ]]; then
+			echo "  merged: removing $target"
+			rm -rf -- "$target" || cleanup_failed=1
+		fi
+	done
+
+	return cleanup_failed
+}
+
+sweep_inactive_rust_targets() {
+	if [[ ! -x "$CARGO_SWEEP" ]]; then
+		echo "  cargo-sweep not installed at $CARGO_SWEEP"
+		return 127
+	fi
+
+	local -a search_roots targets
+	[[ -d "$DEVELOPER" ]] && search_roots+=("$DEVELOPER")
+	[[ -d "$CODEX_WORKTREES" ]] && search_roots+=("$CODEX_WORKTREES")
+	(( ${#search_roots} > 0 )) || return 0
+
+	# Find target directories directly so each repository can be skipped when it
+	# has an open file or cwd. Ignore trees that cannot contain Cargo projects.
+	local target_output
+	target_output="$(find "${search_roots[@]}" -type d \( \
+		-name .git -o \
+		-name .pnpm-store -o \
+		-name .terraform -o \
+		-name .terraform-plugin-cache -o \
+		-name .venv -o \
+		-name node_modules -o \
+		-name vendor \
+	\) -prune -o -type d -name target -print -prune)"
+	local find_status=$?
+	(( find_status == 0 )) || return "$find_status"
+	targets=("${(@f)target_output}")
+
+	local target project scope
+	integer sweep_failed=0
+	for target in "${targets[@]}"; do
+		[[ -n "$target" ]] || continue
+		project="${target:h}"
+		[[ -f "$project/Cargo.toml" ]] || continue
+
+		scope="$(git -C "$project" rev-parse --show-toplevel 2>/dev/null)"
+		[[ -n "$scope" ]] || scope="$project"
+		if worktree_is_active "$scope"; then
+			echo "  active: skipping $target"
+			continue
+		fi
+
+		echo "  sweeping artifacts unused for 14 days: $target"
+		"$CARGO_SWEEP" sweep --time 14 "$project" || sweep_failed=1
+	done
+
+	return sweep_failed
+}
+
+echo "=== Nightly Maintenance: $(date) ==="
+
+start_kib="$(measure_available_kib)" || exit 1
+integer start_kib
+integer threshold_kib=$(( MIN_FREE_GIB * 1024 * 1024 ))
+echo "Starting disk space: $(format_gib "$start_kib") available"
+
+run_step "Updating Homebrew..." brew update
+run_step "Upgrading Homebrew packages..." brew upgrade
+run_step "Cleaning Homebrew caches..." brew cleanup --prune=all
+run_step "Pruning unused mise tool versions..." run_if_available mise mise prune --tools --yes
+run_step "Updating fleetctl..." update_fleetctl
+
+if cleanup_kib="$(measure_available_kib)"; then
+	integer cleanup_kib
+	if (( cleanup_kib < threshold_kib )); then
+		echo "Disk cleanup enabled: $(format_gib "$cleanup_kib") is below ${MIN_FREE_GIB} GiB"
+		run_step "Pruning pnpm store..." run_if_available pnpm pnpm store prune
+		run_step "Pruning uv cache..." run_if_available uv uv cache prune
+		run_step "Reclaiming merged constellation worktree targets..." clean_merged_constellation_targets
+		run_step "Sweeping inactive Rust targets..." sweep_inactive_rust_targets
+	else
+		echo "Disk cleanup skipped: $(format_gib "$cleanup_kib") meets the ${MIN_FREE_GIB} GiB threshold"
+	fi
 else
-  echo "mise not on PATH, skipping tool prune" >> "$LOG"
+	echo "Disk cleanup skipped because available space could not be measured"
+	(( failures += 1 ))
 fi
 
-# Keep Fleet's CLI current, then prune pnpm's store. pnpm is mise-managed;
-# skip both cleanly if its global shim is unavailable.
-echo "Updating fleetctl..." >> "$LOG"
-if command -v pnpm >/dev/null 2>&1; then
-  mkdir -p "$PNPM_HOME/bin"
-  pnpm add --global fleetctl@latest >> "$LOG" 2>&1
-  "$PNPM_HOME/bin/fleetctl" --version >> "$LOG" 2>&1
-  echo "Pruning pnpm store..." >> "$LOG"
-  pnpm store prune >> "$LOG" 2>&1
+if after_kib="$(measure_available_kib)"; then
+	integer after_kib
+	integer reclaimed_kib=$(( after_kib - start_kib ))
+	echo "Final disk space: $(format_gib "$after_kib") available"
+	echo "Net disk change: $(format_gib "$reclaimed_kib")"
 else
-  echo "pnpm not on PATH, skipping fleetctl update and store prune" >> "$LOG"
+	(( failures += 1 ))
 fi
 
-# Drop the rust/target of any constellation worktree whose branch is fully
-# merged into main. Two-dot `origin/main..<branch>` is empty only when the
-# branch carries nothing main lacks; squash-merges past which main has moved
-# read as non-empty, so this never deletes an unmerged worktree's artifacts
-# (the time-based sweep below reclaims those).
-echo "Reclaiming merged constellation worktree targets..." >> "$LOG"
-if [ -d "$CONSTELLATION" ]; then
-  (
-    cd "$CONSTELLATION" || exit 0
-    git fetch --quiet origin main 2>/dev/null
-    git worktree list --porcelain | awk '/^worktree /{print $2}' | while read -r wt; do
-      [ -d "$wt/rust/target" ] || continue
-      br=$(git -C "$wt" rev-parse --abbrev-ref HEAD 2>/dev/null)
-      { [ -z "$br" ] || [ "$br" = "main" ]; } && continue
-      if [ -z "$(git -C "$wt" diff --name-only "origin/main..$br" 2>/dev/null)" ]; then
-        echo "  merged: removing $wt/rust/target" >> "$LOG"
-        rm -rf "$wt/rust/target"
-      fi
-    done
-  )
+if (( failures > 0 )); then
+	echo "=== Maintenance completed with $failures failed step(s) ==="
+	exit 1
 fi
 
-# Sweep rust artifacts unused for 14 days across every project under Developer.
-# --hidden is load-bearing: worktrees live under .claude/worktrees, and the
-# recursive walk skips dot-directories without it.
-echo "Running cargo sweep..." >> "$LOG"
-"$CARGO_SWEEP" sweep --time 14 --recursive --hidden "$DEVELOPER" >> "$LOG" 2>&1
-
-echo "=== Maintenance complete ===" >> "$LOG"
+echo "=== Maintenance complete ==="
