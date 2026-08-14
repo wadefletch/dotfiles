@@ -59,6 +59,10 @@ fi
 alias zshrc="${EDITOR:-vi} ~/.dotfiles/zsh/.zshrc"
 alias ghosttyrc="${EDITOR:-vi} ~/.dotfiles/ghostty/.config/ghostty/config"
 alias nvimconf="${EDITOR:-vi} ~/.dotfiles/nvim/.config/nvim/"
+
+# Aliases - AWS
+alias aws-login="aws sso login --sso-session tractorbeam"
+
 # Aliases - directories
 alias cdd="cd ~/.dotfiles"
 alias cdcm="cd ~/Developer/Tractorbeam/client-carlyle/carlyle-monorepo"
