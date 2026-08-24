@@ -289,19 +289,7 @@
     ]
   },
   "model": "opus[1m]",
-  "hooks": {
-    "SubagentStart": [
-      {
-        "matcher": "tldraw-offline",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "if [ -f \"$HOME/skills/tldraw-offline/inject-server-context.sh\" ]; then sh \"$HOME/skills/tldraw-offline/inject-server-context.sh\" SubagentStart; fi"
-          }
-        ]
-      }
-    ]
-  },
+  "hooks": {},
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh"
