@@ -1,13 +1,14 @@
 #!/bin/sh
 set -eu
 
-private_key_path=${OKTA_PRIVATE_KEY_PATH:-"$HOME/.tractorbeam-readonly/okta/private-key.pem"}
-if [ ! -r "$private_key_path" ]; then
-  printf 'Okta MCP private key is not readable: %s\n' "$private_key_path" >&2
+service=${OKTA_MCP_KEYCHAIN_SERVICE:-"okta-mcp-private-key"}
+private_key_base64=$(/usr/bin/security find-generic-password -a "$USER" -s "$service" -w 2>/dev/null) || {
+  printf 'Okta MCP private key is not available in Keychain service %s\n' "$service" >&2
   exit 1
-fi
+}
 
-private_key=$(sed -n '1,$p' "$private_key_path")
+private_key=$(printf '%s' "$private_key_base64" | base64 --decode)
+unset private_key_base64
 
 exec env \
   OKTA_ORG_URL="https://tractorbeam.okta.com" \

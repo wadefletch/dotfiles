@@ -44,14 +44,37 @@ cd ~/.dotfiles
 
 Codex portable defaults live in `codex/system/config.toml` and bootstrap installs them as `/etc/codex/config.toml`. Codex owns `~/.codex/config.toml` as host-local mutable state for project trust, UI preferences, local runtimes, connectors, and plugin metadata; dotfiles never links or edits it. Bootstrap updates the AWS and Tractorbeam plugin marketplaces, removes Tractorbeam plugins absent from `codex/system/plugins.txt`, and installs every plugin listed there for the ChatGPT desktop app and Codex CLI.
 
-Tractorbeam read-only service credentials live under
-`~/.tractorbeam-readonly`, which bootstrap creates without populating. The
-`fleetctl-readonly` launcher uses the API-only Observer config at
-`~/.tractorbeam-readonly/fleet/config`; it never falls back to the ordinary
-`~/.fleet/config`. The `codex-okta-mcp` launcher reads the Okta service app's
-private key from `~/.tractorbeam-readonly/okta/private-key.pem` and exposes only
-the app's read-scoped tools. Both credential files are host-local, mode 0600,
-and never stowed.
+Tractorbeam read-only service credentials live in the macOS login Keychain. The
+`fleetctl-readonly` launcher reads the API-only Observer token from the
+`fleet-observer-api-token` service and builds a mode-0600 disposable Fleet
+config for each invocation; it never reads the ordinary `~/.fleet/config`. The
+`codex-okta-mcp` launcher reads the base64-encoded Okta service app private key
+from the `okta-mcp-private-key` service and exposes only the app's read-scoped
+tools. Credential values are host-local and never stowed.
+
+Add the Fleet token interactively so it does not enter shell history:
+
+```sh
+security add-generic-password \
+  -a "$USER" \
+  -s fleet-observer-api-token \
+  -U \
+  -w
+```
+
+Store the Okta PEM as one base64-encoded Keychain password. The value passed to
+`security` is briefly present in that process's arguments, so perform this once
+from a trusted local terminal and clear the shell variable immediately:
+
+```sh
+private_key_base64=$(base64 < /path/to/okta-mcp-private-key.pem | tr -d '\n')
+security add-generic-password \
+  -a "$USER" \
+  -s okta-mcp-private-key \
+  -U \
+  -w "$private_key_base64"
+unset private_key_base64
+```
 
 Register Okta in the host-local `~/.codex/config.toml`; this is a local runtime,
 not a portable default:

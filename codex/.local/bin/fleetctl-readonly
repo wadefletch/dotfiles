@@ -1,7 +1,20 @@
 #!/bin/sh
 set -eu
 
-config=${FLEETCTL_READONLY_CONFIG:-"$HOME/.tractorbeam-readonly/fleet/config"}
-export CONFIG="$config"
+service=${FLEETCTL_READONLY_KEYCHAIN_SERVICE:-"fleet-observer-api-token"}
+token=$(/usr/bin/security find-generic-password -a "$USER" -s "$service" -w 2>/dev/null) || {
+  printf 'Fleet Observer token is not available in Keychain service %s\n' "$service" >&2
+  exit 1
+}
 
-exec fleetctl "$@"
+config=$(mktemp "${TMPDIR:-/tmp}/fleetctl-readonly.XXXXXX")
+chmod 600 "$config"
+trap 'rm -f "$config"' EXIT HUP INT TERM
+
+CONFIG="$config" fleetctl config set \
+  --address https://fleet.tractorbeam.tools \
+  --token "$token" \
+  >/dev/null
+unset token
+
+CONFIG="$config" fleetctl "$@"
