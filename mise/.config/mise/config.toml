@@ -1,6 +1,7 @@
 [tools]
 bun = "latest"
 node = "24"
+"npm:fleetctl" = "4.89.2"
 pnpm = "latest"
 python = "3.13"
 uv = "latest"

@@ -40,14 +40,15 @@ cd ~/.dotfiles
 ./bootstrap.sh
 ```
 
-`bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, gh, starship, mise, and Claude Code). On macOS it also installs the Coder CLI and brew casks. It then stows all packages, configures git hooks, and authorizes tailnet SSH between machines. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, teams-link, vscode, wallpapers) are skipped on Linux.
+`bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, gh, starship, mise, and Claude Code). On macOS it also installs the Coder CLI and brew casks. It then stows all packages, installs the locked Mise toolset (including the Fleetctl version matching the Fleet server), configures git hooks, and authorizes tailnet SSH between machines. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, teams-link, vscode, wallpapers) are skipped on Linux.
 
 Codex portable defaults live in `codex/system/config.toml` and bootstrap installs them as `/etc/codex/config.toml`. Codex owns `~/.codex/config.toml` as host-local mutable state for project trust, UI preferences, local runtimes, connectors, and plugin metadata; dotfiles never links or edits it. Bootstrap updates the AWS and Tractorbeam plugin marketplaces, removes Tractorbeam plugins absent from `codex/system/plugins.txt`, and installs every plugin listed there for the ChatGPT desktop app and Codex CLI.
 
 Tractorbeam read-only service credentials live in the macOS login Keychain. The
 `fleetctl-readonly` launcher reads the API-only Observer token from the
-`fleet-observer-api-token` service and builds a mode-0600 disposable Fleet
-config for each invocation; it never reads the ordinary `~/.fleet/config`. The
+`fleet-observer-api-token` service and builds a mode-0700 disposable runtime
+directory for each invocation, containing both Fleet configuration and Mise
+state; it never reads the ordinary `~/.fleet/config`. The
 `codex-okta-mcp` launcher reads the base64-encoded Okta service app private key
 from the `okta-mcp-private-key` service and exposes only the app's read-scoped
 tools. The upstream server's OAuth access-token cache is redirected away from
