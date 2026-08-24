@@ -148,28 +148,6 @@ install_coder() {
   ok "coder"
 }
 
-install_fleetctl() {
-  if ! command -v pnpm &>/dev/null; then
-    warn "pnpm not found; skipping fleetctl"
-    return
-  fi
-
-  if [[ -z "${PNPM_HOME:-}" ]]; then
-    case "$OS" in
-    Darwin) export PNPM_HOME="$HOME/Library/pnpm" ;;
-    Linux) export PNPM_HOME="$HOME/.local/share/pnpm" ;;
-    esac
-  fi
-
-  mkdir -p "$PNPM_HOME/bin"
-  export PATH="$PNPM_HOME/bin:$PNPM_HOME:$PATH"
-
-  info "installing latest fleetctl"
-  pnpm add --global fleetctl@latest
-  "$PNPM_HOME/bin/fleetctl" --version >/dev/null
-  ok "fleetctl"
-}
-
 # --- Install dependencies ----------------------------------------------------
 
 install_deps() {
@@ -489,8 +467,6 @@ main() {
     mise install
     ok "mise tools"
   fi
-
-  install_fleetctl
 
   install_teams_link_handler
 

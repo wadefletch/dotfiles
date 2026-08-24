@@ -99,17 +99,6 @@ run_if_available() {
 	"$@"
 }
 
-update_fleetctl() {
-	if ! command -v pnpm >/dev/null 2>&1; then
-		echo "  pnpm not on PATH, skipping fleetctl update"
-		return 0
-	fi
-
-	mkdir -p "$PNPM_HOME/bin" || return
-	pnpm add --global fleetctl@latest || return
-	"$PNPM_HOME/bin/fleetctl" --version
-}
-
 clean_merged_constellation_targets() {
 	[[ -d "$CONSTELLATION" ]] || return 0
 
@@ -200,8 +189,6 @@ run_step "Updating Homebrew..." brew update
 run_step "Upgrading Homebrew packages..." brew upgrade
 run_step "Cleaning Homebrew caches..." brew cleanup --prune=all
 run_step "Pruning unused mise tool versions..." run_if_available mise mise prune --tools --yes
-run_step "Updating fleetctl..." update_fleetctl
-
 if cleanup_kib="$(measure_available_kib)"; then
 	integer cleanup_kib
 	if (( cleanup_kib < threshold_kib )); then
