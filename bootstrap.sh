@@ -170,6 +170,14 @@ install_fleetctl() {
   ok "fleetctl"
 }
 
+prepare_tractorbeam_readonly_credentials() {
+  install -d -m 700 \
+    "$HOME/.tractorbeam-readonly" \
+    "$HOME/.tractorbeam-readonly/fleet" \
+    "$HOME/.tractorbeam-readonly/okta"
+  ok "Tractorbeam read-only credential directories"
+}
+
 # --- Install dependencies ----------------------------------------------------
 
 install_deps() {
@@ -491,6 +499,7 @@ main() {
   fi
 
   install_fleetctl
+  prepare_tractorbeam_readonly_credentials
 
   install_teams_link_handler
 

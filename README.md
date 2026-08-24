@@ -44,6 +44,27 @@ cd ~/.dotfiles
 
 Codex portable defaults live in `codex/system/config.toml` and bootstrap installs them as `/etc/codex/config.toml`. Codex owns `~/.codex/config.toml` as host-local mutable state for project trust, UI preferences, local runtimes, connectors, and plugin metadata; dotfiles never links or edits it. Bootstrap updates the AWS and Tractorbeam plugin marketplaces, removes Tractorbeam plugins absent from `codex/system/plugins.txt`, and installs every plugin listed there for the ChatGPT desktop app and Codex CLI.
 
+Tractorbeam read-only service credentials live under
+`~/.tractorbeam-readonly`, which bootstrap creates without populating. The
+`fleetctl-readonly` launcher uses the API-only Observer config at
+`~/.tractorbeam-readonly/fleet/config`; it never falls back to the ordinary
+`~/.fleet/config`. The `codex-okta-mcp` launcher reads the Okta service app's
+private key from `~/.tractorbeam-readonly/okta/private-key.pem` and exposes only
+the app's read-scoped tools. Both credential files are host-local, mode 0600,
+and never stowed.
+
+Register Okta in the host-local `~/.codex/config.toml`; this is a local runtime,
+not a portable default:
+
+```toml
+[mcp_servers.okta]
+command = "codex-okta-mcp"
+args = []
+default_tools_approval_mode = "approve"
+startup_timeout_sec = 60
+tool_timeout_sec = 60
+```
+
 To stow manually:
 
 ```sh

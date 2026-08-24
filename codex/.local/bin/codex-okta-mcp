@@ -1,0 +1,18 @@
+#!/bin/sh
+set -eu
+
+private_key_path=${OKTA_PRIVATE_KEY_PATH:-"$HOME/.tractorbeam-readonly/okta/private-key.pem"}
+if [ ! -r "$private_key_path" ]; then
+  printf 'Okta MCP private key is not readable: %s\n' "$private_key_path" >&2
+  exit 1
+fi
+
+private_key=$(sed -n '1,$p' "$private_key_path")
+
+exec env \
+  OKTA_ORG_URL="https://tractorbeam.okta.com" \
+  OKTA_CLIENT_ID="0oa24z4t2hwpAJhv31d8" \
+  OKTA_SCOPES="okta.apps.read okta.brands.read okta.deviceAssurance.read okta.devices.read okta.domains.read okta.emailDomains.read okta.groups.read okta.logs.read okta.policies.read okta.templates.read okta.users.read" \
+  OKTA_PRIVATE_KEY="$private_key" \
+  OKTA_KEY_ID="okta-mcp-1" \
+  uvx --python 3.13 okta-mcp-server@1.1.2

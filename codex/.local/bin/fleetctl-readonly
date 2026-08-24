@@ -1,0 +1,7 @@
+#!/bin/sh
+set -eu
+
+config=${FLEETCTL_READONLY_CONFIG:-"$HOME/.tractorbeam-readonly/fleet/config"}
+export CONFIG="$config"
+
+exec fleetctl "$@"
