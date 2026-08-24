@@ -50,7 +50,10 @@ Tractorbeam read-only service credentials live in the macOS login Keychain. The
 config for each invocation; it never reads the ordinary `~/.fleet/config`. The
 `codex-okta-mcp` launcher reads the base64-encoded Okta service app private key
 from the `okta-mcp-private-key` service and exposes only the app's read-scoped
-tools. Credential values are host-local and never stowed.
+tools. The upstream server's OAuth access-token cache is redirected away from
+the macOS Keychain into a mode-0600 disposable file that the launcher removes
+on exit, avoiding Python Keychain authorization prompts. Credential values are
+host-local and never stowed.
 
 Add the Fleet token interactively so it does not enter shell history:
 

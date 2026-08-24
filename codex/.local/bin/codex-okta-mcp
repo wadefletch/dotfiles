@@ -10,10 +10,24 @@ private_key_base64=$(/usr/bin/security find-generic-password -a "$USER" -s "$ser
 private_key=$(printf '%s' "$private_key_base64" | base64 --decode)
 unset private_key_base64
 
-exec env \
+umask 077
+keyring_parent=${TMPDIR:-/tmp}
+keyring_root=$(mktemp -d "${keyring_parent%/}/codex-okta-mcp.XXXXXX")
+cleanup() {
+  rm -rf -- "$keyring_root"
+}
+trap cleanup 0
+trap 'exit 129' 1
+trap 'exit 130' 2
+trap 'exit 143' 15
+
+env \
   OKTA_ORG_URL="https://tractorbeam.okta.com" \
   OKTA_CLIENT_ID="0oa24z4t2hwpAJhv31d8" \
   OKTA_SCOPES="okta.apps.read okta.brands.read okta.deviceAssurance.read okta.devices.read okta.domains.read okta.emailDomains.read okta.groups.read okta.logs.read okta.policies.read okta.templates.read okta.users.read" \
   OKTA_PRIVATE_KEY="$private_key" \
   OKTA_KEY_ID="okta-mcp-1" \
+  PYTHON_KEYRING_BACKEND="keyrings.alt.file.PlaintextKeyring" \
+  XDG_CONFIG_HOME="$keyring_root" \
+  XDG_DATA_HOME="$keyring_root" \
   uvx --python 3.13 okta-mcp-server@1.1.2
