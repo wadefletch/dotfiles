@@ -46,9 +46,8 @@ Codex portable defaults live in `codex/system/config.toml` and bootstrap install
 
 Tractorbeam read-only service credentials live in the macOS login Keychain. The
 `fleetctl-readonly` launcher reads the API-only Observer token from the
-`fleet-observer-api-token` service and builds a mode-0700 disposable runtime
-directory for each invocation, containing both Fleet configuration and Mise
-state; it never reads the ordinary `~/.fleet/config`. The
+`fleet-observer-api-token` service and builds a mode-0600 disposable Fleet
+config for each invocation; it never reads the ordinary `~/.fleet/config`. The
 `codex-okta-mcp` launcher reads the base64-encoded Okta service app private key
 from the `okta-mcp-private-key` service and exposes only the app's read-scoped
 tools. The upstream server's OAuth access-token cache is redirected away from
