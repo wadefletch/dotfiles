@@ -8,3 +8,9 @@ obsidian-web-clipper-settings.json
 
 # Machine-local: pins per-machine plugin versions/cache paths, churns on autoUpdate
 factory/.factory/plugins/installed_plugins.json
+
+# AWS credentials and the SSO token cache. Only aws/.aws/config is tracked;
+# these are listed so a stray copy into the package can never be committed.
+aws/.aws/credentials
+aws/.aws/sso/
+aws/.aws/cli/

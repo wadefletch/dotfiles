@@ -10,6 +10,7 @@ GNU Stow-based dotfiles for macOS. Each top-level directory is a stow package mi
   Library/...       # macOS paths (cursor/, vscode/, nightly-maintenance/)
   .claude/          # claude code settings (claude/)
   .cargo/, .docker/ # tool config (cargo/, docker/)
+  .aws/config       # aws cli profiles (aws/) — credentials and SSO cache untracked
 .githooks/          # git hooks (core.hooksPath); post-merge updates submodules
 .claude/skills/     # repo-committed Claude Code skills (deploy — roll main out to all machines)
 .retired/           # reference-only packages (yabai, skhd-zig); dot-dirs aren't stowed
@@ -27,3 +28,4 @@ bootstrap.sh        # installs deps, stows packages, git hooks, tailnet ssh, mac
 - XDG paths (`.config/`) where the app supports it, macOS `Library/` paths otherwise.
 - Every top-level directory is a stow package.
 - The `claude/` package has a `.stow-local-ignore` — check it before adding files.
+- Packages listed in `bootstrap.sh`'s `NO_FOLDING` (`aws`, `codex`) target directories that also hold host-local state; stow links their files individually so the directory itself is never replaced.
