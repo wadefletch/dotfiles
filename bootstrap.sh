@@ -358,6 +358,32 @@ install_codex_system_config() {
   ok "codex portable defaults"
 }
 
+remove_retired_codex_approvals() {
+  local replacement
+  local rules="$HOME/.codex/rules/default.rules"
+  local retired_rule='prefix_rule(pattern=["npx", "--yes", "ctx7@latest"], decision="allow")'
+  local status=0
+
+  [[ -f "$rules" ]] || return
+  [[ -r "$rules" ]] || fail "codex rules are not readable: $rules"
+
+  if ! grep -Fxq -- "$retired_rule" "$rules"; then
+    ok "codex approvals already current"
+    return
+  fi
+
+  info "removing retired codex approval"
+  replacement="$(mktemp "${rules}.XXXXXX")"
+  cp -p "$rules" "$replacement"
+  grep -Fvx -- "$retired_rule" "$rules" >"$replacement" || status=$?
+  if ((status > 1)); then
+    rm -f -- "$replacement"
+    fail "unable to filter retired codex approvals"
+  fi
+  mv -- "$replacement" "$rules"
+  ok "codex approvals"
+}
+
 reconcile_codex_plugins() {
   local config="$HOME/.codex/config.toml"
   local plugin
@@ -455,6 +481,7 @@ main() {
 
   install_deps
   install_codex_system_config
+  remove_retired_codex_approvals
   stow_packages
   install_claude_ssh_host_keys
   reconcile_codex_plugins
