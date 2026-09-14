@@ -12,7 +12,7 @@ Roll merged `main` out to every machine: pull, restow what changed, restart the 
 | Machine | Hostname        | How to reach                          |
 | ------- | --------------- | ------------------------------------- |
 | arrakis | `Arrakis.local` | local, or `ssh arrakis` over Cloudflare WARP |
-| corrino | `Corrino-2.local` | local, or `ssh corrino` over Cloudflare WARP |
+| corrino | `Corrino.local` | local, or `ssh corrino` over Cloudflare WARP |
 
 Both are macOS. Run `hostname` to learn which machine you're on: deploy there directly, and reach the others with `ssh -o BatchMode=yes <host> '<commands>'` (WARP DNS search suffix `private.tractorbeam.tools` plus pinned host keys). Non-interactive SSH still sources `~/.zshenv`, so brew binaries (`stow`, `duti`) are on PATH; if one isn't found, use `/opt/homebrew/bin/<bin>`.
 
