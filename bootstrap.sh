@@ -246,16 +246,13 @@ install_deps() {
     done
 
     # macOS-only brew formulae
-    for formula in duti tailscale; do
-      if command -v "$formula" &>/dev/null ||
-        [[ "$formula" == "tailscale" && -d "/Applications/Tailscale.app" ]]; then
-        ok "$formula already installed"
-      else
-        info "installing $formula"
-        brew install "$formula"
-        ok "$formula"
-      fi
-    done
+    if command -v duti &>/dev/null; then
+      ok "duti already installed"
+    else
+      info "installing duti"
+      brew install duti
+      ok "duti"
+    fi
   fi
 }
 
@@ -324,7 +321,7 @@ stow_packages() (
 
 install_claude_ssh_host_keys() {
   local host_key
-  local source="$DOTFILES/ssh/.ssh/known_hosts.tailnet"
+  local source="$DOTFILES/ssh/.ssh/known_hosts.private"
   local target="$HOME/.ssh/known_hosts"
 
   [[ "$OS" == "Darwin" ]] || return
@@ -339,7 +336,7 @@ install_claude_ssh_host_keys() {
     grep -Fxq "$host_key" "$target" || printf '%s\n' "$host_key" >>"$target"
   done <"$source"
 
-  ok "Claude Desktop tailnet host keys"
+  ok "Claude Desktop SSH host keys"
 }
 
 # --- Codex configuration ----------------------------------------------------
