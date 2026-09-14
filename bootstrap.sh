@@ -324,7 +324,7 @@ stow_packages() (
 
 install_claude_ssh_host_keys() {
   local host_key
-  local source="$DOTFILES/ssh/.ssh/known_hosts.tailnet"
+  local source="$DOTFILES/ssh/.ssh/known_hosts.private"
   local target="$HOME/.ssh/known_hosts"
 
   [[ "$OS" == "Darwin" ]] || return
@@ -339,7 +339,7 @@ install_claude_ssh_host_keys() {
     grep -Fxq "$host_key" "$target" || printf '%s\n' "$host_key" >>"$target"
   done <"$source"
 
-  ok "Claude Desktop tailnet host keys"
+  ok "Claude Desktop SSH host keys"
 }
 
 # --- Codex configuration ----------------------------------------------------
