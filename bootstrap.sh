@@ -305,9 +305,10 @@ stow_packages() (
     # Pin target to $HOME. Stow's default target is the parent of the stow
     # dir, which works when this repo is cloned at ~/dotfiles but not when
     # it's elsewhere.
-    if [[ "$pkg" == "codex" ]]; then
-      # Codex owns mutable host state under ~/.codex. Link individual global
-      # instructions without ever replacing the host-local directory.
+    if [[ "$pkg" == "codex" || "$pkg" == "cursor" ]]; then
+      # Codex owns mutable host state under ~/.codex. Cursor owns mutable host
+      # state under ~/.cursor (projects, plugins, extensions). Link individual
+      # files without ever replacing those host-local directories.
       backup_conflicts "$pkg" --no-folding
       stow -t "$HOME" --restow --no-folding "$pkg"
     else

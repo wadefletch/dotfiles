@@ -11,7 +11,7 @@ GNU Stow-based dotfiles for macOS (with Linux support for the CLI packages). Eac
 | claude | Claude Code settings and permissions |
 | codex | Codex global instructions, portable defaults, and core plugins |
 | crowdcontrol | CrowdControl config |
-| cursor | Cursor editor settings and keybindings |
+| cursor | Cursor editor settings, keybindings, and CLI config |
 | docker | Docker daemon config |
 | duti | Default app associations (macOS) |
 | factory | Factory settings and plugin marketplaces |

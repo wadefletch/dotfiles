@@ -8,6 +8,7 @@ GNU Stow-based dotfiles for macOS. Each top-level directory is a stow package mi
   .zshrc, .zshenv   # shell config (zsh/)
   .ssh/config       # ssh config (ssh/)
   Library/...       # macOS paths (cursor/, vscode/, nightly-maintenance/)
+  .cursor/          # Cursor CLI config (cursor/; --no-folding so ~/.cursor stays host-local)
   .claude/          # claude code settings (claude/)
   .cargo/, .docker/ # tool config (cargo/, docker/)
 .githooks/          # git hooks (core.hooksPath); post-merge updates submodules
