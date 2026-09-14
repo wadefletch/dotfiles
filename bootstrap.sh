@@ -246,13 +246,16 @@ install_deps() {
     done
 
     # macOS-only brew formulae
-    if command -v duti &>/dev/null; then
-      ok "duti already installed"
-    else
-      info "installing duti"
-      brew install duti
-      ok "duti"
-    fi
+    for formula in duti tailscale; do
+      if command -v "$formula" &>/dev/null ||
+        [[ "$formula" == "tailscale" && -d "/Applications/Tailscale.app" ]]; then
+        ok "$formula already installed"
+      else
+        info "installing $formula"
+        brew install "$formula"
+        ok "$formula"
+      fi
+    done
   fi
 }
 
