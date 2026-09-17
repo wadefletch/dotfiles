@@ -1,0 +1,4 @@
+{
+  "name": "Cloud: Dotfiles",
+  "install": "bash codex/.local/bin/install-okta-mcp-tool"
+}

@@ -469,6 +469,10 @@ main() {
     ok "mise tools"
   fi
 
+  info "installing Okta MCP server"
+  "$DOTFILES/codex/.local/bin/install-okta-mcp-tool"
+  ok "Okta MCP server"
+
   install_teams_link_handler
 
   if [[ "$OS" == "Darwin" ]] && command -v duti &>/dev/null; then
