@@ -7,4 +7,9 @@ if ! command -v uv >/dev/null 2>&1; then
   export PATH
 fi
 
-uv tool install --python 3.13 'okta-mcp-server==1.1.2'
+if uv tool list | grep -q '^okta-mcp-server v1\.1\.2$'; then
+  printf '%s\n' 'okta-mcp-server v1.1.2 is already installed'
+  exit 0
+fi
+
+uv tool install --force --python 3.13 'okta-mcp-server==1.1.2'
