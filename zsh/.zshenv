@@ -35,7 +35,7 @@ if [[ -d "$HOME/.bun/bin" ]]; then
   export PATH="$HOME/.bun/bin:$PATH"
 fi
 
-# Path addition required by factory.ai droid
+# User-installed command-line tools
 if [[ -d "$HOME/.local/bin" ]]; then
   export PATH="$HOME/.local/bin:$PATH"
 fi

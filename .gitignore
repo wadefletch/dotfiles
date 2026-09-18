@@ -5,6 +5,3 @@ claude/.claude/memory/
 claude/.claude/references/
 superwhisper/Documents/superwhisper/recordings/
 obsidian-web-clipper-settings.json
-
-# Machine-local: pins per-machine plugin versions/cache paths, churns on autoUpdate
-factory/.factory/plugins/installed_plugins.json

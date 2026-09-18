@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "fff": {
+      "command": "fff-mcp",
+      "args": ["--no-update-check"]
+    },
+    "mintlify-index": {
+      "url": "https://index.mintlify.com/mcp"
+    }
+  }
+}

@@ -3,7 +3,6 @@ model_reasoning_effort = "medium"
 approval_policy = "on-request"
 approvals_reviewer = "auto_review"
 sandbox_mode = "workspace-write"
-project_doc_fallback_filenames = ["CLAUDE.md"]
 
 [features]
 multi_agent_v2 = true
@@ -15,3 +14,10 @@ default_subagent_reasoning_effort = "max"
 
 [sandbox_workspace_write]
 network_access = true
+
+[mcp_servers.fff]
+command = "fff-mcp"
+args = ["--no-update-check"]
+
+[mcp_servers.mintlify-index]
+url = "https://index.mintlify.com/mcp"
