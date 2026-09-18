@@ -1,6 +1,11 @@
 #!/bin/sh
 set -eu
 
+if [ "$(uname -s)" != "Darwin" ]; then
+  printf '%s\n' 'codex-okta-mcp requires the macOS login Keychain' >&2
+  exit 1
+fi
+
 service=${OKTA_MCP_KEYCHAIN_SERVICE:-"okta-mcp-private-key"}
 okta_mcp_server=${OKTA_MCP_SERVER_BIN:-"$HOME/.local/bin/okta-mcp-server"}
 

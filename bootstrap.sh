@@ -12,7 +12,7 @@ export PATH="$HOME/.local/bin:$PATH"
 MACOS_ONLY="cursor duti nightly-maintenance teams-link vscode wallpapers"
 
 # CLI packages to install (must exist in brew + apt/dnf/yum/pacman)
-PACKAGES=(git neovim stow zsh eza)
+PACKAGES=(git jq neovim ripgrep stow zsh eza)
 
 # macOS apps and fonts (brew casks)
 CASKS=(cursor ghostty font-symbols-only-nerd-font)
@@ -132,22 +132,6 @@ install_gh() {
   ok "gh"
 }
 
-# Codex desktop discovers Coder workspaces through concrete OpenSSH aliases.
-# Feature detection keeps the CLI new enough to generate those aliases without
-# pinning bootstrap to a release number.
-install_coder() {
-  if command -v coder &>/dev/null &&
-    coder config-ssh --help 2>&1 | grep -q -- "--no-wildcard"; then
-    ok "coder already installed"
-    return
-  fi
-
-  info "installing coder"
-  curl -fsSL https://coder.com/install.sh |
-    sh -s -- --mainline --method standalone --prefix "$HOME/.local"
-  ok "coder"
-}
-
 # --- Install dependencies ----------------------------------------------------
 
 install_deps() {
@@ -174,10 +158,6 @@ install_deps() {
 
   install_gh
 
-  if [[ "$OS" == "Darwin" ]]; then
-    install_coder
-  fi
-
   # starship (curl installer — not reliably packaged across distros)
   if command -v starship &>/dev/null; then
     ok "starship already installed"
@@ -185,9 +165,8 @@ install_deps() {
     info "installing starship"
     # Install into a user-writable bin dir so the upstream installer skips
     # its `sudo -v` priming step. `sudo -v` requires a real password even
-    # under NOPASSWD: ALL (validation has no target command for the rule
-    # to match), and Coder's `coder` user has a locked account, so the
-    # default install path hangs on an unanswerable prompt.
+    # under NOPASSWD: ALL because validation has no target command for the
+    # rule to match.
     mkdir -p "$HOME/.local/bin"
     curl -sS https://starship.rs/install.sh | sh -s -- -y -b "$HOME/.local/bin"
     ok "starship"
@@ -218,7 +197,7 @@ install_deps() {
 
   # Switch login shell to zsh. Stowed config only loads if zsh is the
   # actual login shell, but apt/brew installing zsh doesn't change that.
-  # On Coder workspaces `coder`'s password is locked, so chsh needs sudo.
+  # Linux package installs do not normally change the login shell.
   if command -v zsh &>/dev/null && [[ "${SHELL:-}" != *"/zsh" ]]; then
     zsh_path="$(command -v zsh)"
     if ! grep -qx "$zsh_path" /etc/shells 2>/dev/null; then
@@ -305,10 +284,9 @@ stow_packages() (
     # Pin target to $HOME. Stow's default target is the parent of the stow
     # dir, which works when this repo is cloned at ~/dotfiles but not when
     # it's elsewhere.
-    if [[ "$pkg" == "codex" || "$pkg" == "cursor" ]]; then
-      # Codex owns mutable host state under ~/.codex. Cursor owns mutable host
-      # state under ~/.cursor (projects, plugins, extensions). Link individual
-      # files without ever replacing those host-local directories.
+    if [[ "$pkg" == "agent-config" || "$pkg" == "codex" || "$pkg" == "cursor" ]]; then
+      # Agent harnesses own mutable state alongside the managed files. Link
+      # individual files without ever replacing those host-local directories.
       backup_conflicts "$pkg" --no-folding
       stow -t "$HOME" --restow --no-folding "$pkg"
     else
@@ -319,6 +297,71 @@ stow_packages() (
   done
 
 )
+
+# --- Agent harness configuration -------------------------------------------
+
+# Harnesses write caches, account metadata, and UI preferences into their user
+# settings files. Keep those files host-local and merge portable policy into
+# them instead of symlinking the live files into this repository.
+merge_json_policy() {
+  local policy="$1"
+  local target="$2"
+  local merged
+
+  [[ -r "$policy" ]] || fail "agent policy is not readable: $policy"
+  jq -e 'type == "object"' "$policy" >/dev/null ||
+    fail "agent policy must be a JSON object: $policy"
+
+  install -d -m 0700 "$(dirname "$target")"
+  merged="$(mktemp "${TMPDIR:-/tmp}/agent-settings.XXXXXX")"
+
+  if [[ -r "$target" ]] && jq -e 'type == "object"' "$target" >/dev/null 2>&1; then
+    jq -s '.[0] + .[1]' "$target" "$policy" >"$merged"
+  else
+    jq '.' "$policy" >"$merged"
+  fi
+
+  [[ -L "$target" ]] && rm "$target"
+  install -m 0600 "$merged" "$target"
+  rm -f "$merged"
+}
+
+reconcile_agent_settings() {
+  local policies="$DOTFILES/agent-config/.config/agent-harnesses"
+  local plugins="$policies/plugins.json"
+  local claude_settings="$HOME/.claude/settings.json"
+  local merged
+
+  info "reconciling agent settings"
+  merge_json_policy "$policies/claude-settings.json" "$claude_settings"
+  merge_json_policy "$policies/cursor-cli.json" "$HOME/.cursor/cli-config.json"
+
+  # Plugin enablement is generated from the shared manifest. Replacing the
+  # object also removes stale disabled entries for retired plugins.
+  merged="$(mktemp "${TMPDIR:-/tmp}/claude-settings.XXXXXX")"
+  jq --slurpfile manifest "$plugins" '
+    del(.sshConfigs)
+    | .enabledPlugins = (
+        $manifest[0].plugins
+        | map(select(.harnesses | index("claude")))
+        | map({key: (.name + "@" + .marketplace), value: true})
+        | from_entries
+      )
+  ' "$claude_settings" >"$merged"
+  install -m 0600 "$merged" "$claude_settings"
+  rm -f "$merged"
+
+  # This was previously stowed even though Claude only supports local settings
+  # at project scope. Remove the old managed link without touching an unmanaged
+  # host file.
+  if [[ -L "$HOME/.claude/settings.local.json" ]]; then
+    rm "$HOME/.claude/settings.local.json"
+  elif [[ -e "$HOME/.claude/settings.local.json" ]]; then
+    warn "leaving unmanaged ~/.claude/settings.local.json in place"
+  fi
+
+  ok "agent settings"
+}
 
 # --- SSH host verification --------------------------------------------------
 
@@ -362,14 +405,14 @@ install_codex_system_config() {
 reconcile_codex_plugins() {
   local config="$HOME/.codex/config.toml"
   local plugin
-  local plugins="$DOTFILES/codex/system/plugins.txt"
+  local plugins="$DOTFILES/agent-config/.config/agent-harnesses/plugins.json"
 
   if ! command -v codex &>/dev/null; then
     warn "codex not found; skipping plugin reconciliation"
     return
   fi
 
-  [[ -r "$plugins" ]] || fail "codex plugin list is not readable: $plugins"
+  [[ -r "$plugins" ]] || fail "agent plugin manifest is not readable: $plugins"
 
   info "updating codex plugin marketplaces"
   codex plugin marketplace add https://github.com/tractorbeamai/skills.git
@@ -379,20 +422,99 @@ reconcile_codex_plugins() {
 
   if [[ -f "$config" ]]; then
     while IFS= read -r plugin; do
-      if ! grep -Fxq "$plugin" "$plugins"; then
+      if ! jq -e --arg plugin "$plugin" '
+        any(.plugins[];
+          (.harnesses | index("codex")) and
+          ((.name + "@" + .marketplace) == $plugin)
+        )
+      ' "$plugins" >/dev/null; then
         codex plugin remove "$plugin"
       fi
     done < <(
-      sed -n 's/^\[plugins\."\([^"]*@tractorbeam\)"\]$/\1/p' "$config"
+      sed -nE 's/^\[plugins\."([^"]*@(tractorbeam|agent-toolkit-for-aws))"\]$/\1/p' "$config"
     )
   fi
 
   while IFS= read -r plugin; do
-    [[ -z "$plugin" ]] && continue
     codex plugin add "$plugin"
-  done <"$plugins"
+  done < <(
+    jq -r '.plugins[]
+      | select(.harnesses | index("codex"))
+      | .name + "@" + .marketplace' "$plugins"
+  )
 
   ok "codex plugins"
+}
+
+reconcile_claude_plugins() {
+  local installed
+  local marketplace
+  local marketplaces
+  local plugin
+  local plugins="$DOTFILES/agent-config/.config/agent-harnesses/plugins.json"
+
+  if ! command -v claude &>/dev/null; then
+    warn "claude not found; skipping plugin reconciliation"
+    return
+  fi
+
+  info "reconciling Claude plugins"
+  marketplaces="$(claude plugin marketplace list --json)"
+
+  while IFS=$'\t' read -r marketplace source; do
+    if ! jq -e --arg marketplace "$marketplace" \
+      'any(.[]; .name == $marketplace)' <<<"$marketplaces" >/dev/null; then
+      claude plugin marketplace add "$source"
+    fi
+    claude plugin marketplace update "$marketplace"
+  done < <(
+    jq -r '. as $manifest
+      | [.plugins[] | select(.harnesses | index("claude")) | .marketplace]
+      | unique[] as $marketplace
+      | select($marketplace != "claude-plugins-official")
+      | [$marketplace, $manifest.marketplaces[$marketplace]]
+      | @tsv
+    ' "$plugins"
+  )
+
+  installed="$(claude plugin list --json)"
+
+  # Remove user-scoped plugins from managed marketplaces when they are no
+  # longer present in the desired-state manifest. Project installs are owned by
+  # their repositories and are deliberately left alone.
+  while IFS= read -r plugin; do
+    if ! jq -e --arg plugin "$plugin" '
+      any(.plugins[];
+        (.harnesses | index("claude")) and
+        ((.name + "@" + .marketplace) == $plugin)
+      )
+    ' "$plugins" >/dev/null; then
+      claude plugin uninstall "$plugin" --scope user
+    fi
+  done < <(
+    jq -r --slurpfile manifest "$plugins" '
+      [$manifest[0].marketplaces | keys[]] as $managed
+      | .[]
+      | select(.scope == "user")
+      | select((.id | split("@")[-1]) as $marketplace
+        | $managed | index($marketplace))
+      | .id
+    ' <<<"$installed"
+  )
+
+  while IFS= read -r plugin; do
+    if ! jq -e --arg plugin "$plugin" \
+      'any(.[]; .scope == "user" and .id == $plugin)' \
+      <<<"$installed" >/dev/null; then
+      claude plugin install --scope user --yes "$plugin"
+    fi
+  done < <(
+    jq -r '.plugins[]
+      | select(.harnesses | index("claude"))
+      | .name + "@" + .marketplace' "$plugins"
+  )
+
+  ok "Claude plugins"
 }
 
 # --- Git hooks ---------------------------------------------------------------
@@ -455,10 +577,13 @@ main() {
   fi
 
   install_deps
+  "$DOTFILES/check-agent-config.sh"
   install_codex_system_config
   stow_packages
+  reconcile_agent_settings
   install_claude_ssh_host_keys
   reconcile_codex_plugins
+  reconcile_claude_plugins
   setup_hooks
 
   # Install everything declared in the stowed mise config (node, python, …).
@@ -469,9 +594,13 @@ main() {
     ok "mise tools"
   fi
 
-  info "installing Okta MCP server"
-  "$DOTFILES/codex/.local/bin/install-okta-mcp-tool"
-  ok "Okta MCP server"
+  if [[ "$OS" == "Darwin" ]]; then
+    info "installing Okta MCP server"
+    "$DOTFILES/codex/.local/bin/install-okta-mcp-tool"
+    ok "Okta MCP server"
+  else
+    info "skipping Keychain-backed Okta MCP server (macOS only)"
+  fi
 
   install_teams_link_handler
 

@@ -3,7 +3,6 @@ model_reasoning_effort = "medium"
 approval_policy = "on-request"
 approvals_reviewer = "auto_review"
 sandbox_mode = "workspace-write"
-project_doc_fallback_filenames = ["CLAUDE.md"]
 
 [features]
 multi_agent_v2 = true
