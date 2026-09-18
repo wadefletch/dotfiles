@@ -42,7 +42,7 @@ cd ~/.dotfiles
 
 `bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, ripgrep, gh, jq, starship, mise, and Claude Code) and macOS brew casks. It then stows all packages, reconciles host-local agent settings and plugins, installs the locked Mise toolset (including the Fleetctl version matching the Fleet server), configures git hooks, and pins SSH host keys for WARP-reachable machines. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, teams-link, vscode, wallpapers) are skipped on Linux.
 
-Portable agent policy lives under `agent-config/.config/agent-harnesses/`. Claude Code and Cursor own their live user JSON, so bootstrap merges the tracked policy into regular host-local files rather than stowing those mutable files. Runtime caches, account metadata, UI state, and credentials therefore stay out of Git. `plugins.json` is the shared desired-state manifest for Claude and Codex plugins.
+Portable agent policy lives under `agent-config/.config/agent-harnesses/`. Claude Code owns its live user JSON, so bootstrap merges the tracked policy into a regular host-local file rather than stowing that mutable file. Cursor's CLI configuration is fully host-local and unmanaged. Runtime caches, account metadata, UI state, and credentials therefore stay out of Git. `plugins.json` is the shared desired-state manifest for Claude and Codex plugins.
 
 Repository instructions use `AGENTS.md`. Shared personal workflows live under `agent-config/.agents/skills/` and are stowed into the standard user skill directory.
 

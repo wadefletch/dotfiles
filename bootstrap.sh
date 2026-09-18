@@ -334,7 +334,6 @@ reconcile_agent_settings() {
 
   info "reconciling agent settings"
   merge_json_policy "$policies/claude-settings.json" "$claude_settings"
-  merge_json_policy "$policies/cursor-cli.json" "$HOME/.cursor/cli-config.json"
 
   # Plugin enablement is generated from the shared manifest. Replacing the
   # object also removes stale disabled entries for retired plugins.
