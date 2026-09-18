@@ -113,4 +113,4 @@ Changes land on machines by merging to `main`, then pulling on each machine, res
 
 **`check-brew-availability.sh`** — Lists apps installed in `/Applications` and `~/Applications` and searches Homebrew formulae/casks for matches, to find apps that could be managed by brew.
 
-**`check-agent-config.sh`** — Validates the shared agent policies, canonical instruction filename, permission syntax, portability, and mutable-file boundary. Bootstrap runs it before changing the host.
+**`check-agent-config.sh`** — Checks tracked agent JSON, confirms instructions use `AGENTS.md`, and catches machine-specific home paths. Bootstrap runs it before changing the host.
