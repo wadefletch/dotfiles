@@ -6,10 +6,10 @@ GNU Stow-based dotfiles for macOS (with Linux support for the CLI packages). Eac
 
 | Package | What it configures |
 |---------|--------------------|
-| agent-config | Portable agent policies, plugin intent, and shared personal skills |
+| agent-config | Shared plugin intent and personal agent skills |
 | alacritty | Alacritty terminal |
 | cargo | Cargo (Rust) |
-| claude | Claude Code runtime helpers |
+| claude | Claude Code settings and runtime helpers |
 | codex | Codex portable defaults and service launchers |
 | crowdcontrol | CrowdControl config |
 | cursor | Cursor editor settings and keybindings (macOS) |
@@ -40,9 +40,9 @@ cd ~/.dotfiles
 ./bootstrap.sh
 ```
 
-`bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, ripgrep, gh, jq, starship, mise, and Claude Code) and macOS brew casks. It then stows all packages, reconciles host-local agent settings and plugins, installs the locked Mise toolset (including the Fleetctl version matching the Fleet server), configures git hooks, and pins SSH host keys for WARP-reachable machines. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, teams-link, vscode, wallpapers) are skipped on Linux.
+`bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, ripgrep, gh, jq, starship, mise, and Claude Code) and macOS brew casks. It then stows all packages, reconciles agent plugins, installs the locked Mise toolset (including the Fleetctl version matching the Fleet server), configures git hooks, and pins SSH host keys for WARP-reachable machines. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, teams-link, vscode, wallpapers) are skipped on Linux.
 
-Portable agent policy lives under `agent-config/.config/agent-harnesses/`. Claude Code owns its live user JSON, so bootstrap merges the tracked policy into a regular host-local file rather than stowing that mutable file. Cursor's CLI configuration is fully host-local and unmanaged. Runtime caches, account metadata, UI state, and credentials therefore stay out of Git. `plugins.json` is the shared desired-state manifest for Claude and Codex plugins.
+Each harness owns its settings in its conventional Stow package. Claude Code settings live at `claude/.claude/settings.json`; Cursor's CLI configuration is fully host-local and unmanaged. Runtime caches, account metadata, UI state, and credentials stay out of Git. `agent-config/.config/agent-harnesses/plugins.json` is shared only because it describes desired plugins for both Claude and Codex.
 
 Repository instructions use `AGENTS.md`. Shared personal workflows live under `agent-config/.agents/skills/` and are stowed into the standard user skill directory.
 

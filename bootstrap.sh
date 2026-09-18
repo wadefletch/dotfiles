@@ -284,7 +284,7 @@ stow_packages() (
     # Pin target to $HOME. Stow's default target is the parent of the stow
     # dir, which works when this repo is cloned at ~/dotfiles but not when
     # it's elsewhere.
-    if [[ "$pkg" == "agent-config" || "$pkg" == "codex" || "$pkg" == "cursor" ]]; then
+    if [[ "$pkg" == "agent-config" || "$pkg" == "claude" || "$pkg" == "codex" || "$pkg" == "cursor" ]]; then
       # Agent harnesses own mutable state alongside the managed files. Link
       # individual files without ever replacing those host-local directories.
       backup_conflicts "$pkg" --no-folding
@@ -297,70 +297,6 @@ stow_packages() (
   done
 
 )
-
-# --- Agent harness configuration -------------------------------------------
-
-# Harnesses write caches, account metadata, and UI preferences into their user
-# settings files. Keep those files host-local and merge portable policy into
-# them instead of symlinking the live files into this repository.
-merge_json_policy() {
-  local policy="$1"
-  local target="$2"
-  local merged
-
-  [[ -r "$policy" ]] || fail "agent policy is not readable: $policy"
-  jq -e 'type == "object"' "$policy" >/dev/null ||
-    fail "agent policy must be a JSON object: $policy"
-
-  install -d -m 0700 "$(dirname "$target")"
-  merged="$(mktemp "${TMPDIR:-/tmp}/agent-settings.XXXXXX")"
-
-  if [[ -r "$target" ]] && jq -e 'type == "object"' "$target" >/dev/null 2>&1; then
-    jq -s '.[0] + .[1]' "$target" "$policy" >"$merged"
-  else
-    jq '.' "$policy" >"$merged"
-  fi
-
-  [[ -L "$target" ]] && rm "$target"
-  install -m 0600 "$merged" "$target"
-  rm -f "$merged"
-}
-
-reconcile_agent_settings() {
-  local policies="$DOTFILES/agent-config/.config/agent-harnesses"
-  local plugins="$policies/plugins.json"
-  local claude_settings="$HOME/.claude/settings.json"
-  local merged
-
-  info "reconciling agent settings"
-  merge_json_policy "$policies/claude-settings.json" "$claude_settings"
-
-  # Plugin enablement is generated from the shared manifest. Replacing the
-  # object also removes stale disabled entries for retired plugins.
-  merged="$(mktemp "${TMPDIR:-/tmp}/claude-settings.XXXXXX")"
-  jq --slurpfile manifest "$plugins" '
-    del(.sshConfigs)
-    | .enabledPlugins = (
-        $manifest[0].plugins
-        | map(select(.harnesses | index("claude")))
-        | map({key: (.name + "@" + .marketplace), value: true})
-        | from_entries
-      )
-  ' "$claude_settings" >"$merged"
-  install -m 0600 "$merged" "$claude_settings"
-  rm -f "$merged"
-
-  # This was previously stowed even though Claude only supports local settings
-  # at project scope. Remove the old managed link without touching an unmanaged
-  # host file.
-  if [[ -L "$HOME/.claude/settings.local.json" ]]; then
-    rm "$HOME/.claude/settings.local.json"
-  elif [[ -e "$HOME/.claude/settings.local.json" ]]; then
-    warn "leaving unmanaged ~/.claude/settings.local.json in place"
-  fi
-
-  ok "agent settings"
-}
 
 # --- SSH host verification --------------------------------------------------
 
@@ -579,7 +515,6 @@ main() {
   "$DOTFILES/check-agent-config.sh"
   install_codex_system_config
   stow_packages
-  reconcile_agent_settings
   install_claude_ssh_host_keys
   reconcile_codex_plugins
   reconcile_claude_plugins

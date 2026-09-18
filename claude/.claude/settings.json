@@ -279,7 +279,16 @@
     "type": "command",
     "command": "~/.claude/statusline.sh"
   },
-  "enabledPlugins": {},
+  "enabledPlugins": {
+    "aws-core@claude-plugins-official": true,
+    "code-style@tractorbeam": true,
+    "document-skills@anthropic-agent-skills": true,
+    "mise@tractorbeam": true,
+    "plugin-dev@claude-plugins-official": true,
+    "rust-analyzer-lsp@claude-plugins-official": true,
+    "tractorbeam@tractorbeam": true,
+    "typescript-lsp@claude-plugins-official": true
+  },
   "extraKnownMarketplaces": {
     "tractorbeam": {
       "source": {
