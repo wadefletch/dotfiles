@@ -12,7 +12,7 @@ export PATH="$HOME/.local/bin:$PATH"
 MACOS_ONLY="cursor duti nightly-maintenance teams-link vscode wallpapers"
 
 # CLI packages to install (must exist in brew + apt/dnf/yum/pacman)
-PACKAGES=(git jq neovim ripgrep stow zsh eza)
+PACKAGES=(git neovim stow zsh eza)
 
 # macOS apps and fonts (brew casks)
 CASKS=(cursor ghostty font-symbols-only-nerd-font)
@@ -340,14 +340,14 @@ install_codex_system_config() {
 reconcile_codex_plugins() {
   local config="$HOME/.codex/config.toml"
   local plugin
-  local plugins="$DOTFILES/agent-config/.config/agent-harnesses/plugins.json"
+  local plugins="$DOTFILES/codex/system/plugins.txt"
 
   if ! command -v codex &>/dev/null; then
     warn "codex not found; skipping plugin reconciliation"
     return
   fi
 
-  [[ -r "$plugins" ]] || fail "agent plugin manifest is not readable: $plugins"
+  [[ -r "$plugins" ]] || fail "codex plugin list is not readable: $plugins"
 
   info "updating codex plugin marketplaces"
   codex plugin marketplace add https://github.com/tractorbeamai/skills.git
@@ -357,12 +357,7 @@ reconcile_codex_plugins() {
 
   if [[ -f "$config" ]]; then
     while IFS= read -r plugin; do
-      if ! jq -e --arg plugin "$plugin" '
-        any(.plugins[];
-          (.harnesses | index("codex")) and
-          ((.name + "@" + .marketplace) == $plugin)
-        )
-      ' "$plugins" >/dev/null; then
+      if ! grep -Fxq "$plugin" "$plugins"; then
         codex plugin remove "$plugin"
       fi
     done < <(
@@ -371,85 +366,11 @@ reconcile_codex_plugins() {
   fi
 
   while IFS= read -r plugin; do
+    [[ -z "$plugin" ]] && continue
     codex plugin add "$plugin"
-  done < <(
-    jq -r '.plugins[]
-      | select(.harnesses | index("codex"))
-      | .name + "@" + .marketplace' "$plugins"
-  )
+  done <"$plugins"
 
   ok "codex plugins"
-}
-
-reconcile_claude_plugins() {
-  local installed
-  local marketplace
-  local marketplaces
-  local plugin
-  local plugins="$DOTFILES/agent-config/.config/agent-harnesses/plugins.json"
-
-  if ! command -v claude &>/dev/null; then
-    warn "claude not found; skipping plugin reconciliation"
-    return
-  fi
-
-  info "reconciling Claude plugins"
-  marketplaces="$(claude plugin marketplace list --json)"
-
-  while IFS=$'\t' read -r marketplace source; do
-    if ! jq -e --arg marketplace "$marketplace" \
-      'any(.[]; .name == $marketplace)' <<<"$marketplaces" >/dev/null; then
-      claude plugin marketplace add "$source"
-    fi
-    claude plugin marketplace update "$marketplace"
-  done < <(
-    jq -r '. as $manifest
-      | [.plugins[] | select(.harnesses | index("claude")) | .marketplace]
-      | unique[] as $marketplace
-      | select($marketplace != "claude-plugins-official")
-      | [$marketplace, $manifest.marketplaces[$marketplace]]
-      | @tsv
-    ' "$plugins"
-  )
-
-  installed="$(claude plugin list --json)"
-
-  # Remove user-scoped plugins from managed marketplaces when they are no
-  # longer present in the desired-state manifest. Project installs are owned by
-  # their repositories and are deliberately left alone.
-  while IFS= read -r plugin; do
-    if ! jq -e --arg plugin "$plugin" '
-      any(.plugins[];
-        (.harnesses | index("claude")) and
-        ((.name + "@" + .marketplace) == $plugin)
-      )
-    ' "$plugins" >/dev/null; then
-      claude plugin uninstall "$plugin" --scope user
-    fi
-  done < <(
-    jq -r --slurpfile manifest "$plugins" '
-      [$manifest[0].marketplaces | keys[]] as $managed
-      | .[]
-      | select(.scope == "user")
-      | select((.id | split("@")[-1]) as $marketplace
-        | $managed | index($marketplace))
-      | .id
-    ' <<<"$installed"
-  )
-
-  while IFS= read -r plugin; do
-    if ! jq -e --arg plugin "$plugin" \
-      'any(.[]; .scope == "user" and .id == $plugin)' \
-      <<<"$installed" >/dev/null; then
-      claude plugin install --scope user --yes "$plugin"
-    fi
-  done < <(
-    jq -r '.plugins[]
-      | select(.harnesses | index("claude"))
-      | .name + "@" + .marketplace' "$plugins"
-  )
-
-  ok "Claude plugins"
 }
 
 # --- Git hooks ---------------------------------------------------------------
@@ -512,12 +433,10 @@ main() {
   fi
 
   install_deps
-  "$DOTFILES/check-agent-config.sh"
   install_codex_system_config
   stow_packages
   install_claude_ssh_host_keys
   reconcile_codex_plugins
-  reconcile_claude_plugins
   setup_hooks
 
   # Install everything declared in the stowed mise config (node, python, …).

@@ -6,7 +6,7 @@ GNU Stow-based dotfiles for macOS (with Linux support for the CLI packages). Eac
 
 | Package | What it configures |
 |---------|--------------------|
-| agent-config | Shared plugin intent and personal agent skills |
+| agent-config | Shared personal agent skills |
 | alacritty | Alacritty terminal |
 | cargo | Cargo (Rust) |
 | claude | Claude Code settings and runtime helpers |
@@ -40,13 +40,13 @@ cd ~/.dotfiles
 ./bootstrap.sh
 ```
 
-`bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, ripgrep, gh, jq, starship, mise, and Claude Code) and macOS brew casks. It then stows all packages, reconciles agent plugins, installs the locked Mise toolset (including the Fleetctl version matching the Fleet server), configures git hooks, and pins SSH host keys for WARP-reachable machines. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, teams-link, vscode, wallpapers) are skipped on Linux.
+`bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, gh, starship, mise, and Claude Code) and macOS brew casks. It then stows all packages, reconciles Codex plugins, installs the locked Mise toolset (including the Fleetctl version matching the Fleet server), configures git hooks, and pins SSH host keys for WARP-reachable machines. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, teams-link, vscode, wallpapers) are skipped on Linux.
 
-Each harness owns its settings in its conventional Stow package. Claude Code settings live at `claude/.claude/settings.json`; Cursor's CLI configuration is fully host-local and unmanaged. Runtime caches, account metadata, UI state, and credentials stay out of Git. `agent-config/.config/agent-harnesses/plugins.json` is shared only because it describes desired plugins for both Claude and Codex.
+Each harness owns its settings in its conventional Stow package. Claude Code settings live at `claude/.claude/settings.json`; Cursor's CLI configuration is fully host-local and unmanaged. Runtime caches, account metadata, UI state, and credentials stay out of Git.
 
 Repository instructions use `AGENTS.md`. Shared personal workflows live under `agent-config/.agents/skills/` and are stowed into the standard user skill directory.
 
-Codex portable defaults live in `codex/system/config.toml` and bootstrap installs them as `/etc/codex/config.toml`. Codex owns `~/.codex/config.toml` as host-local mutable state for project trust, UI preferences, local runtimes, connectors, and plugin metadata; dotfiles never links or edits it. Bootstrap reconciles its managed marketplaces and plugins from the shared manifest.
+Codex portable defaults live in `codex/system/config.toml` and bootstrap installs them as `/etc/codex/config.toml`. Codex owns `~/.codex/config.toml` as host-local mutable state for project trust, UI preferences, local runtimes, connectors, and plugin metadata; dotfiles never links or edits it. Bootstrap reconciles its managed marketplaces and plugins from `codex/system/plugins.txt`.
 
 Tractorbeam read-only service credentials live in the macOS login Keychain. The
 `fleetctl-readonly` launcher reads the API-only Observer token from the
@@ -101,8 +101,8 @@ To stow manually:
 
 ```sh
 stow git zsh ghostty   # individual packages
-stow --no-folding agent-config codex cursor
-./bootstrap.sh         # everything, including host-local policy reconciliation
+stow --no-folding agent-config claude codex cursor
+./bootstrap.sh         # everything
 ```
 
 ## Deploying changes
@@ -112,5 +112,3 @@ Changes land on machines by merging to `main`, then pulling on each machine, res
 ## Other scripts
 
 **`check-brew-availability.sh`** — Lists apps installed in `/Applications` and `~/Applications` and searches Homebrew formulae/casks for matches, to find apps that could be managed by brew.
-
-**`check-agent-config.sh`** — Checks tracked agent JSON, confirms instructions use `AGENTS.md`, and catches machine-specific home paths. Bootstrap runs it before changing the host.
