@@ -1,8 +1,8 @@
 {
   "mcpServers": {
     "fff": {
-      "command": "zsh",
-      "args": ["-lc", "exec fff-mcp --no-update-check"],
+      "command": "fff-mcp",
+      "args": ["--no-update-check"],
       "lifecycle": "lazy"
     },
     "mintlify-index": {

@@ -346,7 +346,7 @@ configure_claude_mcp() {
     ok "Claude Code FFF MCP already configured"
   else
     claude mcp add --scope user fff -- \
-      zsh -lc 'exec fff-mcp --no-update-check'
+      fff-mcp --no-update-check
     ok "Claude Code FFF MCP"
   fi
 
