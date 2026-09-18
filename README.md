@@ -21,6 +21,7 @@ GNU Stow-based dotfiles for macOS (with Linux support for the CLI packages). Eac
 | mise | Mise tool versions (node, python, …) |
 | nightly-maintenance | LaunchAgent for nightly maintenance script (macOS) |
 | nvim | Neovim config and markdownlint |
+| pi | Pi settings and MCP configuration |
 | ssh | SSH config |
 | starship | Starship prompt |
 | terraform | Terraform CLI config |
@@ -40,9 +41,11 @@ cd ~/.dotfiles
 ./bootstrap.sh
 ```
 
-`bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, gh, starship, mise, and Claude Code) and macOS brew casks. It then stows all packages, reconciles Codex plugins, installs the locked Mise toolset (including the Fleetctl version matching the Fleet server), configures git hooks, and pins SSH host keys for WARP-reachable machines. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, teams-link, vscode, wallpapers) are skipped on Linux.
+`bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, ripgrep, gh, starship, mise, and Claude Code), FFF's MCP server through Homebrew when available, and macOS brew casks. It then stows all packages, adds the portable Claude Code MCP servers when missing, reconciles Codex plugins, installs the locked Mise toolset (including the Fleetctl version matching the Fleet server), configures git hooks, and pins SSH host keys for WARP-reachable machines. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, teams-link, vscode, wallpapers) are skipped on Linux.
 
-Each harness owns its settings in its conventional Stow package. Claude Code settings live at `claude/.claude/settings.json`; Cursor's CLI configuration is fully host-local and unmanaged. Runtime caches, account metadata, UI state, and credentials stay out of Git.
+Each harness owns its settings in its conventional Stow package. Claude Code settings live at `claude/.claude/settings.json`; Cursor's CLI configuration is fully host-local and unmanaged. Pi's live `settings.json` is stowed deliberately, so preference and package changes made from Pi update the dotfiles checkout. Runtime caches, account metadata, UI state, credentials, Pi sessions, and installed package contents stay out of Git.
+
+FFF and the public, credential-free Mintlify Index are configured for Claude Code, Cursor, Codex, and Pi. Pi loads the MCP servers through `pi-mcp-adapter` while retaining its native `@ff-labs/pi-fff` package. FFF inherits each harness's working directory and refuses to index the home or filesystem root by default.
 
 Repository instructions use `AGENTS.md`. Shared personal workflows live under `agent-config/.agents/skills/` and are stowed into the standard user skill directory.
 
@@ -101,7 +104,7 @@ To stow manually:
 
 ```sh
 stow git zsh ghostty   # individual packages
-stow --no-folding agent-config claude codex cursor
+stow --no-folding agent-config claude codex cursor pi
 ./bootstrap.sh         # everything
 ```
 

@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "fff": {
+      "command": "zsh",
+      "args": ["-lc", "exec fff-mcp --no-update-check"],
+      "lifecycle": "lazy"
+    },
+    "mintlify-index": {
+      "url": "https://index.mintlify.com/mcp",
+      "lifecycle": "lazy"
+    }
+  }
+}

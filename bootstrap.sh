@@ -12,7 +12,7 @@ export PATH="$HOME/.local/bin:$PATH"
 MACOS_ONLY="cursor duti nightly-maintenance teams-link vscode wallpapers"
 
 # CLI packages to install (must exist in brew + apt/dnf/yum/pacman)
-PACKAGES=(git neovim stow zsh eza)
+PACKAGES=(git neovim ripgrep stow zsh eza)
 
 # macOS apps and fonts (brew casks)
 CASKS=(cursor ghostty font-symbols-only-nerd-font)
@@ -236,6 +236,19 @@ install_deps() {
       fi
     done
   fi
+
+  # FFF publishes its MCP server as a Homebrew formula for macOS and Linux.
+  # Keep its installation separate from distro packages, where it is not
+  # available.
+  if command -v fff-mcp &>/dev/null; then
+    ok "fff-mcp already installed"
+  elif command -v brew &>/dev/null; then
+    info "installing fff-mcp"
+    brew install dmtrKovalenko/fff/fff-mcp
+    ok "fff-mcp"
+  else
+    warn "Homebrew not found; install fff-mcp before using the FFF MCP server"
+  fi
 }
 
 # --- Stow packages ----------------------------------------------------------
@@ -284,7 +297,7 @@ stow_packages() (
     # Pin target to $HOME. Stow's default target is the parent of the stow
     # dir, which works when this repo is cloned at ~/dotfiles but not when
     # it's elsewhere.
-    if [[ "$pkg" == "agent-config" || "$pkg" == "claude" || "$pkg" == "codex" || "$pkg" == "cursor" ]]; then
+    if [[ "$pkg" == "agent-config" || "$pkg" == "claude" || "$pkg" == "codex" || "$pkg" == "cursor" || "$pkg" == "pi" ]]; then
       # Agent harnesses own mutable state alongside the managed files. Link
       # individual files without ever replacing those host-local directories.
       backup_conflicts "$pkg" --no-folding
@@ -318,6 +331,32 @@ install_claude_ssh_host_keys() {
   done <"$source"
 
   ok "Claude Desktop SSH host keys"
+}
+
+# Claude Code stores user-scoped MCP registrations in mutable host state rather
+# than a standalone stowable file. Add the portable servers when they are
+# missing and leave all other registrations alone.
+configure_claude_mcp() {
+  if ! command -v claude &>/dev/null; then
+    warn "claude not found; skipping MCP configuration"
+    return
+  fi
+
+  if claude mcp get fff &>/dev/null; then
+    ok "Claude Code FFF MCP already configured"
+  else
+    claude mcp add --scope user fff -- \
+      zsh -lc 'exec fff-mcp --no-update-check'
+    ok "Claude Code FFF MCP"
+  fi
+
+  if claude mcp get mintlify-index &>/dev/null; then
+    ok "Claude Code Mintlify Index MCP already configured"
+  else
+    claude mcp add --scope user --transport http \
+      mintlify-index https://index.mintlify.com/mcp
+    ok "Claude Code Mintlify Index MCP"
+  fi
 }
 
 # --- Codex configuration ----------------------------------------------------
@@ -435,6 +474,7 @@ main() {
   install_deps
   install_codex_system_config
   stow_packages
+  configure_claude_mcp
   install_claude_ssh_host_keys
   reconcile_codex_plugins
   setup_hooks

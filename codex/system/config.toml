@@ -14,3 +14,10 @@ default_subagent_reasoning_effort = "max"
 
 [sandbox_workspace_write]
 network_access = true
+
+[mcp_servers.fff]
+command = "zsh"
+args = ["-lc", "exec fff-mcp --no-update-check"]
+
+[mcp_servers.mintlify-index]
+url = "https://index.mintlify.com/mcp"
