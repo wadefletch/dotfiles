@@ -1,6 +1,11 @@
 #!/bin/sh
 set -eu
 
+if [ "$(uname -s)" != "Darwin" ]; then
+  printf '%s\n' 'fleetctl-readonly requires the macOS login Keychain' >&2
+  exit 1
+fi
+
 service=${FLEETCTL_READONLY_KEYCHAIN_SERVICE:-"fleet-observer-api-token"}
 token=$(/usr/bin/security find-generic-password -a "$USER" -s "$service" -w 2>/dev/null) || {
   printf 'Fleet Observer token is not available in Keychain service %s\n' "$service" >&2

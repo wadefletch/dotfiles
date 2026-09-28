@@ -1,6 +1,11 @@
+---
+name: sync-developer-repos
+description: Safely synchronize developer repositories across Corrino, Arrakis, and their GitHub origins without discarding local work. Use when asked to sync development repositories or reconcile the two machines.
+---
+
 # Sync Developer Repos
 
-Synchronize all git repos in `~/Developer/` and `~/Developer/Tractorbeam/` across two machines (Corrino and Arrakis) and their GitHub origins. Preserve all local work — never discard uncommitted changes, force-push, or delete unmerged branches.
+Synchronize all git repos in `$HOME/Developer/` and `$HOME/Developer/Tractorbeam/` across two machines (Corrino and Arrakis) and their GitHub origins. Preserve all local work — never discard uncommitted changes, force-push, or delete unmerged branches.
 
 ## Host Detection
 

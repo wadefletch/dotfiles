@@ -12,7 +12,7 @@ export PATH="$HOME/.local/bin:$PATH"
 MACOS_ONLY="cursor duti nightly-maintenance teams-link vscode wallpapers"
 
 # CLI packages to install (must exist in brew + apt/dnf/yum/pacman)
-PACKAGES=(git neovim stow zsh eza)
+PACKAGES=(git neovim ripgrep stow zsh eza)
 
 # macOS apps and fonts (brew casks)
 CASKS=(cursor ghostty font-symbols-only-nerd-font)
@@ -132,22 +132,6 @@ install_gh() {
   ok "gh"
 }
 
-# Codex desktop discovers Coder workspaces through concrete OpenSSH aliases.
-# Feature detection keeps the CLI new enough to generate those aliases without
-# pinning bootstrap to a release number.
-install_coder() {
-  if command -v coder &>/dev/null &&
-    coder config-ssh --help 2>&1 | grep -q -- "--no-wildcard"; then
-    ok "coder already installed"
-    return
-  fi
-
-  info "installing coder"
-  curl -fsSL https://coder.com/install.sh |
-    sh -s -- --mainline --method standalone --prefix "$HOME/.local"
-  ok "coder"
-}
-
 # --- Install dependencies ----------------------------------------------------
 
 install_deps() {
@@ -174,10 +158,6 @@ install_deps() {
 
   install_gh
 
-  if [[ "$OS" == "Darwin" ]]; then
-    install_coder
-  fi
-
   # starship (curl installer — not reliably packaged across distros)
   if command -v starship &>/dev/null; then
     ok "starship already installed"
@@ -185,9 +165,8 @@ install_deps() {
     info "installing starship"
     # Install into a user-writable bin dir so the upstream installer skips
     # its `sudo -v` priming step. `sudo -v` requires a real password even
-    # under NOPASSWD: ALL (validation has no target command for the rule
-    # to match), and Coder's `coder` user has a locked account, so the
-    # default install path hangs on an unanswerable prompt.
+    # under NOPASSWD: ALL because validation has no target command for the
+    # rule to match.
     mkdir -p "$HOME/.local/bin"
     curl -sS https://starship.rs/install.sh | sh -s -- -y -b "$HOME/.local/bin"
     ok "starship"
@@ -218,7 +197,7 @@ install_deps() {
 
   # Switch login shell to zsh. Stowed config only loads if zsh is the
   # actual login shell, but apt/brew installing zsh doesn't change that.
-  # On Coder workspaces `coder`'s password is locked, so chsh needs sudo.
+  # Linux package installs do not normally change the login shell.
   if command -v zsh &>/dev/null && [[ "${SHELL:-}" != *"/zsh" ]]; then
     zsh_path="$(command -v zsh)"
     if ! grep -qx "$zsh_path" /etc/shells 2>/dev/null; then
@@ -256,6 +235,19 @@ install_deps() {
         ok "$formula"
       fi
     done
+  fi
+
+  # FFF publishes its MCP server as a Homebrew formula for macOS and Linux.
+  # Keep its installation separate from distro packages, where it is not
+  # available.
+  if command -v fff-mcp &>/dev/null; then
+    ok "fff-mcp already installed"
+  elif command -v brew &>/dev/null; then
+    info "installing fff-mcp"
+    brew install dmtrKovalenko/fff/fff-mcp
+    ok "fff-mcp"
+  else
+    warn "Homebrew not found; install fff-mcp before using the FFF MCP server"
   fi
 }
 
@@ -305,10 +297,9 @@ stow_packages() (
     # Pin target to $HOME. Stow's default target is the parent of the stow
     # dir, which works when this repo is cloned at ~/dotfiles but not when
     # it's elsewhere.
-    if [[ "$pkg" == "codex" || "$pkg" == "cursor" ]]; then
-      # Codex owns mutable host state under ~/.codex. Cursor owns mutable host
-      # state under ~/.cursor (projects, plugins, extensions). Link individual
-      # files without ever replacing those host-local directories.
+    if [[ "$pkg" == "agent-config" || "$pkg" == "claude" || "$pkg" == "codex" || "$pkg" == "cursor" || "$pkg" == "pi" ]]; then
+      # Agent harnesses own mutable state alongside the managed files. Link
+      # individual files without ever replacing those host-local directories.
       backup_conflicts "$pkg" --no-folding
       stow -t "$HOME" --restow --no-folding "$pkg"
     else
@@ -340,6 +331,32 @@ install_claude_ssh_host_keys() {
   done <"$source"
 
   ok "Claude Desktop SSH host keys"
+}
+
+# Claude Code stores user-scoped MCP registrations in mutable host state rather
+# than a standalone stowable file. Add the portable servers when they are
+# missing and leave all other registrations alone.
+configure_claude_mcp() {
+  if ! command -v claude &>/dev/null; then
+    warn "claude not found; skipping MCP configuration"
+    return
+  fi
+
+  if claude mcp get fff &>/dev/null; then
+    ok "Claude Code FFF MCP already configured"
+  else
+    claude mcp add --scope user fff -- \
+      fff-mcp --no-update-check
+    ok "Claude Code FFF MCP"
+  fi
+
+  if claude mcp get mintlify-index &>/dev/null; then
+    ok "Claude Code Mintlify Index MCP already configured"
+  else
+    claude mcp add --scope user --transport http \
+      mintlify-index https://index.mintlify.com/mcp
+    ok "Claude Code Mintlify Index MCP"
+  fi
 }
 
 # --- Codex configuration ----------------------------------------------------
@@ -383,7 +400,7 @@ reconcile_codex_plugins() {
         codex plugin remove "$plugin"
       fi
     done < <(
-      sed -n 's/^\[plugins\."\([^"]*@tractorbeam\)"\]$/\1/p' "$config"
+      sed -nE 's/^\[plugins\."([^"]*@(tractorbeam|agent-toolkit-for-aws))"\]$/\1/p' "$config"
     )
   fi
 
@@ -457,6 +474,7 @@ main() {
   install_deps
   install_codex_system_config
   stow_packages
+  configure_claude_mcp
   install_claude_ssh_host_keys
   reconcile_codex_plugins
   setup_hooks
@@ -467,6 +485,14 @@ main() {
     info "installing mise tools"
     mise install
     ok "mise tools"
+  fi
+
+  if [[ "$OS" == "Darwin" ]]; then
+    info "installing Okta MCP server"
+    "$DOTFILES/codex/.local/bin/install-okta-mcp-tool"
+    ok "Okta MCP server"
+  else
+    info "skipping Keychain-backed Okta MCP server (macOS only)"
   fi
 
   install_teams_link_handler

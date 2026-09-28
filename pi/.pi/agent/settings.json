@@ -1,0 +1,20 @@
+{
+  "lastChangelogVersion": "0.85.1",
+  "theme": "light/dark",
+  "defaultProvider": "xai",
+  "defaultModel": "grok-4.6",
+  "defaultThinkingLevel": "medium",
+  "terminal": {
+    "showTerminalProgress": true
+  },
+  "showCacheMissNotices": true,
+  "enableInstallTelemetry": false,
+  "defaultProjectTrust": "ask",
+  "packages": [
+    "npm:@ff-labs/pi-fff",
+    "npm:pi-web-access",
+    "npm:pi-subagents",
+    "npm:pi-context-view",
+    "npm:pi-mcp-adapter@2.34.0"
+  ]
+}
