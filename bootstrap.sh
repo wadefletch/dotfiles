@@ -311,6 +311,15 @@ stow_packages() (
 
 )
 
+remove_obsolete_cargo_config_link() {
+  local config="$HOME/.cargo/config.toml"
+  [[ -L "$config" ]] || return
+  [[ "$(readlink "$config")" == *"/cargo/.cargo/config.toml" ]] || return
+
+  rm "$config"
+  ok "removed obsolete Cargo home config link"
+}
+
 # --- SSH host verification --------------------------------------------------
 
 install_claude_ssh_host_keys() {
@@ -473,6 +482,7 @@ main() {
 
   install_deps
   install_codex_system_config
+  remove_obsolete_cargo_config_link
   stow_packages
   configure_claude_mcp
   install_claude_ssh_host_keys

@@ -8,7 +8,6 @@ GNU Stow-based dotfiles for macOS (with Linux support for the CLI packages). Eac
 |---------|--------------------|
 | agent-config | Shared personal agent skills |
 | alacritty | Alacritty terminal |
-| cargo | Cargo (Rust) |
 | claude | Claude Code settings and runtime helpers |
 | codex | Codex portable defaults and service launchers |
 | crowdcontrol | CrowdControl config |

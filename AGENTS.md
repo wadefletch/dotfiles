@@ -10,7 +10,7 @@ GNU Stow-based dotfiles for macOS. Each top-level directory is a stow package mi
   Library/...       # macOS paths (cursor/, vscode/, nightly-maintenance/)
   .cursor/          # Cursor CLI config (cursor/; --no-folding so ~/.cursor stays host-local)
   .claude/          # Claude Code runtime files (claude/)
-  .cargo/, .docker/ # tool config (cargo/, docker/)
+  .docker/           # tool config (docker/)
 .githooks/          # git hooks (core.hooksPath); post-merge updates submodules
 .agents/skills/     # repo-scoped skills shared by agent harnesses
 .retired/           # reference-only packages (yabai, skhd-zig); dot-dirs aren't stowed
