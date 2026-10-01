@@ -47,7 +47,7 @@ Both are macOS. Run `hostname` to learn which machine you're on: deploy there di
    cd ~/.dotfiles && stow -t "$HOME" --restow <pkg>...
    ```
 
-   Restow is idempotent — when unsure, restow.
+   Restow `agent-config`, `aws`, `claude`, `codex`, `cursor`, and `pi` with `--no-folding` so host-local state under those directories is never replaced by a symlink. Restow is idempotent — when unsure, restow.
 
 4. **Restart services** per the matrix below, only for packages that actually changed.
 
@@ -63,6 +63,7 @@ Both are macOS. Run `hostname` to learn which machine you're on: deploy there di
 | `ghostty` | No CLI reload — tell the user open Ghostty windows need cmd+shift+, (Reload Configuration). |
 | `zsh`, `starship`, `git`, `gh`, `ssh`, `mise`, `cargo` | Nothing — next shell picks it up. |
 | `aws` | Restow with `--no-folding`, then `sync-aws-config` so `~/.aws/config` is rebuilt from the tracked profiles plus `~/.aws/config.local`. Nothing to restart. |
+| `pi` | Restow with `--no-folding`. Nothing to restart — next `pi` launch. |
 | `nvim`, `claude`, `codex`, `cursor`, `vscode`, `alacritty`, `docker`, `crowdcontrol`, `terraform`, `wallpapers` | Nothing — next app launch. |
 | `agent-config`, `bootstrap.sh`, or a brand-new package directory | Run `./bootstrap.sh` so host-local agent settings and plugins are reconciled. |
 
