@@ -1,5 +1,11 @@
 source ~/.orbstack/shell/init.zsh 2>/dev/null || :
 
+# /etc/zprofile's path_helper reorders PATH after .zshenv. Re-apply brew so
+# login shells keep Homebrew ahead of the system paths.
+if [[ -x "${HOMEBREW_PREFIX:-}/bin/brew" ]]; then
+  eval "$("${HOMEBREW_PREFIX}/bin/brew" shellenv)"
+fi
+
 # Local macOS shells use launchd's current agent; incoming SSH sessions keep
 # their forwarded agent.
 if [[ "$OSTYPE" == darwin* && -z "${SSH_CONNECTION:-}" ]]; then
