@@ -1,0 +1,4 @@
+# Live ~/.aws/config is assembled by sync-aws-config from this file plus
+# host-local ~/.aws/config.local. Never symlink it — writing through a
+# symlink would commit generated agent profiles.
+^/\.aws/config$

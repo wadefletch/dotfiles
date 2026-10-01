@@ -62,6 +62,7 @@ Both are macOS. Run `hostname` to learn which machine you're on: deploy there di
 | `teams-link` | Nothing — the stowed script is what runs. The handler app only needs rebuilding (`./bootstrap.sh`) if `install_teams_link_handler` itself changed. |
 | `ghostty` | No CLI reload — tell the user open Ghostty windows need cmd+shift+, (Reload Configuration). |
 | `zsh`, `starship`, `git`, `gh`, `ssh`, `mise`, `cargo` | Nothing — next shell picks it up. |
+| `aws` | Restow with `--no-folding`, then `sync-aws-config` so `~/.aws/config` is rebuilt from the tracked profiles plus `~/.aws/config.local`. Nothing to restart. |
 | `nvim`, `claude`, `codex`, `cursor`, `vscode`, `alacritty`, `docker`, `crowdcontrol`, `terraform`, `wallpapers` | Nothing — next app launch. |
 | `agent-config`, `bootstrap.sh`, or a brand-new package directory | Run `./bootstrap.sh` so host-local agent settings and plugins are reconciled. |
 

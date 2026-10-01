@@ -8,6 +8,7 @@ GNU Stow-based dotfiles for macOS (with Linux support for the CLI packages). Eac
 |---------|--------------------|
 | agent-config | Shared personal agent skills |
 | alacritty | Alacritty terminal |
+| aws | AWS CLI profiles and Identity Center session |
 | claude | Claude Code settings and runtime helpers |
 | codex | Codex portable defaults and service launchers |
 | crowdcontrol | CrowdControl config |
@@ -43,6 +44,8 @@ cd ~/.dotfiles
 `bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, ripgrep, gh, starship, mise, and Claude Code), FFF's MCP server through Homebrew when available, and macOS brew casks. It then stows all packages, adds the portable Claude Code MCP servers when missing, reconciles Codex plugins, installs the locked Mise toolset (including the Fleetctl version matching the Fleet server), configures git hooks, and pins SSH host keys for WARP-reachable machines. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, teams-link, vscode, wallpapers) are skipped on Linux.
 
 Each harness owns its settings in its conventional Stow package. Claude Code settings live at `claude/.claude/settings.json`; Cursor's CLI configuration is fully host-local and unmanaged. Pi's live `settings.json` is stowed deliberately, so preference and package changes made from Pi update the dotfiles checkout. Runtime caches, account metadata, UI state, credentials, Pi sessions, and installed package contents stay out of Git.
+
+The `aws` package tracks the managed AWS CLI profiles. Bootstrap stows the package without folding so `~/.aws` stays a real directory (SSO cache and credentials are host-local), then `sync-aws-config` writes `~/.aws/config` as a regular file from the tracked profiles plus optional `~/.aws/config.local`. That overlay is where generated Tractorbeam agent profiles live — they must not be a symlink into the repo. Account IDs mirror the infra repo's `data/accounts.json`, which is their source of truth. `aws-login` refreshes the shared Identity Center session.
 
 FFF and the public, credential-free Mintlify Index are configured for Claude Code, Cursor, Codex, and Pi. Pi loads the MCP servers through `pi-mcp-adapter` while retaining its native `@ff-labs/pi-fff` package. FFF inherits each harness's working directory and refuses to index the home or filesystem root by default.
 
@@ -103,7 +106,8 @@ To stow manually:
 
 ```sh
 stow git zsh ghostty   # individual packages
-stow --no-folding agent-config claude codex cursor pi
+stow --no-folding agent-config aws claude codex cursor pi
+sync-aws-config          # assemble ~/.aws/config (managed + config.local)
 ./bootstrap.sh         # everything
 ```
 

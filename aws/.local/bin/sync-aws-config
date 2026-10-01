@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Assemble ~/.aws/config from the tracked profiles plus optional host-local
+# overlay. The overlay is where generated Tractorbeam agent profiles live;
+# they must not be symlinked into the repo or a regenerator would dirty git.
+
+script="$0"
+if [[ -L "$script" ]]; then
+  script="$(readlink "$script")"
+fi
+root="$(cd "$(dirname "$script")/../../.." && pwd)"
+managed="$root/aws/.aws/config"
+live="$HOME/.aws/config"
+overlay="$HOME/.aws/config.local"
+marker='# BEGIN TRACTORBEAM AGENT PROFILES'
+
+[[ -f "$managed" ]] || {
+  printf 'sync-aws-config: missing %s\n' "$managed" >&2
+  exit 1
+}
+
+install -d -m 700 "$HOME/.aws"
+
+# A symlink into the repo would make the write below a git change.
+if [[ -L "$live" ]]; then
+  rm "$live"
+fi
+
+if [[ -f "$live" && ! -f "$overlay" ]] && grep -qxF "$marker" "$live"; then
+  awk -v m="$marker" '$0 == m { p = 1 } p' "$live" >"$overlay"
+  chmod 600 "$overlay"
+fi
+
+tmp="$(mktemp "$HOME/.aws/config.XXXXXX")"
+{
+  cat "$managed"
+  if [[ -s "$overlay" ]]; then
+    printf '\n'
+    cat "$overlay"
+  fi
+} >"$tmp"
+chmod 600 "$tmp"
+mv "$tmp" "$live"
