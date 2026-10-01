@@ -491,6 +491,9 @@ main() {
   install_codex_system_config
   remove_obsolete_cargo_config_link
   stow_packages
+  info "installing AWS CLI config"
+  "$DOTFILES/aws/.local/bin/sync-aws-config"
+  ok "AWS CLI config"
   configure_claude_mcp
   install_claude_ssh_host_keys
   reconcile_codex_plugins

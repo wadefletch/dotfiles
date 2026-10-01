@@ -6,8 +6,10 @@ claude/.claude/references/
 superwhisper/Documents/superwhisper/recordings/
 obsidian-web-clipper-settings.json
 
-# AWS credentials and the SSO token cache. Only aws/.aws/config is tracked;
-# these are listed so a stray copy into the package can never be committed.
+# AWS credentials, the SSO token cache, and the host-local overlay. Only
+# aws/.aws/config is tracked; these are listed so a stray copy into the
+# package can never be committed.
 aws/.aws/credentials
 aws/.aws/sso/
 aws/.aws/cli/
+aws/.aws/config.local

@@ -11,7 +11,7 @@ GNU Stow-based dotfiles for macOS. Each top-level directory is a stow package mi
   .cursor/          # Cursor CLI config (cursor/; --no-folding so ~/.cursor stays host-local)
   .claude/          # Claude Code runtime files (claude/)
   .docker/           # tool config (docker/)
-  .aws/config       # aws cli profiles (aws/) — credentials and SSO cache untracked
+  .aws/config       # aws cli profiles (aws/) — live ~/.aws/config is assembled; credentials, SSO cache, config.local untracked
 .githooks/          # git hooks (core.hooksPath); post-merge updates submodules
 .agents/skills/     # repo-scoped skills shared by agent harnesses
 .retired/           # reference-only packages (yabai, skhd-zig); dot-dirs aren't stowed
