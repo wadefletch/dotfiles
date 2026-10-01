@@ -32,5 +32,5 @@ keybind = global:cmd+grave_accent=toggle_quick_terminal
 quick-terminal-position = center
 quick-terminal-size = 33%,33%
 
-# claude code keybind fix
-keybind = shift+enter=text:\x1b\r
+# Leave Shift+Enter unmapped so Ghostty reports a real modified-Enter
+# (Claude Code's text:\x1b\r remap collapses it, which Pi cannot distinguish).
