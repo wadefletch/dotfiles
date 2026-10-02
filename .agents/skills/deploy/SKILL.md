@@ -51,7 +51,11 @@ Both are macOS. Run `hostname` to learn which machine you're on: deploy there di
 
 4. **Restart services** per the matrix below, only for packages that actually changed.
 
-5. **Verify:** `git status -sb` clean and even with `origin/main`; `pgrep -fl <daemon>` shows a fresh PID for anything you restarted.
+5. **Verify:** `git status -sb` clean, on `main`, and even with `origin/main`; `pgrep -fl <daemon>` shows a fresh PID for anything you restarted. Stow never removes a link whose target left the repo, so list dangling links into the checkout and delete them:
+
+   ```sh
+   find ~ -maxdepth 5 -type l -lname '*.dotfiles/*' ! -exec test -e {} \; -print 2>/dev/null | grep -v '/.dotfiles/'
+   ```
 
 ## Restart matrix
 
