@@ -1,11 +1,11 @@
 {
   "mcpServers": {
-    "aws-mcp": {
+    "aws": {
       "command": "mcp-proxy-for-aws-cli",
       "args": ["https://aws-mcp.us-east-1.api.aws/mcp"],
       "env": {
         "AWS_REGION": "us-east-1",
-        "AWS_MCP_PROXY_PROFILES": "agent-read-management agent-read-audit agent-read-log-archive agent-read-production agent-read-nonprod agent-read-shared-services agent-read-distribution agent-read-sandbox-shared agent-read-brizzco"
+        "AWS_MCP_PROXY_PROFILES": "agent-read-management agent-read-audit agent-read-log-archive agent-read-production agent-read-nonprod agent-read-shared-services agent-read-distribution agent-read-sandbox agent-read-brizzco"
       },
       "timeout": 300,
       "exposure": "deferred",
