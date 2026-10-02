@@ -18,16 +18,13 @@
   "showCacheMissNotices": true,
   "enableInstallTelemetry": false,
   "defaultProjectTrust": "ask",
-  "skills": [
-    "~/Developer/Tractorbeam/skills/plugins/tractorbeam/skills",
-    "~/Developer/Tractorbeam/skills/plugins/code-style/skills"
-  ],
   "packages": [
     "npm:@ff-labs/pi-fff",
     "npm:pi-web-access",
     "npm:pi-subagents",
     "npm:pi-context-view",
-    "npm:pi-goal-x"
+    "npm:pi-goal-x",
+    "git:github.com/tractorbeamai/skills"
   ],
   "deviceId": "a8a2dbef-ae85-4da6-8ad4-8785795ef046",
   "hideThinkingBlock": false

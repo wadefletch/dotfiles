@@ -2,7 +2,9 @@
   "mcpServers": {
     "aws-mcp": {
       "command": "mcp-proxy-for-aws-cli",
-      "args": ["https://aws-mcp.us-east-1.api.aws/mcp"],
+      "args": [
+        "https://aws-mcp.us-east-1.api.aws/mcp"
+      ],
       "env": {
         "AWS_REGION": "us-east-1",
         "AWS_MCP_PROXY_PROFILES": "agent-read-management agent-read-audit agent-read-log-archive agent-read-production agent-read-nonprod agent-read-shared-services agent-read-distribution agent-read-sandbox agent-read-brizzco"
@@ -11,10 +13,46 @@
       "exposure": "deferred",
       "description": "Approved Tractorbeam AWS inspection proxy. Use an explicit agent-read profile on every call; no mutations or secret values."
     },
-    "mintlify-index": {
+    "docs-index": {
       "url": "https://index.mintlify.com/mcp",
-      "description": "Public Mintlify documentation index",
+      "description": "Public documentation index",
       "exposure": "direct"
+    },
+    "cloudflare": {
+      "url": "https://mcp.cloudflare.com/mcp",
+      "description": "Cloudflare account, Workers, DNS, and platform APIs",
+      "exposure": "deferred"
+    },
+    "betterstack": {
+      "url": "https://mcp.betterstack.com",
+      "description": "Better Stack monitors, incidents, and logs",
+      "exposure": "deferred"
+    },
+    "secureframe": {
+      "url": "https://mcp.secureframe.com/",
+      "description": "Secureframe compliance controls, tests, and evidence",
+      "exposure": "deferred"
+    },
+    "okta": {
+      "command": "codex-okta-mcp",
+      "timeout": 60,
+      "description": "Okta directory, groups, apps, and policies (read-only)",
+      "exposure": "deferred"
+    },
+    "aikido": {
+      "command": "fnox",
+      "args": [
+        "exec",
+        "--",
+        "npx",
+        "-y",
+        "@aikidosec/mcp"
+      ],
+      "env": {
+        "npm_config_cache": "/Users/wadefletcher/.cache/aikido-npx"
+      },
+      "description": "Aikido security findings",
+      "exposure": "deferred"
     }
   }
 }

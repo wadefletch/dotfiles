@@ -282,6 +282,7 @@
   },
   "enabledPlugins": {
     "aws-core@agent-toolkit-for-aws": true,
+    "cloudflare@cloudflare": true,
     "code-style@tractorbeam": true,
     "document-skills@anthropic-agent-skills": true,
     "mise@tractorbeam": true,
@@ -295,6 +296,12 @@
       "source": {
         "source": "github",
         "repo": "aws/agent-toolkit-for-aws"
+      }
+    },
+    "cloudflare": {
+      "source": {
+        "source": "github",
+        "repo": "cloudflare/skills"
       }
     },
     "tractorbeam": {
@@ -320,5 +327,8 @@
   "preferredNotifChannel": "ghostty",
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "skillOverrides": {
+    "aws-core:signing-in-to-aws": "off"
+  }
 }

@@ -2,10 +2,47 @@
   "mcpServers": {
     "fff": {
       "command": "fff-mcp",
-      "args": ["--no-update-check"]
+      "args": [
+        "--no-update-check"
+      ]
     },
-    "mintlify-index": {
+    "docs-index": {
       "url": "https://index.mintlify.com/mcp"
+    },
+    "aws-mcp": {
+      "command": "mcp-proxy-for-aws-cli",
+      "args": [
+        "https://aws-mcp.us-east-1.api.aws/mcp"
+      ],
+      "env": {
+        "AWS_REGION": "us-east-1",
+        "AWS_MCP_PROXY_PROFILES": "agent-read-management agent-read-audit agent-read-log-archive agent-read-production agent-read-nonprod agent-read-shared-services agent-read-distribution agent-read-sandbox agent-read-brizzco"
+      }
+    },
+    "cloudflare": {
+      "url": "https://mcp.cloudflare.com/mcp"
+    },
+    "betterstack": {
+      "url": "https://mcp.betterstack.com"
+    },
+    "secureframe": {
+      "url": "https://mcp.secureframe.com/"
+    },
+    "okta": {
+      "command": "codex-okta-mcp"
+    },
+    "aikido": {
+      "command": "fnox",
+      "args": [
+        "exec",
+        "--",
+        "npx",
+        "-y",
+        "@aikidosec/mcp"
+      ],
+      "env": {
+        "npm_config_cache": "/Users/wadefletcher/.cache/aikido-npx"
+      }
     }
   }
 }

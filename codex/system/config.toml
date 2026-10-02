@@ -19,7 +19,7 @@ network_access = true
 command = "fff-mcp"
 args = ["--no-update-check"]
 
-[mcp_servers.mintlify-index]
+[mcp_servers.docs-index]
 url = "https://index.mintlify.com/mcp"
 
 # Replaces the aws-core plugin's aws-mcp entry by name. The plugin's own entry
@@ -37,3 +37,30 @@ tool_timeout_sec = 300
 [mcp_servers.aws-mcp.env]
 AWS_REGION = "us-east-1"
 AWS_MCP_PROXY_PROFILES = "agent-read-management agent-read-audit agent-read-log-archive agent-read-production agent-read-nonprod agent-read-shared-services agent-read-distribution agent-read-sandbox agent-read-brizzco"
+
+[mcp_servers.betterstack]
+url = "https://mcp.betterstack.com"
+
+[mcp_servers.secureframe]
+url = "https://mcp.secureframe.com/"
+
+# codex-okta-mcp reads the Okta service-app key from the login Keychain.
+[mcp_servers.okta]
+command = "codex-okta-mcp"
+default_tools_approval_mode = "approve"
+startup_timeout_sec = 60
+tool_timeout_sec = 60
+
+# fnox supplies AIKIDO_API_KEY from its keychain-backed store.
+[mcp_servers.aikido]
+command = "fnox"
+args = ["exec", "--", "npx", "-y", "@aikidosec/mcp"]
+
+[mcp_servers.aikido.env]
+npm_config_cache = "/Users/wadefletcher/.cache/aikido-npx"
+
+# The aws-core plugin's sign-in skill tells the agent to run `aws login`;
+# Tractorbeam's aws-access skill makes authentication a human handoff.
+[[skills.config]]
+name = "signing-in-to-aws"
+enabled = false
