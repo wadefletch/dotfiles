@@ -6,7 +6,7 @@ GNU Stow-based dotfiles for macOS (with Linux support for the CLI packages). Eac
 
 | Package | What it configures |
 |---------|--------------------|
-| agent-config | Shared personal agent skills |
+| agent-config | Shared personal agent skills and user-scoped instructions |
 | alacritty | Alacritty terminal |
 | aws | AWS CLI profiles and Identity Center session |
 | claude | Claude Code settings and runtime helpers |
@@ -50,6 +50,8 @@ The `aws` package tracks the managed AWS CLI profiles. Bootstrap stows the packa
 FFF and the public, credential-free Mintlify Index are configured for Claude Code, Cursor, Codex, and Pi. Pi loads the MCP servers through `pi-mcp-adapter` while retaining its native `@ff-labs/pi-fff` package. FFF inherits each harness's working directory and refuses to index the home or filesystem root by default.
 
 Repository instructions use `AGENTS.md`. Shared personal workflows live under `agent-config/.agents/skills/` and are stowed into the standard user skill directory.
+
+User-scoped instructions for every harness live in one file, `agent-config/.agents/AGENTS.md`. Each harness reads it through a symlink at its own user-scope path: `~/.claude/CLAUDE.md` for Claude Code, `~/.codex/AGENTS.md` for Codex, and `~/.pi/agent/AGENTS.md` for Pi. Cursor has no file-based user instructions, so it is not covered.
 
 Codex portable defaults live in `codex/system/config.toml` and bootstrap installs them as `/etc/codex/config.toml`. Codex owns `~/.codex/config.toml` as host-local mutable state for project trust, UI preferences, local runtimes, connectors, and plugin metadata; dotfiles never links or edits it. Bootstrap reconciles its managed marketplaces and plugins from `codex/system/plugins.txt`.
 

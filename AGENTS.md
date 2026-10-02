@@ -25,6 +25,7 @@ bootstrap.sh        # installs deps, stows packages, git hooks, WARP SSH host ke
 - `zsh/.zshrc` — shell config, aliases (`ga`, `gc`, `gs`, `gp`, `gl`, `gq`), `stopall`, `automerge`
 - `zsh/.zshenv` — lightweight PATH exports (brew, local bin)
 - `claude/AGENTS.md` — instructions for the Claude stow package itself
+- `agent-config/.agents/AGENTS.md` — user-scoped agent instructions. `claude/.claude/CLAUDE.md`, `codex/.codex/AGENTS.md`, and `pi/.pi/agent/AGENTS.md` are symlinks to it, so edit this file, not the links.
 
 ## Conventions
 
