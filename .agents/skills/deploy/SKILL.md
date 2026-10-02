@@ -47,7 +47,7 @@ Both are macOS. Run `hostname` to learn which machine you're on: deploy there di
    cd ~/.dotfiles && stow -t "$HOME" --restow <pkg>...
    ```
 
-   Restow `agent-config`, `aws`, `claude`, `codex`, `cursor`, and `pi` with `--no-folding` so host-local state under those directories is never replaced by a symlink. Restow is idempotent — when unsure, restow.
+   Restow `agent-config`, `aws`, `claude`, `codex`, `cursor`, `git-auto-ff`, and `pi` with `--no-folding` so host-local state under those directories is never replaced by a symlink. Restow is idempotent — when unsure, restow.
 
 4. **Restart services** per the matrix below, only for packages that actually changed.
 
@@ -58,6 +58,7 @@ Both are macOS. Run `hostname` to learn which machine you're on: deploy there di
 | Package changed | Action |
 | --------------- | ------ |
 | `nightly-maintenance` | `launchctl bootout gui/$(id -u)/com.wadefletcher.nightly-maintenance 2>/dev/null; launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.wadefletcher.nightly-maintenance.plist` |
+| `git-auto-ff` | Restow with `--no-folding`. Only on hosts where it is enabled: rerun `./enable-git-auto-ff.sh` if the timer or plist changed; script-only changes need nothing. Never enable it on a host that hasn't opted in. |
 | `duti` | `duti ~/.config/duti/default-apps` |
 | `teams-link` | Nothing — the stowed script is what runs. The handler app only needs rebuilding (`./bootstrap.sh`) if `install_teams_link_handler` itself changed. |
 | `ghostty` | No CLI reload — tell the user open Ghostty windows need cmd+shift+, (Reload Configuration). |
