@@ -49,7 +49,7 @@ The `aws` package tracks the managed AWS CLI profiles. Bootstrap stows the packa
 
 FFF and the public, credential-free Mintlify Index are configured for Claude Code, Cursor, Codex, and Pi. Pi uses built-in MCP (`~/.pi/agent/mcp.json`) for Mintlify and the native `@ff-labs/pi-fff` package for FFF. Codemode is on so classifier models such as TypeSafe Jev can run from scripts once a Jev provider is authenticated (`CLOUDFLARE_API_KEY` + `CLOUDFLARE_ACCOUNT_ID`, or `TYPESAFE_API_KEY`). FFF inherits each harness's working directory and refuses to index the home or filesystem root by default.
 
-Pi's user-level `aws` MCP server is the Tractorbeam AWS inspection proxy with the read-only `agent-read-*` profiles. Its profile list mirrors the read profiles in the infra repo's `.pi/mcp.json`, and the server has the same name so that inside infra the project entry replaces it. Write profiles are exposed only by the infra repo's own configuration, never at user level.
+Pi's user-level `AWS` MCP server is the Tractorbeam AWS inspection proxy with the read-only `agent-read-*` profiles. Its profile list mirrors the read profiles in the infra repo's `.pi/mcp.json`, and the server has the same name so that inside infra the project entry replaces it. Write profiles are exposed only by the infra repo's own configuration, never at user level. The `aws-core` plugin registers its own unauthenticated copy of the AWS MCP server; Claude Code's settings deny it (`plugin:aws-core:aws-mcp`) so it never loads beside `AWS`.
 
 Repository instructions use `AGENTS.md`. Shared personal workflows live under `agent-config/.agents/skills/` and are stowed into the standard user skill directory.
 
