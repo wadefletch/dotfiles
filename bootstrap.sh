@@ -16,11 +16,6 @@ MACOS_ONLY="cursor duti nightly-maintenance teams-link vscode wallpapers"
 # directory itself into a symlink.
 NO_FOLDING="agent-config aws claude codex cursor git-autoff pi"
 
-# Stow packages only for hosts that list them, one per line, in this
-# untracked file.
-OPT_IN="git-autoff"
-OPT_IN_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/dotfiles/opt-in"
-
 # CLI packages to install (must exist in brew + apt/dnf/yum/pacman)
 PACKAGES=(git neovim ripgrep stow zsh eza)
 
@@ -295,10 +290,6 @@ backup_conflicts() {
   )
 }
 
-opted_in() {
-  [[ -r "$OPT_IN_FILE" ]] && grep -qxF "$1" "$OPT_IN_FILE"
-}
-
 stow_packages() (
   local pkg
 
@@ -310,11 +301,6 @@ stow_packages() (
     # skip macOS-only packages on Linux
     if [[ "$OS" != "Darwin" && " $MACOS_ONLY " == *" $pkg "* ]]; then
       info "skipping $pkg (macOS only)"
-      continue
-    fi
-
-    if [[ " $OPT_IN " == *" $pkg "* ]] && ! opted_in "$pkg"; then
-      info "skipping $pkg (opt-in; add it to $OPT_IN_FILE)"
       continue
     fi
 
@@ -456,24 +442,6 @@ setup_hooks() {
   ok "git hooks configured"
 }
 
-# --- git-autoff timer (Linux, opt-in) ---------------------------------------
-# Daily 05:00 fast-forward of the tiburon primary checkout. Linger lets the
-# per-user timer fire without an active login session.
-enable_git_autoff() {
-  [[ "$OS" == "Linux" ]] || return 0
-  opted_in git-autoff || return 0
-  command -v systemctl &>/dev/null || {
-    warn "systemctl not found; skipping git-autoff timer"
-    return 0
-  }
-
-  loginctl enable-linger "$USER" 2>/dev/null ||
-    sudo loginctl enable-linger "$USER"
-  systemctl --user daemon-reload
-  systemctl --user enable --now git-autoff.timer
-  ok "git-autoff timer"
-}
-
 # A URL scheme handler has to be an app bundle, so build the thinnest possible
 # one — it just forwards the URL to teams-link-open. duti points the msteams:
 # scheme at it (see .config/duti/default-apps).
@@ -537,7 +505,6 @@ main() {
   install_claude_ssh_host_keys
   reconcile_codex_plugins
   setup_hooks
-  enable_git_autoff
 
   # Install everything declared in the stowed mise config (node, python, …).
   # Must run after stow_packages so the symlinked config is in place.

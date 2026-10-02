@@ -18,7 +18,7 @@ GNU Stow-based dotfiles for macOS (with Linux support for the CLI packages). Eac
 | gh | GitHub CLI config (XDG) |
 | ghostty | Ghostty terminal |
 | git | Git config (XDG) |
-| git-autoff | systemd user timer that fast-forwards the tiburon checkout to origin/main daily at 05:00 ET when safe (Linux, opt-in) |
+| git-autoff | systemd user timer that fast-forwards the tiburon checkout to origin/main daily at 05:00 ET when safe (Linux; enable per host with `./enable-git-autoff.sh`) |
 | mise | Mise tool versions (node, python, …) |
 | nightly-maintenance | LaunchAgent for nightly maintenance script (macOS) |
 | nvim | Neovim config and markdownlint |
@@ -42,7 +42,7 @@ cd ~/.dotfiles
 ./bootstrap.sh
 ```
 
-`bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, ripgrep, gh, starship, mise, and Claude Code), FFF's MCP server through Homebrew when available, and macOS brew casks. It then stows all packages, adds the portable Claude Code MCP servers when missing, reconciles Codex plugins, installs the locked Mise toolset (including the Fleetctl version matching the Fleet server), configures git hooks, pins SSH host keys for WARP-reachable machines, and enables the git-autoff systemd user timer on opted-in Linux hosts. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, teams-link, vscode, wallpapers) are skipped on Linux. Opt-in packages (git-autoff) are skipped unless named, one per line, in the untracked `~/.config/dotfiles/opt-in`.
+`bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, ripgrep, gh, starship, mise, and Claude Code), FFF's MCP server through Homebrew when available, and macOS brew casks. It then stows all packages, adds the portable Claude Code MCP servers when missing, reconciles Codex plugins, installs the locked Mise toolset (including the Fleetctl version matching the Fleet server), configures git hooks, and pins SSH host keys for WARP-reachable machines. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, teams-link, vscode, wallpapers) are skipped on Linux.
 
 Each harness owns its settings in its conventional Stow package. Claude Code settings live at `claude/.claude/settings.json`; Cursor's CLI configuration is fully host-local and unmanaged. Pi's live `settings.json` is stowed deliberately, so preference and package changes made from Pi update the dotfiles checkout. Runtime caches, account metadata, UI state, credentials, Pi sessions, and installed package contents stay out of Git.
 
