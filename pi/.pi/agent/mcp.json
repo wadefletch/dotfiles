@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "AWS": {
+    "aws-mcp": {
       "command": "mcp-proxy-for-aws-cli",
       "args": ["https://aws-mcp.us-east-1.api.aws/mcp"],
       "env": {

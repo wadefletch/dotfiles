@@ -375,6 +375,47 @@ configure_claude_mcp() {
   fi
 }
 
+# aws-core comes straight from AWS's marketplace, the source Codex uses, so
+# both harnesses run the same plugin. The settings file already declares the
+# marketplace and the plugin; this makes the installed copy match it and drops
+# the copy from Anthropic's marketplace, which pins an older commit.
+configure_claude_aws_plugin() {
+  if ! command -v claude &>/dev/null; then
+    warn "claude not found; skipping aws-core plugin"
+    return
+  fi
+
+  info "updating Claude Code aws-core plugin"
+  claude plugin marketplace add aws/agent-toolkit-for-aws
+  claude plugin marketplace update agent-toolkit-for-aws
+
+  # Captured first: grep -q closing the pipe early would fail it under pipefail.
+  local installed
+  installed="$(claude plugin list)"
+  if grep -qF 'aws-core@claude-plugins-official' <<<"$installed"; then
+    claude plugin uninstall aws-core@claude-plugins-official
+  fi
+
+  claude plugin install aws-core@agent-toolkit-for-aws
+  claude plugin update aws-core@agent-toolkit-for-aws
+  ok "Claude Code aws-core plugin"
+}
+
+# The AWS MCP servers for Codex and Pi launch this executable directly instead
+# of resolving it through uvx on every start. uv comes from the mise toolset,
+# so this runs after `mise install`.
+install_aws_mcp_proxy() {
+  if command -v mcp-proxy-for-aws-cli &>/dev/null; then
+    ok "AWS MCP proxy already installed"
+  elif command -v uv &>/dev/null; then
+    info "installing AWS MCP proxy"
+    uv tool install mcp-proxy-for-aws-cli
+    ok "AWS MCP proxy"
+  else
+    warn "uv not found; install mcp-proxy-for-aws-cli before using the AWS MCP server"
+  fi
+}
+
 # --- Codex configuration ----------------------------------------------------
 
 install_codex_system_config() {
@@ -495,6 +536,7 @@ main() {
   "$DOTFILES/aws/.local/bin/sync-aws-config"
   ok "AWS CLI config"
   configure_claude_mcp
+  configure_claude_aws_plugin
   install_claude_ssh_host_keys
   reconcile_codex_plugins
   setup_hooks
@@ -506,6 +548,8 @@ main() {
     mise install
     ok "mise tools"
   fi
+
+  install_aws_mcp_proxy
 
   if [[ "$OS" == "Darwin" ]]; then
     info "installing Okta MCP server"
