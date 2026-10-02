@@ -1,5 +1,5 @@
 # Fast-forward the tiburon primary checkout to origin/main when safe.
-# Triggered by git-autoff.timer; run manually with: systemctl --user start git-autoff.
+# Triggered by git-auto-ff.timer; run manually with: systemctl --user start git-auto-ff.
 [Unit]
 Description=Fast-forward tiburon main to origin when safe
 Documentation=man:git-fetch(1)
@@ -8,4 +8,4 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=%h/.local/bin/git-autoff
+ExecStart=%h/.local/bin/git-auto-ff

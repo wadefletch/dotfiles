@@ -1,11 +1,11 @@
 #!/bin/zsh
-# git-autoff — fast-forward a repo's primary worktree to its upstream, but only
+# git-auto-ff — fast-forward a repo's primary worktree to its upstream, but only
 # when it's unambiguously safe: the primary checkout is on the target branch,
 # the working tree is clean, and the upstream is strictly ahead (a real
 # fast-forward). Anything else — a linked worktree, a different branch, local
 # changes, or a diverged/ahead history — is left untouched.
 #
-# Usage: git-autoff [REPO ...]   (defaults to ~/tiburon)
+# Usage: git-auto-ff [REPO ...]   (defaults to ~/tiburon)
 
 setopt pipe_fail
 
@@ -20,7 +20,7 @@ repos=("$@")
 
 integer failures=0
 
-autoff_repo() {
+auto_ff_repo() {
 	local repo="${1:A}"
 
 	# A .git *file* (not directory) marks a linked worktree or submodule; only
@@ -72,7 +72,7 @@ autoff_repo() {
 
 local repo
 for repo in "${repos[@]}"; do
-	autoff_repo "$repo" || (( failures += 1 ))
+	auto_ff_repo "$repo" || (( failures += 1 ))
 done
 
 (( failures == 0 ))

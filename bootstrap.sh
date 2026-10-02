@@ -14,7 +14,7 @@ MACOS_ONLY="cursor duti nightly-maintenance teams-link vscode wallpapers"
 # Stow packages whose target directory also holds host-local state, so the
 # tracked files must be linked individually rather than by folding the
 # directory itself into a symlink.
-NO_FOLDING="agent-config aws claude codex cursor git-autoff pi"
+NO_FOLDING="agent-config aws claude codex cursor git-auto-ff pi"
 
 # CLI packages to install (must exist in brew + apt/dnf/yum/pacman)
 PACKAGES=(git neovim ripgrep stow zsh eza)
@@ -311,7 +311,7 @@ stow_packages() (
       # These packages sit beside mutable host state — agent harnesses under
       # ~/.claude, ~/.codex, ~/.cursor, and ~/.pi, the AWS CLI's SSO token
       # cache and credentials under ~/.aws, and the timers.target.wants link
-      # that systemctl --user enable writes beside git-autoff's units. Link the
+      # that systemctl --user enable writes beside git-auto-ff's units. Link the
       # tracked files individually so stow never replaces the host-local
       # directory with a symlink.
       backup_conflicts "$pkg" --no-folding
