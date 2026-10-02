@@ -49,6 +49,17 @@ if [[ "$TERM" == "xterm-ghostty" ]]; then
   export FORCE_HYPERLINK=1
 fi
 
+# Don't open browsers on a machine reached over SSH: nobody is at its screen.
+# Claude Code's fullscreen UI captures the mouse and runs $BROWSER (default
+# `open`) on its own host for a clicked link, so a click from a remote terminal
+# opens a tab here instead of on the connecting machine. `true` makes that a
+# no-op, and Claude Code reads BROWSER=true as "no browser available". Open a
+# link on the connecting machine with the terminal's own gesture instead
+# (Ghostty: Shift+Cmd+click, which bypasses the mouse capture).
+if [[ -n "$SSH_CONNECTION" ]]; then
+  export BROWSER=true
+fi
+
 if [[ -r ~/.zshenv.local ]]; then
   # shellcheck disable=SC1090
   source ~/.zshenv.local
