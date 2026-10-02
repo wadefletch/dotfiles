@@ -273,7 +273,7 @@
       "~/.claude/references"
     ]
   },
-  "model": "opus[1m]",
+  "model": "opus",
   "hooks": {},
   "statusLine": {
     "type": "command",
