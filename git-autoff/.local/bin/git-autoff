@@ -1,0 +1,78 @@
+#!/bin/zsh
+# git-autoff — fast-forward a repo's primary worktree to its upstream, but only
+# when it's unambiguously safe: the primary checkout is on the target branch,
+# the working tree is clean, and the upstream is strictly ahead (a real
+# fast-forward). Anything else — a linked worktree, a different branch, local
+# changes, or a diverged/ahead history — is left untouched.
+#
+# Usage: git-autoff [REPO ...]   (defaults to ~/tiburon)
+
+setopt pipe_fail
+
+# Schedulers hand us a minimal PATH; make git, gh (the credential helper), and
+# ~/.local/bin reachable so an unattended fetch can authenticate.
+export PATH="$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+
+typeset -r BRANCH=main
+typeset -a repos
+repos=("$@")
+(( ${#repos} > 0 )) || repos=("$HOME/tiburon")
+
+integer failures=0
+
+autoff_repo() {
+	local repo="${1:A}"
+
+	# A .git *file* (not directory) marks a linked worktree or submodule; only
+	# the primary checkout has a real .git directory.
+	if [[ ! -d "$repo/.git" ]]; then
+		echo "$repo: not a primary worktree, skipping"
+		return 0
+	fi
+
+	local current
+	current="$(git -C "$repo" symbolic-ref --quiet --short HEAD 2>/dev/null)"
+	if [[ "$current" != "$BRANCH" ]]; then
+		echo "$repo: on ${current:-detached HEAD}, not $BRANCH — leaving alone"
+		return 0
+	fi
+
+	if [[ -n "$(git -C "$repo" status --porcelain)" ]]; then
+		echo "$repo: working tree dirty — leaving alone"
+		return 0
+	fi
+
+	if ! git -C "$repo" fetch --quiet origin "$BRANCH"; then
+		echo "$repo: fetch failed"
+		return 1
+	fi
+
+	local head upstream
+	head="$(git -C "$repo" rev-parse HEAD)"
+	upstream="$(git -C "$repo" rev-parse FETCH_HEAD)"
+
+	if [[ "$head" == "$upstream" ]]; then
+		echo "$repo: already up to date"
+		return 0
+	fi
+
+	# Only fast-forward: bail unless HEAD is a strict ancestor of the upstream.
+	if ! git -C "$repo" merge-base --is-ancestor HEAD "$upstream"; then
+		echo "$repo: local $BRANCH has diverged or is ahead — leaving alone"
+		return 0
+	fi
+
+	if git -C "$repo" merge --ff-only --quiet "$upstream"; then
+		echo "$repo: fast-forwarded ${head:0:9} -> ${upstream:0:9}"
+	else
+		echo "$repo: fast-forward failed"
+		return 1
+	fi
+}
+
+local repo
+for repo in "${repos[@]}"; do
+	autoff_repo "$repo" || (( failures += 1 ))
+done
+
+(( failures == 0 ))

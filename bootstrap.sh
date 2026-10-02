@@ -14,7 +14,12 @@ MACOS_ONLY="cursor duti nightly-maintenance teams-link vscode wallpapers"
 # Stow packages whose target directory also holds host-local state, so the
 # tracked files must be linked individually rather than by folding the
 # directory itself into a symlink.
-NO_FOLDING="agent-config aws claude codex cursor pi"
+NO_FOLDING="agent-config aws claude codex cursor git-autoff pi"
+
+# Stow packages only for hosts that list them, one per line, in this
+# untracked file.
+OPT_IN="git-autoff"
+OPT_IN_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/dotfiles/opt-in"
 
 # CLI packages to install (must exist in brew + apt/dnf/yum/pacman)
 PACKAGES=(git neovim ripgrep stow zsh eza)
@@ -156,8 +161,13 @@ install_deps() {
       ok "$pkg already installed"
     else
       info "installing $pkg"
-      pkg_install "$pkg"
-      ok "$pkg"
+      # Not every distro packages everything (Amazon Linux 2023 has neither
+      # neovim nor eza), so a missing package is a warning, not a failure.
+      if pkg_install "$pkg"; then
+        ok "$pkg"
+      else
+        warn "$pkg not available from the package manager; skipping"
+      fi
     fi
   done
 
@@ -285,6 +295,10 @@ backup_conflicts() {
   )
 }
 
+opted_in() {
+  [[ -r "$OPT_IN_FILE" ]] && grep -qxF "$1" "$OPT_IN_FILE"
+}
+
 stow_packages() (
   local pkg
 
@@ -299,14 +313,21 @@ stow_packages() (
       continue
     fi
 
+    if [[ " $OPT_IN " == *" $pkg "* ]] && ! opted_in "$pkg"; then
+      info "skipping $pkg (opt-in; add it to $OPT_IN_FILE)"
+      continue
+    fi
+
     # Pin target to $HOME. Stow's default target is the parent of the stow
     # dir, which works when this repo is cloned at ~/dotfiles but not when
     # it's elsewhere.
     if [[ " $NO_FOLDING " == *" $pkg "* ]]; then
       # These packages sit beside mutable host state — agent harnesses under
-      # ~/.claude, ~/.codex, ~/.cursor, and ~/.pi, plus the AWS CLI's SSO token
-      # cache and credentials under ~/.aws. Link the tracked files individually
-      # so stow never replaces the host-local directory with a symlink.
+      # ~/.claude, ~/.codex, ~/.cursor, and ~/.pi, the AWS CLI's SSO token
+      # cache and credentials under ~/.aws, and the timers.target.wants link
+      # that systemctl --user enable writes beside git-autoff's units. Link the
+      # tracked files individually so stow never replaces the host-local
+      # directory with a symlink.
       backup_conflicts "$pkg" --no-folding
       stow -t "$HOME" --restow --no-folding "$pkg"
     else
@@ -320,8 +341,8 @@ stow_packages() (
 
 remove_obsolete_cargo_config_link() {
   local config="$HOME/.cargo/config.toml"
-  [[ -L "$config" ]] || return
-  [[ "$(readlink "$config")" == *"/cargo/.cargo/config.toml" ]] || return
+  [[ -L "$config" ]] || return 0
+  [[ "$(readlink "$config")" == *"/cargo/.cargo/config.toml" ]] || return 0
 
   rm "$config"
   ok "removed obsolete Cargo home config link"
@@ -334,7 +355,7 @@ install_claude_ssh_host_keys() {
   local source="$DOTFILES/ssh/.ssh/known_hosts.private"
   local target="$HOME/.ssh/known_hosts"
 
-  [[ "$OS" == "Darwin" ]] || return
+  [[ "$OS" == "Darwin" ]] || return 0
 
   install -d -m 700 "$HOME/.ssh"
   touch "$target"
@@ -435,6 +456,24 @@ setup_hooks() {
   ok "git hooks configured"
 }
 
+# --- git-autoff timer (Linux, opt-in) ---------------------------------------
+# Daily 05:00 fast-forward of the tiburon primary checkout. Linger lets the
+# per-user timer fire without an active login session.
+enable_git_autoff() {
+  [[ "$OS" == "Linux" ]] || return 0
+  opted_in git-autoff || return 0
+  command -v systemctl &>/dev/null || {
+    warn "systemctl not found; skipping git-autoff timer"
+    return 0
+  }
+
+  loginctl enable-linger "$USER" 2>/dev/null ||
+    sudo loginctl enable-linger "$USER"
+  systemctl --user daemon-reload
+  systemctl --user enable --now git-autoff.timer
+  ok "git-autoff timer"
+}
+
 # A URL scheme handler has to be an app bundle, so build the thinnest possible
 # one — it just forwards the URL to teams-link-open. duti points the msteams:
 # scheme at it (see .config/duti/default-apps).
@@ -498,6 +537,7 @@ main() {
   install_claude_ssh_host_keys
   reconcile_codex_plugins
   setup_hooks
+  enable_git_autoff
 
   # Install everything declared in the stowed mise config (node, python, …).
   # Must run after stow_packages so the symlinked config is in place.
