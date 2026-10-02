@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "mintlify-index": {
+      "url": "https://index.mintlify.com/mcp",
+      "description": "Public Mintlify documentation index",
+      "exposure": "direct"
+    }
+  }
+}

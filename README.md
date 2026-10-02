@@ -47,7 +47,7 @@ Each harness owns its settings in its conventional Stow package. Claude Code set
 
 The `aws` package tracks the managed AWS CLI profiles. Bootstrap stows the package without folding so `~/.aws` stays a real directory (SSO cache and credentials are host-local), then `sync-aws-config` writes `~/.aws/config` as a regular file from the tracked profiles plus optional `~/.aws/config.local`. That overlay is where generated Tractorbeam agent profiles live — they must not be a symlink into the repo. Account IDs mirror the infra repo's `data/accounts.json`, which is their source of truth. `aws-login` refreshes the shared Identity Center session.
 
-FFF and the public, credential-free Mintlify Index are configured for Claude Code, Cursor, Codex, and Pi. Pi loads the MCP servers through `pi-mcp-adapter` while retaining its native `@ff-labs/pi-fff` package. FFF inherits each harness's working directory and refuses to index the home or filesystem root by default.
+FFF and the public, credential-free Mintlify Index are configured for Claude Code, Cursor, Codex, and Pi. Pi uses built-in MCP (`~/.pi/agent/mcp.json`) for Mintlify and the native `@ff-labs/pi-fff` package for FFF. Codemode is on so classifier models such as TypeSafe Jev can run from scripts once a Jev provider is authenticated (`CLOUDFLARE_API_KEY` + `CLOUDFLARE_ACCOUNT_ID`, or `TYPESAFE_API_KEY`). FFF inherits each harness's working directory and refuses to index the home or filesystem root by default.
 
 Repository instructions use `AGENTS.md`. Shared personal workflows live under `agent-config/.agents/skills/` and are stowed into the standard user skill directory.
 
