@@ -32,11 +32,8 @@
       "command": "codex-okta-mcp"
     },
     "aikido": {
-      "command": "fnox",
+      "command": "npx",
       "args": [
-        "exec",
-        "--",
-        "npx",
         "-y",
         "@aikidosec/mcp"
       ],

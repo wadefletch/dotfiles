@@ -40,11 +40,8 @@
       "exposure": "deferred"
     },
     "aikido": {
-      "command": "fnox",
+      "command": "npx",
       "args": [
-        "exec",
-        "--",
-        "npx",
         "-y",
         "@aikidosec/mcp"
       ],

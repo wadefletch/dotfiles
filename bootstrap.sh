@@ -370,7 +370,7 @@ configure_claude_mcp() {
   add_claude_mcp secureframe --transport http -- https://mcp.secureframe.com/
   add_claude_mcp okta -- codex-okta-mcp
   add_claude_mcp aikido --env "npm_config_cache=$HOME/.cache/aikido-npx" -- \
-    fnox exec -- npx -y @aikidosec/mcp
+    npx -y @aikidosec/mcp
 }
 
 # add_claude_mcp <name> [claude mcp add options] -- <command or url> [args]

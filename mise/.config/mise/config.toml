@@ -1,6 +1,5 @@
 [tools]
 bun = "latest"
-fnox = "latest"
 node = "24"
 "npm:fleetctl" = "4.89.2"
 pnpm = "latest"

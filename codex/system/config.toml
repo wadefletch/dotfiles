@@ -51,10 +51,11 @@ default_tools_approval_mode = "approve"
 startup_timeout_sec = 60
 tool_timeout_sec = 60
 
-# fnox supplies AIKIDO_API_KEY from its keychain-backed store.
+# Aikido offers a browser sign-in on first use and keeps the token in the OS
+# keychain. The npm cache is kept out of ~/.npm so the sandbox can write it.
 [mcp_servers.aikido]
-command = "fnox"
-args = ["exec", "--", "npx", "-y", "@aikidosec/mcp"]
+command = "npx"
+args = ["-y", "@aikidosec/mcp"]
 
 [mcp_servers.aikido.env]
 npm_config_cache = "/Users/wadefletcher/.cache/aikido-npx"
