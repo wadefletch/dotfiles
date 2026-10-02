@@ -2,7 +2,7 @@
 # pins this to Eastern regardless). Persistent catches up a missed run — e.g. if
 # the box was down at 05:00 — on the next start.
 [Unit]
-Description=Daily fast-forward of tiburon main
+Description=Daily git-auto-ff fast-forward
 
 [Timer]
 OnCalendar=*-*-* 05:00:00 America/New_York

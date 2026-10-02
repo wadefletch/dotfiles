@@ -5,7 +5,9 @@
 # fast-forward). Anything else — a linked worktree, a different branch, local
 # changes, or a diverged/ahead history — is left untouched.
 #
-# Usage: git-auto-ff [REPO ...]   (defaults to ~/tiburon)
+# Usage: git-auto-ff [REPO ...]
+# With no arguments, reads repo paths, one per line, from
+# ~/.config/git-auto-ff/repos (host-local; enable-git-auto-ff.sh writes it).
 
 setopt pipe_fail
 
@@ -16,7 +18,16 @@ export PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$PA
 typeset -r BRANCH=main
 typeset -a repos
 repos=("$@")
-(( ${#repos} > 0 )) || repos=("$HOME/tiburon")
+if (( ${#repos} == 0 )); then
+	typeset list="${XDG_CONFIG_HOME:-$HOME/.config}/git-auto-ff/repos"
+	[[ -r "$list" ]] && repos=(${(f)"$(<"$list")"})
+	repos=(${repos:#(\#*|)})
+	repos=(${repos/#\~/$HOME})
+fi
+if (( ${#repos} == 0 )); then
+	echo "no repos to fast-forward; list them in ~/.config/git-auto-ff/repos"
+	exit 0
+fi
 
 integer failures=0
 
