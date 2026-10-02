@@ -29,5 +29,6 @@
     "npm:pi-context-view",
     "npm:pi-goal-x"
   ],
+  "deviceId": "a8a2dbef-ae85-4da6-8ad4-8785795ef046",
   "hideThinkingBlock": false
 }
