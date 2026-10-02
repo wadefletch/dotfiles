@@ -359,11 +359,6 @@ configure_claude_mcp() {
     return
   fi
 
-  # The documentation index used to be registered under the vendor's name.
-  if claude mcp get mintlify-index &>/dev/null; then
-    claude mcp remove --scope user mintlify-index
-  fi
-
   add_claude_mcp fff -- fff-mcp --no-update-check
   add_claude_mcp docs-index --transport http -- https://index.mintlify.com/mcp
   add_claude_mcp betterstack --transport http -- https://mcp.betterstack.com
@@ -388,19 +383,11 @@ add_claude_mcp() {
 # aws-core and cloudflare come straight from their vendors' marketplaces, the
 # sources Codex uses, so both harnesses run the same plugins. The settings
 # file already declares the marketplaces and the plugins; this makes the
-# installed copies match it and drops the aws-core copy from Anthropic's
-# marketplace, which pins an older commit.
+# installed copies match it.
 configure_claude_plugins() {
   if ! command -v claude &>/dev/null; then
     warn "claude not found; skipping vendor plugins"
     return
-  fi
-
-  # Captured first: grep -q closing the pipe early would fail it under pipefail.
-  local installed
-  installed="$(claude plugin list)"
-  if grep -qF 'aws-core@claude-plugins-official' <<<"$installed"; then
-    claude plugin uninstall aws-core@claude-plugins-official
   fi
 
   info "updating Claude Code vendor plugins"
