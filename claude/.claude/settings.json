@@ -274,7 +274,7 @@
       "~/.claude/references"
     ]
   },
-  "model": "opus[1m]",
+  "model": "opus",
   "hooks": {},
   "statusLine": {
     "type": "command",
@@ -327,6 +327,7 @@
   "preferredNotifChannel": "ghostty",
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
+  "askUserQuestionTimeout": "60s",
   "skipAutoPermissionPrompt": true,
   "skillOverrides": {
     "aws-core:signing-in-to-aws": "off"
