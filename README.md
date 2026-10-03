@@ -18,6 +18,7 @@ GNU Stow-based dotfiles for macOS (with Linux support for the CLI packages). Eac
 | gh | GitHub CLI config (XDG) |
 | ghostty | Ghostty terminal |
 | git | Git config (XDG) |
+| git-auto-ff | Fast-forwards chosen checkouts to origin/main daily at 05:00 when safe, via a systemd user timer (Linux) or LaunchAgent (macOS); enable per host with `./enable-git-auto-ff.sh REPO...` |
 | mise | Mise tool versions (node, python, …) |
 | nightly-maintenance | LaunchAgent for nightly maintenance script (macOS) |
 | nvim | Neovim config and markdownlint |

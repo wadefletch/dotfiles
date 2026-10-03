@@ -14,7 +14,7 @@ MACOS_ONLY="cursor duti nightly-maintenance teams-link vscode wallpapers"
 # Stow packages whose target directory also holds host-local state, so the
 # tracked files must be linked individually rather than by folding the
 # directory itself into a symlink.
-NO_FOLDING="agent-config aws claude codex cursor pi"
+NO_FOLDING="agent-config aws claude codex cursor git-auto-ff pi"
 
 # CLI packages to install (must exist in brew + apt/dnf/yum/pacman)
 PACKAGES=(git neovim ripgrep stow zsh eza)
@@ -156,8 +156,13 @@ install_deps() {
       ok "$pkg already installed"
     else
       info "installing $pkg"
-      pkg_install "$pkg"
-      ok "$pkg"
+      # Not every distro packages everything (Amazon Linux 2023 has neither
+      # neovim nor eza), so a missing package is a warning, not a failure.
+      if pkg_install "$pkg"; then
+        ok "$pkg"
+      else
+        warn "$pkg not available from the package manager; skipping"
+      fi
     fi
   done
 
@@ -304,9 +309,11 @@ stow_packages() (
     # it's elsewhere.
     if [[ " $NO_FOLDING " == *" $pkg "* ]]; then
       # These packages sit beside mutable host state — agent harnesses under
-      # ~/.claude, ~/.codex, ~/.cursor, and ~/.pi, plus the AWS CLI's SSO token
-      # cache and credentials under ~/.aws. Link the tracked files individually
-      # so stow never replaces the host-local directory with a symlink.
+      # ~/.claude, ~/.codex, ~/.cursor, and ~/.pi, the AWS CLI's SSO token
+      # cache and credentials under ~/.aws, and the timers.target.wants link
+      # that systemctl --user enable writes beside git-auto-ff's units. Link the
+      # tracked files individually so stow never replaces the host-local
+      # directory with a symlink.
       backup_conflicts "$pkg" --no-folding
       stow -t "$HOME" --restow --no-folding "$pkg"
     else
@@ -325,7 +332,7 @@ install_claude_ssh_host_keys() {
   local source="$DOTFILES/ssh/.ssh/known_hosts.private"
   local target="$HOME/.ssh/known_hosts"
 
-  [[ "$OS" == "Darwin" ]] || return
+  [[ "$OS" == "Darwin" ]] || return 0
 
   install -d -m 700 "$HOME/.ssh"
   touch "$target"

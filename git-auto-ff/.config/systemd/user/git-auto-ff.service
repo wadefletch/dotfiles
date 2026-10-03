@@ -1,0 +1,11 @@
+# Fast-forward the repos in ~/.config/git-auto-ff/repos to origin/main when safe.
+# Triggered by git-auto-ff.timer; run manually with: systemctl --user start git-auto-ff.
+[Unit]
+Description=Fast-forward listed repos' main to origin when safe
+Documentation=man:git-fetch(1)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/git-auto-ff

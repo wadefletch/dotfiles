@@ -31,4 +31,5 @@ bootstrap.sh        # installs deps, stows packages, git hooks, WARP SSH host ke
 - XDG paths (`.config/`) where the app supports it, macOS `Library/` paths otherwise.
 - Every top-level directory is a stow package.
 - The `claude/` package has a `.stow-local-ignore` — check it before adding files.
-- Packages listed in `bootstrap.sh`'s `NO_FOLDING` (`agent-config`, `aws`, `claude`, `codex`, `cursor`, `pi`) target directories that also hold host-local state; stow links their files individually so the directory itself is never replaced.
+- Packages listed in `bootstrap.sh`'s `NO_FOLDING` (`agent-config`, `aws`, `claude`, `codex`, `cursor`, `git-auto-ff`, `pi`) target directories that also hold host-local state; stow links their files individually so the directory itself is never replaced.
+- `git-auto-ff/` ships a systemd user timer (Linux) and a LaunchAgent (macOS); it is in `NO_FOLDING` so `systemctl --user enable` writes into `~/.config`, not the repo. Bootstrap never enables either; `./enable-git-auto-ff.sh` does, per host.
