@@ -4,3 +4,4 @@ experimental@tractorbeam
 mise@tractorbeam
 tractorbeam@tractorbeam
 cloudflare@cloudflare
+workos@workos
