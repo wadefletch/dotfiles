@@ -1,10 +1,16 @@
 {
   "lastChangelogVersion": "0.99.2",
   "theme": "light/dark",
-  "defaultProvider": "xai",
-  "defaultModel": "grok-4.6",
+  "defaultProvider": "openai",
+  "defaultModel": "gpt-6.1-sol",
   "defaultThinkingLevel": "medium",
-  "defaultTools": ["+codemode"],
+  "defaultTools": [
+    "+codemode",
+    "+tool_search"
+  ],
+  "codemode": {
+    "mode": "on"
+  },
   "outputPad": 0,
   "terminal": {
     "showTerminalProgress": true
@@ -17,6 +23,9 @@
     "npm:pi-web-access",
     "npm:pi-subagents",
     "npm:pi-context-view",
-    "npm:pi-mcp-adapter@2.34.0"
-  ]
+    "npm:pi-goal-x",
+    "git:github.com/tractorbeamai/skills"
+  ],
+  "deviceId": "a8a2dbef-ae85-4da6-8ad4-8785795ef046",
+  "hideThinkingBlock": false
 }

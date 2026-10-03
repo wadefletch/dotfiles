@@ -6,7 +6,8 @@
     "CLAUDE_CODE_DISABLE_FAST_MODE": "1",
     "DISABLE_ERROR_REPORTING": "1",
     "ENABLE_LSP_TOOL": "1",
-    "ENABLE_CLAUDEAI_MCP_SERVERS": "true"
+    "ENABLE_CLAUDEAI_MCP_SERVERS": "true",
+    "AWS_MCP_PROXY_PROFILES": "agent-read-management agent-read-audit agent-read-log-archive agent-read-production agent-read-nonprod agent-read-shared-services agent-read-distribution agent-read-sandbox agent-read-brizzco"
   },
   "attribution": {
     "commit": "",
@@ -280,7 +281,8 @@
     "command": "~/.claude/statusline.sh"
   },
   "enabledPlugins": {
-    "aws-core@claude-plugins-official": true,
+    "aws-core@agent-toolkit-for-aws": true,
+    "cloudflare@cloudflare": true,
     "code-style@tractorbeam": true,
     "document-skills@anthropic-agent-skills": true,
     "mise@tractorbeam": true,
@@ -290,6 +292,18 @@
     "typescript-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
+    "agent-toolkit-for-aws": {
+      "source": {
+        "source": "github",
+        "repo": "aws/agent-toolkit-for-aws"
+      }
+    },
+    "cloudflare": {
+      "source": {
+        "source": "github",
+        "repo": "cloudflare/skills"
+      }
+    },
     "tractorbeam": {
       "source": {
         "source": "git",
@@ -313,5 +327,8 @@
   "preferredNotifChannel": "ghostty",
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "skillOverrides": {
+    "aws-core:signing-in-to-aws": "off"
+  }
 }

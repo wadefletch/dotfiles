@@ -5,13 +5,12 @@ GNU Stow-based dotfiles for macOS. Each top-level directory is a stow package mi
 ```
 <package>/          # stow package — contents symlinked into ~
   .config/<app>/    # XDG config (ghostty, git, nvim, starship, alacritty)
-  .config/mcp/      # Pi MCP servers via pi-mcp-adapter (pi/)
   .zshrc, .zshenv   # shell config (zsh/)
   .ssh/config       # ssh config (ssh/)
   Library/...       # macOS paths (cursor/, vscode/, nightly-maintenance/)
   .cursor/          # Cursor CLI config (cursor/; --no-folding so ~/.cursor stays host-local)
   .claude/          # Claude Code runtime files (claude/)
-  .pi/agent/        # Pi settings (pi/; --no-folding so ~/.pi stays host-local)
+  .pi/agent/        # Pi settings and MCP servers (pi/; --no-folding so ~/.pi stays host-local)
   .docker/           # tool config (docker/)
   .aws/config       # aws cli profiles (aws/) — live ~/.aws/config is assembled; credentials, SSO cache, config.local untracked
 .githooks/          # git hooks (core.hooksPath); post-merge updates submodules
@@ -25,6 +24,7 @@ bootstrap.sh        # installs deps, stows packages, git hooks, WARP SSH host ke
 - `zsh/.zshrc` — shell config, aliases (`ga`, `gc`, `gs`, `gp`, `gl`, `gq`), `stopall`, `automerge`
 - `zsh/.zshenv` — lightweight PATH exports (brew, local bin)
 - `claude/AGENTS.md` — instructions for the Claude stow package itself
+- `agent-config/.agents/AGENTS.md` — user-scoped agent instructions. `claude/.claude/CLAUDE.md`, `codex/.codex/AGENTS.md`, and `pi/.pi/agent/AGENTS.md` are symlinks to it, so edit this file, not the links.
 
 ## Conventions
 

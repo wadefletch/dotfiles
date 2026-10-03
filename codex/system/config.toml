@@ -19,5 +19,54 @@ network_access = true
 command = "fff-mcp"
 args = ["--no-update-check"]
 
-[mcp_servers.mintlify-index]
+[mcp_servers.docs-index]
 url = "https://index.mintlify.com/mcp"
+
+# Replaces the aws-core plugin's aws-mcp entry by name. The plugin's own entry
+# signs with whatever AWS credentials are in the environment; this one launches
+# the installed proxy with the read-only agent profiles and nothing else. The
+# agent roles and this allowlist enforce read access, so the proxy runs without
+# --read-only, which hides the tools used to inspect resources.
+[mcp_servers.aws-mcp]
+command = "mcp-proxy-for-aws-cli"
+args = ["https://aws-mcp.us-east-1.api.aws/mcp"]
+default_tools_approval_mode = "approve"
+startup_timeout_sec = 60
+tool_timeout_sec = 300
+
+[mcp_servers.aws-mcp.env]
+AWS_REGION = "us-east-1"
+AWS_MCP_PROXY_PROFILES = "agent-read-management agent-read-audit agent-read-log-archive agent-read-production agent-read-nonprod agent-read-shared-services agent-read-distribution agent-read-sandbox agent-read-brizzco"
+
+[mcp_servers.betterstack]
+url = "https://mcp.betterstack.com"
+
+[mcp_servers.secureframe]
+url = "https://mcp.secureframe.com/"
+
+# codex-okta-mcp reads the Okta service-app key from the login Keychain.
+[mcp_servers.okta]
+command = "codex-okta-mcp"
+default_tools_approval_mode = "approve"
+startup_timeout_sec = 60
+tool_timeout_sec = 60
+
+# Aikido offers a browser sign-in on first use and keeps the token in the OS
+# keychain. The npm cache is kept out of ~/.npm so the sandbox can write it.
+[mcp_servers.aikido]
+command = "npx"
+args = ["-y", "@aikidosec/mcp"]
+
+[mcp_servers.aikido.env]
+npm_config_cache = "/Users/wadefletcher/.cache/aikido-npx"
+
+# xurl reads the X app credentials and OAuth token from ~/.xurl/auth.yml.
+[mcp_servers.xapi]
+command = "npx"
+args = ["-y", "@xdevplatform/xurl", "mcp", "https://api.x.com/mcp"]
+
+# The aws-core plugin's sign-in skill tells the agent to run `aws login`;
+# Tractorbeam's aws-access skill makes authentication a human handoff.
+[[skills.config]]
+name = "signing-in-to-aws"
+enabled = false

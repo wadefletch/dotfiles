@@ -20,7 +20,7 @@ NO_FOLDING="agent-config aws claude codex cursor git-auto-ff pi"
 PACKAGES=(git neovim ripgrep stow zsh eza)
 
 # macOS apps and fonts (brew casks)
-CASKS=(cursor ghostty font-symbols-only-nerd-font)
+CASKS=(cursor ghostty)
 
 info() { printf '  [ .. ] %s\n' "$1"; }
 ok() { printf '  [ OK ] %s\n' "$1"; }
@@ -325,15 +325,6 @@ stow_packages() (
 
 )
 
-remove_obsolete_cargo_config_link() {
-  local config="$HOME/.cargo/config.toml"
-  [[ -L "$config" ]] || return 0
-  [[ "$(readlink "$config")" == *"/cargo/.cargo/config.toml" ]] || return 0
-
-  rm "$config"
-  ok "removed obsolete Cargo home config link"
-}
-
 # --- SSH host verification --------------------------------------------------
 
 install_claude_ssh_host_keys() {
@@ -358,27 +349,70 @@ install_claude_ssh_host_keys() {
 
 # Claude Code stores user-scoped MCP registrations in mutable host state rather
 # than a standalone stowable file. Add the portable servers when they are
-# missing and leave all other registrations alone.
+# missing and leave all other registrations alone. The AWS and Cloudflare
+# servers come from their plugins instead.
 configure_claude_mcp() {
   if ! command -v claude &>/dev/null; then
     warn "claude not found; skipping MCP configuration"
     return
   fi
 
-  if claude mcp get fff &>/dev/null; then
-    ok "Claude Code FFF MCP already configured"
+  add_claude_mcp fff -- fff-mcp --no-update-check
+  add_claude_mcp docs-index --transport http -- https://index.mintlify.com/mcp
+  add_claude_mcp betterstack --transport http -- https://mcp.betterstack.com
+  add_claude_mcp secureframe --transport http -- https://mcp.secureframe.com/
+  add_claude_mcp okta -- codex-okta-mcp
+  add_claude_mcp aikido --env "npm_config_cache=$HOME/.cache/aikido-npx" -- \
+    npx -y @aikidosec/mcp
+  add_claude_mcp xapi -- npx -y @xdevplatform/xurl mcp https://api.x.com/mcp
+}
+
+# add_claude_mcp <name> [claude mcp add options] -- <command or url> [args]
+add_claude_mcp() {
+  local name="$1"
+  shift
+  if claude mcp get "$name" &>/dev/null; then
+    ok "Claude Code $name MCP already configured"
   else
-    claude mcp add --scope user fff -- \
-      fff-mcp --no-update-check
-    ok "Claude Code FFF MCP"
+    claude mcp add --scope user "$name" "$@"
+    ok "Claude Code $name MCP"
+  fi
+}
+
+# aws-core and cloudflare come straight from their vendors' marketplaces, the
+# sources Codex uses, so both harnesses run the same plugins. The settings
+# file already declares the marketplaces and the plugins; this makes the
+# installed copies match it.
+configure_claude_plugins() {
+  if ! command -v claude &>/dev/null; then
+    warn "claude not found; skipping vendor plugins"
+    return
   fi
 
-  if claude mcp get mintlify-index &>/dev/null; then
-    ok "Claude Code Mintlify Index MCP already configured"
+  info "updating Claude Code vendor plugins"
+  claude plugin marketplace add aws/agent-toolkit-for-aws
+  claude plugin marketplace add cloudflare/skills
+  claude plugin marketplace update agent-toolkit-for-aws
+  claude plugin marketplace update cloudflare
+  claude plugin install aws-core@agent-toolkit-for-aws
+  claude plugin install cloudflare@cloudflare
+  claude plugin update aws-core@agent-toolkit-for-aws
+  claude plugin update cloudflare@cloudflare
+  ok "Claude Code vendor plugins"
+}
+
+# The AWS MCP servers for Codex and Pi launch this executable directly instead
+# of resolving it through uvx on every start. uv comes from the mise toolset,
+# so this runs after `mise install`.
+install_aws_mcp_proxy() {
+  if command -v mcp-proxy-for-aws-cli &>/dev/null; then
+    ok "AWS MCP proxy already installed"
+  elif command -v uv &>/dev/null; then
+    info "installing AWS MCP proxy"
+    uv tool install mcp-proxy-for-aws-cli
+    ok "AWS MCP proxy"
   else
-    claude mcp add --scope user --transport http \
-      mintlify-index https://index.mintlify.com/mcp
-    ok "Claude Code Mintlify Index MCP"
+    warn "uv not found; install mcp-proxy-for-aws-cli before using the AWS MCP server"
   fi
 }
 
@@ -414,8 +448,10 @@ reconcile_codex_plugins() {
   info "updating codex plugin marketplaces"
   codex plugin marketplace add https://github.com/tractorbeamai/skills.git
   codex plugin marketplace add aws/agent-toolkit-for-aws
+  codex plugin marketplace add cloudflare/skills
   codex plugin marketplace upgrade tractorbeam
   codex plugin marketplace upgrade agent-toolkit-for-aws
+  codex plugin marketplace upgrade cloudflare
 
   if [[ -f "$config" ]]; then
     while IFS= read -r plugin; do
@@ -423,7 +459,7 @@ reconcile_codex_plugins() {
         codex plugin remove "$plugin"
       fi
     done < <(
-      sed -nE 's/^\[plugins\."([^"]*@(tractorbeam|agent-toolkit-for-aws))"\]$/\1/p' "$config"
+      sed -nE 's/^\[plugins\."([^"]*@(tractorbeam|agent-toolkit-for-aws|cloudflare))"\]$/\1/p' "$config"
     )
   fi
 
@@ -496,12 +532,12 @@ main() {
 
   install_deps
   install_codex_system_config
-  remove_obsolete_cargo_config_link
   stow_packages
   info "installing AWS CLI config"
   "$DOTFILES/aws/.local/bin/sync-aws-config"
   ok "AWS CLI config"
   configure_claude_mcp
+  configure_claude_plugins
   install_claude_ssh_host_keys
   reconcile_codex_plugins
   setup_hooks
@@ -513,6 +549,8 @@ main() {
     mise install
     ok "mise tools"
   fi
+
+  install_aws_mcp_proxy
 
   if [[ "$OS" == "Darwin" ]]; then
     info "installing Okta MCP server"
