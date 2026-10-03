@@ -50,6 +50,17 @@
       },
       "description": "Aikido security findings",
       "exposure": "deferred"
+    },
+    "xapi": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@xdevplatform/xurl",
+        "mcp",
+        "https://api.x.com/mcp"
+      ],
+      "description": "X (Twitter) API: posts, users, bookmarks, and DMs",
+      "exposure": "deferred"
     }
   }
 }
