@@ -49,6 +49,9 @@
         "mcp",
         "https://api.x.com/mcp"
       ]
+    },
+    "workos": {
+      "url": "https://mcp.workos.com/mcp"
     }
   }
 }
