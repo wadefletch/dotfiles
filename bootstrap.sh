@@ -20,7 +20,7 @@ NO_FOLDING="agent-config aws claude codex cursor pi"
 PACKAGES=(git neovim ripgrep stow zsh eza)
 
 # macOS apps and fonts (brew casks)
-CASKS=(cursor ghostty font-symbols-only-nerd-font)
+CASKS=(cursor ghostty)
 
 info() { printf '  [ .. ] %s\n' "$1"; }
 ok() { printf '  [ OK ] %s\n' "$1"; }
@@ -318,15 +318,6 @@ stow_packages() (
 
 )
 
-remove_obsolete_cargo_config_link() {
-  local config="$HOME/.cargo/config.toml"
-  [[ -L "$config" ]] || return
-  [[ "$(readlink "$config")" == *"/cargo/.cargo/config.toml" ]] || return
-
-  rm "$config"
-  ok "removed obsolete Cargo home config link"
-}
-
 # --- SSH host verification --------------------------------------------------
 
 install_claude_ssh_host_keys() {
@@ -366,6 +357,7 @@ configure_claude_mcp() {
   add_claude_mcp okta -- codex-okta-mcp
   add_claude_mcp aikido --env "npm_config_cache=$HOME/.cache/aikido-npx" -- \
     npx -y @aikidosec/mcp
+  add_claude_mcp xapi -- npx -y @xdevplatform/xurl mcp https://api.x.com/mcp
 }
 
 # add_claude_mcp <name> [claude mcp add options] -- <command or url> [args]
@@ -533,7 +525,6 @@ main() {
 
   install_deps
   install_codex_system_config
-  remove_obsolete_cargo_config_link
   stow_packages
   info "installing AWS CLI config"
   "$DOTFILES/aws/.local/bin/sync-aws-config"

@@ -60,6 +60,11 @@ args = ["-y", "@aikidosec/mcp"]
 [mcp_servers.aikido.env]
 npm_config_cache = "/Users/wadefletcher/.cache/aikido-npx"
 
+# xurl reads the X app credentials and OAuth token from ~/.xurl/auth.yml.
+[mcp_servers.xapi]
+command = "npx"
+args = ["-y", "@xdevplatform/xurl", "mcp", "https://api.x.com/mcp"]
+
 # The aws-core plugin's sign-in skill tells the agent to run `aws login`;
 # Tractorbeam's aws-access skill makes authentication a human handoff.
 [[skills.config]]

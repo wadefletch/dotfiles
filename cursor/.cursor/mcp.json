@@ -40,6 +40,15 @@
       "env": {
         "npm_config_cache": "/Users/wadefletcher/.cache/aikido-npx"
       }
+    },
+    "xapi": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@xdevplatform/xurl",
+        "mcp",
+        "https://api.x.com/mcp"
+      ]
     }
   }
 }
