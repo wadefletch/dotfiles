@@ -5,9 +5,11 @@ set -euo pipefail
 # overlay. The overlay is where generated Tractorbeam agent profiles live;
 # they must not be symlinked into the repo or a regenerator would dirty git.
 
+# Stow links this script into ~/.local/bin with a relative target, so resolve
+# the link from its own directory rather than the caller's.
 script="$0"
 if [[ -L "$script" ]]; then
-  script="$(readlink "$script")"
+  script="$(cd "$(dirname "$script")" && cd "$(dirname "$(readlink "$script")")" && pwd)/$(basename "$script")"
 fi
 root="$(cd "$(dirname "$script")/../../.." && pwd)"
 managed="$root/aws/.aws/config"
