@@ -6,9 +6,11 @@ if [[ -x "${HOMEBREW_PREFIX:-}/bin/brew" ]]; then
   eval "$("${HOMEBREW_PREFIX}/bin/brew" shellenv)"
 fi
 
-# Local macOS shells use launchd's current agent; incoming SSH sessions keep
-# their forwarded agent.
-if [[ "$OSTYPE" == darwin* && -z "${SSH_CONNECTION:-}" ]]; then
+# macOS shells keep a forwarded agent when one arrived and otherwise use
+# launchd's current agent, including in incoming SSH sessions, so git's SSH
+# commit signing reaches the key without a TTY. Only local sessions load
+# keychain keys into the agent.
+if [[ "$OSTYPE" == darwin* ]]; then
   if [[ ! -S "${SSH_AUTH_SOCK:-}" ]]; then
     SSH_AUTH_SOCK=$(
       launchctl print "gui/$UID/com.openssh.ssh-agent" 2>/dev/null |
@@ -17,5 +19,7 @@ if [[ "$OSTYPE" == darwin* && -z "${SSH_CONNECTION:-}" ]]; then
     export SSH_AUTH_SOCK
   fi
 
-  ssh-add --apple-load-keychain 2>/dev/null
+  if [[ -z "${SSH_CONNECTION:-}" ]]; then
+    ssh-add --apple-load-keychain 2>/dev/null
+  fi
 fi
