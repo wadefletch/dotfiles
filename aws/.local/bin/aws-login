@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Refresh the shared Tractorbeam Identity Center session. Lives in the aws
+# package, not a .zshrc alias, so a host that doesn't stow aws can supply its
+# own aws-login.
+exec aws sso login --sso-session tractorbeam "$@"
