@@ -560,7 +560,10 @@ main() {
     local tmp
     tmp="$(mktemp "$HOME/.claude/settings.json.XXXXXX")"
     jq -s '.[0] * .[1]' "$DOTFILES/claude/.claude/settings.json" \
-      "$DOTFILES/claude/.claude/settings.carlyle-ec2.json" >"$tmp"
+      "$DOTFILES/claude/.claude/settings.carlyle-ec2.json" >"$tmp" || {
+      rm -f "$tmp"
+      fail "merging Carlyle Claude Code settings (is jq installed?)"
+    }
     chmod 644 "$tmp"
     mv -f "$tmp" "$HOME/.claude/settings.json"
     ok "Claude Code settings (Carlyle EC2)"
