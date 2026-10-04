@@ -3,12 +3,10 @@
 # package, not a .zshrc alias, so a host that doesn't stow aws can supply its
 # own aws-login.
 
-# Claude Code runs background sessions with BROWSER=true, which turns the
-# CLI's browser launch into a silent no-op. Honor it only over SSH, where it
-# keeps the browser from opening on a machine nobody is looking at.
-if [[ -z "${SSH_CONNECTION:-}" && "${BROWSER:-}" == "true" ]]; then
-  unset BROWSER
-fi
+# Open the sign-in page on the Mac you are using, which may be another one
+# connected over SSH. This also replaces the BROWSER=true that Claude Code
+# sets in background sessions, which turns the browser launch into a no-op.
+export BROWSER=open-url
 
 # The device code flow prints a URL and code that also work from another
 # machine, which the default flow's localhost callback does not.

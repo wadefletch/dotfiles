@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# Open a URL on whichever of these Macs someone is using: the one with the
+# most recent keyboard or mouse input, if any had input in the last ten
+# minutes. Lets a browser launched over SSH (an `aws-login` device page, a
+# link clicked in Claude Code) open in front of you on the Mac you are at,
+# whichever of them you connected from. Used as $BROWSER.
+set -euo pipefail
+
+hosts=(arrakis corrino)
+max_idle=600
+
+url=${1:?usage: open-url <url>}
+case "$url" in
+  http://* | https://*) ;;
+  *)
+    printf 'open-url: refusing non-http URL: %s\n' "$url" >&2
+    exit 1
+    ;;
+esac
+
+# Run from launchd jobs and agent daemons too, which start without an agent.
+if [[ ! -S "${SSH_AUTH_SOCK:-}" ]]; then
+  SSH_AUTH_SOCK=$(launchctl print "gui/$UID/com.openssh.ssh-agent" 2>/dev/null |
+    awk '$1 == "SSH_AUTH_SOCK" && $2 == "=>" { print $3; exit }')
+  export SSH_AUTH_SOCK
+fi
+
+# Single-quoted on purpose: it runs as-is here and on the other Mac.
+# shellcheck disable=SC2016
+idle_seconds='ioreg -c IOHIDSystem | awk "/HIDIdleTime/ && !n++ { print int(\$NF / 1000000000) }"'
+self=$(scutil --get LocalHostName | tr '[:upper:]' '[:lower:]')
+
+best=
+best_idle=$max_idle
+for host in "${hosts[@]}"; do
+  if [[ "$host" == "$self" ]]; then
+    idle=$(eval "$idle_seconds")
+  else
+    idle=$(ssh -o BatchMode=yes -o ConnectTimeout=3 "$host" "$idle_seconds" 2>/dev/null) || continue
+  fi
+  if [[ "$idle" =~ ^[0-9]+$ ]] && ((idle < best_idle)); then
+    best=$host
+    best_idle=$idle
+  fi
+done
+
+if [[ -z "$best" ]]; then
+  printf 'open-url: no Mac in use; open this yourself:\n%s\n' "$url" >&2
+  exit 1
+elif [[ "$best" == "$self" ]]; then
+  exec /usr/bin/open "$url"
+else
+  exec ssh -o BatchMode=yes -o ConnectTimeout=5 "$best" "/usr/bin/open $(printf '%q' "$url")"
+fi
