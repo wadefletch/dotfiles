@@ -318,6 +318,7 @@
       }
     }
   },
+  "feedbackDrafts": "off",
   "showClearContextOnPlanAccept": true,
   "autoUpdatesChannel": "latest",
   "autoMemoryEnabled": false,
