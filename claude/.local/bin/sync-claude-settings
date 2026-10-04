@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Write ~/.claude/settings.json as the shared settings deep-merged with the
+# Carlyle EC2 overlay. Claude Code has no user-scope settings.local.json, so
+# the host overrides have to be baked into the user file itself; a symlink
+# into the repo would turn that merge into a git change.
+
+# Stow links this script into ~/.local/bin with a relative target, so resolve
+# the link from its own directory rather than the caller's.
+script="$0"
+if [[ -L "$script" ]]; then
+  script="$(cd "$(dirname "$script")" && cd "$(dirname "$(readlink "$script")")" && pwd)/$(basename "$script")"
+fi
+root="$(cd "$(dirname "$script")/../../.." && pwd)"
+base="$root/claude/.claude/settings.json"
+overlay="$root/claude/.claude/settings.carlyle-ec2.json"
+live="$HOME/.claude/settings.json"
+
+for f in "$base" "$overlay"; do
+  [[ -f "$f" ]] || {
+    printf 'sync-claude-settings: missing %s\n' "$f" >&2
+    exit 1
+  }
+done
+
+install -d "$HOME/.claude"
+
+tmp="$(mktemp "$HOME/.claude/settings.json.XXXXXX")"
+jq -s '.[0] * .[1]' "$base" "$overlay" >"$tmp"
+chmod 644 "$tmp"
+if [[ -L "$live" ]]; then
+  rm "$live"
+fi
+mv "$tmp" "$live"

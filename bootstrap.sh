@@ -552,6 +552,11 @@ main() {
     "$DOTFILES/aws/.local/bin/sync-aws-config"
     ok "AWS CLI config"
   fi
+  if [[ -n "${CARLYLE_EC2:-}" ]]; then
+    info "applying Carlyle EC2 Claude Code overrides"
+    "$DOTFILES/claude/.local/bin/sync-claude-settings"
+    ok "Claude Code settings (Carlyle EC2)"
+  fi
   configure_claude_mcp
   configure_claude_plugins
   install_claude_ssh_host_keys
