@@ -60,6 +60,20 @@ if [[ -n "$SSH_CONNECTION" ]]; then
   export BROWSER=true
 fi
 
+# macOS shells keep a forwarded agent when one arrived and otherwise use
+# launchd's current agent, including in incoming SSH sessions, so git's SSH
+# commit signing reaches the key without a TTY. This lives here rather than in
+# .zprofile because non-login shells need it too: processes launchd starts
+# without SSH_AUTH_SOCK (the Claude Code daemon, for one) spawn `zsh -c`
+# shells that never read .zprofile.
+if [[ "$OSTYPE" == darwin* && ! -S "${SSH_AUTH_SOCK:-}" ]]; then
+  SSH_AUTH_SOCK=$(
+    launchctl print "gui/$UID/com.openssh.ssh-agent" 2>/dev/null |
+      awk '$1 == "SSH_AUTH_SOCK" && $2 == "=>" { print $3; exit }'
+  )
+  export SSH_AUTH_SOCK
+fi
+
 if [[ -r ~/.zshenv.local ]]; then
   # shellcheck disable=SC1090
   source ~/.zshenv.local
