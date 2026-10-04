@@ -11,6 +11,12 @@ export PATH="$HOME/.local/bin:$PATH"
 # macOS-only stow packages (contain Library/ paths or macOS-only tools)
 MACOS_ONLY="cursor duti nightly-maintenance teams-link vscode wallpapers"
 
+# Packages this host opts out of, driven by env. The Carlyle EC2 devbox manages
+# its own host-local ~/.aws/config and aws-login, so CARLYLE_EC2=1 skips the aws
+# package (and its config sync) to leave that host-local setup untouched.
+SKIP_PACKAGES=""
+[[ -n "${CARLYLE_EC2:-}" ]] && SKIP_PACKAGES+=" aws"
+
 # Stow packages whose target directory also holds host-local state, so the
 # tracked files must be linked individually rather than by folding the
 # directory itself into a symlink.
@@ -304,6 +310,12 @@ stow_packages() (
       continue
     fi
 
+    # skip packages this host opts out of (e.g. CARLYLE_EC2 disables aws)
+    if [[ " $SKIP_PACKAGES " == *" $pkg "* ]]; then
+      info "skipping $pkg (disabled on this host)"
+      continue
+    fi
+
     # Pin target to $HOME. Stow's default target is the parent of the stow
     # dir, which works when this repo is cloned at ~/dotfiles but not when
     # it's elsewhere.
@@ -533,9 +545,13 @@ main() {
   install_deps
   install_codex_system_config
   stow_packages
-  info "installing AWS CLI config"
-  "$DOTFILES/aws/.local/bin/sync-aws-config"
-  ok "AWS CLI config"
+  if [[ " $SKIP_PACKAGES " == *" aws "* ]]; then
+    info "skipping AWS CLI config (aws disabled on this host)"
+  else
+    info "installing AWS CLI config"
+    "$DOTFILES/aws/.local/bin/sync-aws-config"
+    ok "AWS CLI config"
+  fi
   configure_claude_mcp
   configure_claude_plugins
   install_claude_ssh_host_keys
