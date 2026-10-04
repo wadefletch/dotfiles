@@ -275,6 +275,9 @@
     ]
   },
   "model": "opus",
+  "skillOverrides": {
+    "aws-core:signing-in-to-aws": "off"
+  },
   "hooks": {},
   "statusLine": {
     "type": "command",
@@ -320,6 +323,7 @@
   },
   "feedbackDrafts": "off",
   "showClearContextOnPlanAccept": true,
+  "askUserQuestionTimeout": "60s",
   "autoUpdatesChannel": "latest",
   "autoMemoryEnabled": false,
   "skipDangerousModePermissionPrompt": true,
@@ -328,9 +332,5 @@
   "preferredNotifChannel": "ghostty",
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
-  "askUserQuestionTimeout": "60s",
-  "skipAutoPermissionPrompt": true,
-  "skillOverrides": {
-    "aws-core:signing-in-to-aws": "off"
-  }
+  "skipAutoPermissionPrompt": true
 }
