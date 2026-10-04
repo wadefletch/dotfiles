@@ -4,5 +4,8 @@
   },
   "skillOverrides": {
     "tractorbeam:aws-access": "off"
+  },
+  "enabledPlugins": {
+    "cloudflare@cloudflare": false
   }
 }
