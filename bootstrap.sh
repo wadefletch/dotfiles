@@ -552,6 +552,22 @@ main() {
     "$DOTFILES/aws/.local/bin/sync-aws-config"
     ok "AWS CLI config"
   fi
+  # Claude Code has no user-scope settings.local.json, so the Carlyle overlay
+  # is merged into a real ~/.claude/settings.json in place of the stowed
+  # symlink, which would otherwise turn the merge into a git change.
+  if [[ -n "${CARLYLE_EC2:-}" ]]; then
+    info "applying Carlyle EC2 Claude Code overrides"
+    local tmp
+    tmp="$(mktemp "$HOME/.claude/settings.json.XXXXXX")"
+    jq -s '.[0] * .[1]' "$DOTFILES/claude/.claude/settings.json" \
+      "$DOTFILES/claude/.claude/settings.carlyle-ec2.json" >"$tmp" || {
+      rm -f "$tmp"
+      fail "merging Carlyle Claude Code settings (is jq installed?)"
+    }
+    chmod 644 "$tmp"
+    mv -f "$tmp" "$HOME/.claude/settings.json"
+    ok "Claude Code settings (Carlyle EC2)"
+  fi
   configure_claude_mcp
   configure_claude_plugins
   install_claude_ssh_host_keys

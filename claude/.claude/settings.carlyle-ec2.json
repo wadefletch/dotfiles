@@ -1,0 +1,8 @@
+{
+  "env": {
+    "AWS_MCP_PROXY_PROFILES": "gpe-readonly ais"
+  },
+  "skillOverrides": {
+    "tractorbeam:aws-access": "off"
+  }
+}
