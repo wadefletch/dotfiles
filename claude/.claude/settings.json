@@ -262,6 +262,11 @@
   "skillOverrides": {
     "aws-core:signing-in-to-aws": "off"
   },
+  "deniedMcpServers": [
+    {
+      "serverName": "plugin:aws-core:aws-mcp"
+    }
+  ],
   "hooks": {},
   "statusLine": {
     "type": "command",
@@ -324,10 +329,5 @@
   "preferredNotifChannel": "ghostty",
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true,
-  "deniedMcpServers": [
-    {
-      "serverName": "plugin:aws-core:aws-mcp"
-    }
-  ]
+  "skipAutoPermissionPrompt": true
 }
