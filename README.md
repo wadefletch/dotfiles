@@ -22,6 +22,7 @@ GNU Stow-based dotfiles for macOS (with Linux support for the CLI packages). Eac
 | mise | Mise tool versions (node, python, …) |
 | nightly-maintenance | LaunchAgent for nightly maintenance script (macOS) |
 | nvim | Neovim config and markdownlint |
+| office-tv-relay | Fire TV relay and Cloudflare Tunnel LaunchAgents for beam's `office_tv` tool (arrakis only) |
 | pi | Pi settings and MCP configuration |
 | ssh | SSH config |
 | starship | Starship prompt |
@@ -42,7 +43,7 @@ cd ~/.dotfiles
 ./bootstrap.sh
 ```
 
-`bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, ripgrep, gh, starship, mise, and Claude Code), FFF's MCP server through Homebrew when available, and macOS brew casks. It then stows all packages, adds the portable Claude Code MCP servers when missing, reconciles Codex plugins, installs the locked Mise toolset (including the Fleetctl version matching the Fleet server), configures git hooks, and pins SSH host keys for WARP-reachable machines. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, teams-link, vscode, wallpapers) are skipped on Linux.
+`bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, ripgrep, gh, starship, mise, and Claude Code), FFF's MCP server through Homebrew when available, and macOS brew casks. It then stows all packages, adds the portable Claude Code MCP servers when missing, reconciles Codex plugins, installs the locked Mise toolset (including the Fleetctl version matching the Fleet server), configures git hooks, and pins SSH host keys for WARP-reachable machines. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, teams-link, vscode, wallpapers) are skipped on Linux. `office-tv-relay` is stowed and enabled only on arrakis.
 
 Each harness owns its settings in its conventional Stow package. Claude Code settings live at `claude/.claude/settings.json`; Cursor's CLI configuration is fully host-local and unmanaged. Pi's live `settings.json` is stowed deliberately, so preference and package changes made from Pi update the dotfiles checkout. Runtime caches, account metadata, UI state, credentials, Pi sessions, and installed package contents stay out of Git.
 
@@ -113,10 +114,25 @@ To stow manually:
 
 ```sh
 stow git zsh ghostty   # individual packages
-stow --no-folding agent-config aws claude codex cursor pi
+stow --no-folding agent-config aws claude codex cursor git-auto-ff office-tv-relay pi
 sync-aws-config          # assemble ~/.aws/config (managed + config.local)
 ./bootstrap.sh         # everything
 ```
+
+## Office TV relay
+
+The `office-tv-relay` package runs on arrakis only: bootstrap stows it there, installs `cloudflared`, and loads its two LaunchAgents; every other host skips it. `com.wadefletcher.office-tv-relay` serves a fixed allowlist of Fire TV adb actions (status, screenshot, open the sign or a URL, remote keys) on `127.0.0.1:8765`. It runs under Apple's `/usr/bin/python3`, which macOS Local Network privacy lets reach the TV, and drives `/opt/homebrew/bin/adb`. `com.wadefletcher.office-tv-tunnel` runs the `office-tv` Cloudflare Tunnel (account tractorbeam-nonprod), which carries beam's Workers VPC Service to the relay.
+
+Both read a secret from the login Keychain when they start. `office-tv-relay-secret` is the bearer secret beam sends as `OFFICE_TV_RELAY_SECRET`; `office-tv-tunnel-token` is the tunnel's run token. Add each interactively so it stays out of shell history:
+
+```sh
+security add-generic-password -a "$USER" -s office-tv-relay-secret -U -w
+security add-generic-password -a "$USER" -s office-tv-tunnel-token -U -w
+```
+
+Bootstrap warns when either is missing and loads the agents anyway; launchd retries them every 30 seconds until the items exist. Logs go to `/tmp/office-tv-relay.log` and `/tmp/office-tv-tunnel.log`.
+
+The other side lives in `tractorbeamai/beam`: the `office_tv` tool in `agents/beam/office-tv.ts`, and the Fire TV sign app in `firetv/`.
 
 ## Deploying changes
 

@@ -11,6 +11,12 @@ export PATH="$HOME/.local/bin:$PATH"
 # macOS-only stow packages (contain Library/ paths or macOS-only tools)
 MACOS_ONLY="cursor duti nightly-maintenance teams-link vscode wallpapers"
 
+# Packages for one machine, matched on its lowercased LocalHostName (empty on
+# Linux, so none of them apply there).
+HOST_NAME=""
+[[ "$OS" == "Darwin" ]] && HOST_NAME="$(scutil --get LocalHostName | tr '[:upper:]' '[:lower:]')"
+ARRAKIS_ONLY="office-tv-relay"
+
 # Packages this host opts out of, driven by env. The Carlyle EC2 devbox manages
 # its own host-local ~/.aws/config and aws-login, so CARLYLE_EC2=1 skips the aws
 # package (and its config sync) to leave that host-local setup untouched.
@@ -20,7 +26,7 @@ SKIP_PACKAGES=""
 # Stow packages whose target directory also holds host-local state, so the
 # tracked files must be linked individually rather than by folding the
 # directory itself into a symlink.
-NO_FOLDING="agent-config aws claude codex cursor git-auto-ff pi"
+NO_FOLDING="agent-config aws claude codex cursor git-auto-ff office-tv-relay pi"
 
 # CLI packages to install (must exist in brew + apt/dnf/yum/pacman)
 PACKAGES=(git neovim ripgrep stow zsh eza)
@@ -146,7 +152,7 @@ install_gh() {
 # --- Install dependencies ----------------------------------------------------
 
 install_deps() {
-  local app bin formula installed_casks pkg zsh_path
+  local app bin formula formulae installed_casks pkg zsh_path
 
   info "updating package index"
   pkg_update
@@ -240,8 +246,11 @@ install_deps() {
       fi
     done
 
-    # macOS-only brew formulae
-    for formula in duti tailscale; do
+    # macOS-only brew formulae. arrakis also runs the office-tv tunnel, which
+    # needs cloudflared 2025.7+ for Workers VPC; Homebrew's is current.
+    formulae=(duti tailscale)
+    [[ "$HOST_NAME" == "arrakis" ]] && formulae+=(cloudflared)
+    for formula in "${formulae[@]}"; do
       if command -v "$formula" &>/dev/null ||
         [[ "$formula" == "tailscale" && -d "/Applications/Tailscale.app" ]]; then
         ok "$formula already installed"
@@ -310,6 +319,12 @@ stow_packages() (
       continue
     fi
 
+    # skip arrakis-only packages everywhere else
+    if [[ "$HOST_NAME" != "arrakis" && " $ARRAKIS_ONLY " == *" $pkg "* ]]; then
+      info "skipping $pkg (arrakis only)"
+      continue
+    fi
+
     # skip packages this host opts out of (e.g. CARLYLE_EC2 disables aws)
     if [[ " $SKIP_PACKAGES " == *" $pkg "* ]]; then
       info "skipping $pkg (disabled on this host)"
@@ -322,10 +337,11 @@ stow_packages() (
     if [[ " $NO_FOLDING " == *" $pkg "* ]]; then
       # These packages sit beside mutable host state — agent harnesses under
       # ~/.claude, ~/.codex, ~/.cursor, and ~/.pi, the AWS CLI's SSO token
-      # cache and credentials under ~/.aws, and the timers.target.wants link
-      # that systemctl --user enable writes beside git-auto-ff's units. Link the
-      # tracked files individually so stow never replaces the host-local
-      # directory with a symlink.
+      # cache and credentials under ~/.aws, the timers.target.wants link
+      # that systemctl --user enable writes beside git-auto-ff's units, and
+      # other apps' agents in ~/Library/LaunchAgents. Link the tracked files
+      # individually so stow never replaces the host-local directory with a
+      # symlink.
       backup_conflicts "$pkg" --no-folding
       stow -t "$HOME" --restow --no-folding "$pkg"
     else
@@ -531,6 +547,28 @@ install_teams_link_handler() {
   ok "Teams link handler"
 }
 
+# The office TV relay and its Cloudflare Tunnel run as LaunchAgents on arrakis
+# only. Each reads its secret from the login Keychain when it starts, and an
+# agent that exits is retried every 30s, so a missing item is a warning and
+# the agents load anyway.
+enable_office_tv_relay() {
+  local label service
+
+  [[ "$HOST_NAME" == "arrakis" ]] || return 0
+
+  for service in office-tv-relay-secret office-tv-tunnel-token; do
+    if ! security find-generic-password -a "$USER" -s "$service" &>/dev/null; then
+      warn "Keychain item $service missing; add it with: security add-generic-password -a \"\$USER\" -s $service -U -w"
+    fi
+  done
+
+  for label in com.wadefletcher.office-tv-relay com.wadefletcher.office-tv-tunnel; do
+    launchctl bootout "gui/$(id -u)/$label" 2>/dev/null || true
+    launchctl bootstrap "gui/$(id -u)" "$HOME/Library/LaunchAgents/$label.plist"
+  done
+  ok "office TV relay and tunnel"
+}
+
 # --- Main --------------------------------------------------------------------
 
 main() {
@@ -593,6 +631,7 @@ main() {
   fi
 
   install_teams_link_handler
+  enable_office_tv_relay
 
   if [[ "$OS" == "Darwin" ]] && command -v duti &>/dev/null; then
     info "applying default app associations"

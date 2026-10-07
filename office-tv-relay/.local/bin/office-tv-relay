@@ -1,0 +1,167 @@
+#!/usr/bin/python3 -I
+"""Office TV relay: a fixed set of Fire TV operations for beam's `office_tv` tool.
+
+Runs on arrakis next to the `office-tv` Cloudflare Tunnel. Beam's Worker reaches
+it through a Workers VPC Service pinned to 127.0.0.1:8765 and POSTs
+{"action": ..., "url": ...} with a bearer secret. Every action maps to one fixed
+adb command; there is no way to run an arbitrary shell command.
+
+macOS Local Network privacy blocks third-party binaries like Homebrew adb from
+reaching the TV, but not Apple's /usr/bin/python3. So this process owns the only
+LAN connection: it forwards 127.0.0.1:5556 to the TV's adb port, and adb only
+ever talks to loopback.
+
+The bearer secret lives in the login Keychain (service office-tv-relay-secret);
+beam holds the same value as OFFICE_TV_RELAY_SECRET.
+"""
+
+import hmac
+import http.server
+import json
+import os
+import shlex
+import socket
+import subprocess
+import tempfile
+import threading
+from urllib.parse import urlsplit
+
+BIND = ("127.0.0.1", 8765)
+SECRET = subprocess.run(
+    ["/usr/bin/security", "find-generic-password", "-a", os.environ["USER"],
+     "-s", "office-tv-relay-secret", "-w"],
+    capture_output=True, check=True, text=True,
+).stdout.strip().encode()
+# The TV on the office LAN; give it a DHCP reservation so this stays right.
+TV = ("172.16.0.151", 5555)
+ADB = "/opt/homebrew/bin/adb"
+SERIAL = "127.0.0.1:5556"
+SIGN = "ai.tractorbeam.sign/.SignActivity"
+KEYS = {
+    "home": "KEYCODE_HOME",
+    "back": "KEYCODE_BACK",
+    "wake": "KEYCODE_WAKEUP",
+    "sleep": "KEYCODE_SLEEP",
+    "volume_up": "KEYCODE_VOLUME_UP",
+    "volume_down": "KEYCODE_VOLUME_DOWN",
+    "mute": "KEYCODE_VOLUME_MUTE",
+}
+
+
+def pipe(src, dst):
+    try:
+        while data := src.recv(65536):
+            dst.sendall(data)
+    except OSError:
+        pass
+    finally:
+        for s in (src, dst):
+            try:
+                s.shutdown(socket.SHUT_RDWR)
+            except OSError:
+                pass
+
+
+def forward_adb():
+    """Forward loopback 5556 to the TV's adb port (see module docstring)."""
+    server = socket.socket()
+    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server.bind(("127.0.0.1", 5556))
+    server.listen()
+    while True:
+        client, _ = server.accept()
+        try:
+            upstream = socket.create_connection(TV, timeout=5)
+            upstream.settimeout(None)
+        except OSError:
+            client.close()
+            continue
+        threading.Thread(target=pipe, args=(client, upstream), daemon=True).start()
+        threading.Thread(target=pipe, args=(upstream, client), daemon=True).start()
+
+
+def adb(*args, timeout=20):
+    subprocess.run([ADB, "connect", SERIAL], capture_output=True, timeout=timeout)
+    result = subprocess.run(
+        [ADB, "-s", SERIAL, *args], capture_output=True, timeout=timeout
+    )
+    if result.returncode != 0:
+        raise RuntimeError(result.stderr.decode(errors="replace").strip() or "adb failed")
+    return result.stdout
+
+
+def status():
+    activities = adb("shell", "dumpsys activity activities").decode(errors="replace")
+    power = adb("shell", "dumpsys power").decode(errors="replace")
+    resumed = next((l for l in activities.splitlines() if "mResumedActivity" in l), "")
+    foreground = next((t for t in resumed.split() if "/" in t), None)
+    return {
+        "foreground": foreground,
+        "sign_showing": foreground is not None and foreground.startswith("ai.tractorbeam.sign/"),
+        "awake": "mWakefulness=Awake" in power,
+    }
+
+
+def screenshot():
+    """The current screen as a ~960px JPEG, small enough to keep in chat history."""
+    png = adb("exec-out", "screencap -p")
+    with tempfile.TemporaryDirectory() as tmp:
+        src, out = os.path.join(tmp, "tv.png"), os.path.join(tmp, "tv.jpg")
+        with open(src, "wb") as f:
+            f.write(png)
+        subprocess.run(
+            ["/usr/bin/sips", "-Z", "960", "-s", "format", "jpeg", src, "--out", out],
+            capture_output=True,
+            check=True,
+        )
+        with open(out, "rb") as f:
+            return f.read()
+
+
+def run(action, url):
+    if action == "status":
+        return status()
+    if action == "open_sign":
+        adb("shell", f"am start -n {SIGN}")
+        return {"ok": True}
+    if action == "open_url":
+        parts = urlsplit(url or "")
+        if parts.scheme != "https" or not parts.netloc or any(c.isspace() for c in url):
+            raise ValueError("open_url needs an https URL")
+        adb("shell", f"am start -n {SIGN} -e url {shlex.quote(url)}")
+        return {"ok": True}
+    if action in KEYS:
+        adb("shell", f"input keyevent {KEYS[action]}")
+        return {"ok": True}
+    raise ValueError(f"unknown action: {action}")
+
+
+class Handler(http.server.BaseHTTPRequestHandler):
+    def do_POST(self):
+        token = self.headers.get("authorization", "").removeprefix("Bearer ").encode()
+        if not hmac.compare_digest(token, SECRET):
+            return self.reply(401, {"ok": False, "error": "unauthorized"})
+        try:
+            body = json.loads(self.rfile.read(int(self.headers.get("content-length", 0))))
+            action, url = body.get("action"), body.get("url")
+            if action == "screenshot":
+                return self.reply(200, screenshot(), "image/jpeg")
+            return self.reply(200, run(action, url))
+        except (ValueError, json.JSONDecodeError) as error:
+            return self.reply(400, {"ok": False, "error": str(error)})
+        except (RuntimeError, subprocess.SubprocessError, OSError) as error:
+            return self.reply(502, {"ok": False, "error": f"TV unreachable: {error}"})
+
+    def reply(self, code, body, content_type="application/json"):
+        data = body if isinstance(body, bytes) else json.dumps(body).encode()
+        self.send_response(code)
+        self.send_header("content-type", content_type)
+        self.send_header("content-length", str(len(data)))
+        self.end_headers()
+        self.wfile.write(data)
+
+
+if __name__ == "__main__":
+    threading.Thread(target=forward_adb, daemon=True).start()
+    # Single-threaded on purpose: adb commands run one at a time.
+    http.server.HTTPServer(BIND, Handler).serve_forever()
