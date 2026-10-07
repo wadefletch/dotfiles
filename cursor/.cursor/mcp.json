@@ -31,10 +31,10 @@
       "command": "codex-okta-mcp"
     },
     "aikido": {
-      "command": "sh",
+      "command": "npx",
       "args": [
-        "-c",
-        "npm_config_cache=\"$HOME/.cache/aikido-npx\" exec npx -y @aikidosec/mcp"
+        "-y",
+        "@aikidosec/mcp"
       ]
     },
     "xapi": {

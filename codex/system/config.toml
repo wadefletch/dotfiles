@@ -56,11 +56,10 @@ startup_timeout_sec = 60
 tool_timeout_sec = 60
 
 # Aikido offers a browser sign-in on first use and keeps the token in the OS
-# keychain. The npm cache is kept out of ~/.npm so the sandbox can write it.
-# Codex doesn't expand $HOME in env values, so sh sets the path at launch.
+# keychain. Aikido publishes no Codex plugin, so the server is registered here.
 [mcp_servers.aikido]
-command = "sh"
-args = ["-c", "npm_config_cache=\"$HOME/.cache/aikido-npx\" exec npx -y @aikidosec/mcp"]
+command = "npx"
+args = ["-y", "@aikidosec/mcp"]
 
 # xurl reads the X app credentials and OAuth token from ~/.xurl/auth.yml.
 [mcp_servers.xapi]

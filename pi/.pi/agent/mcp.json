@@ -39,10 +39,10 @@
       "exposure": "deferred"
     },
     "aikido": {
-      "command": "sh",
+      "command": "npx",
       "args": [
-        "-c",
-        "npm_config_cache=\"$HOME/.cache/aikido-npx\" exec npx -y @aikidosec/mcp"
+        "-y",
+        "@aikidosec/mcp"
       ],
       "description": "Aikido security findings",
       "exposure": "deferred"
