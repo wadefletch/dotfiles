@@ -11,16 +11,30 @@ export PATH="$HOME/.local/bin:$PATH"
 # macOS-only stow packages (contain Library/ paths or macOS-only tools)
 MACOS_ONLY="cursor duti nightly-maintenance teams-link vscode wallpapers"
 
+# Packages for one machine, matched on its lowercased LocalHostName (empty on
+# Linux, so none of them apply there).
+HOST_NAME=""
+[[ "$OS" == "Darwin" ]] && HOST_NAME="$(scutil --get LocalHostName | tr '[:upper:]' '[:lower:]')"
+ARRAKIS_ONLY="office-tv-relay"
+
+# Packages this host opts out of, driven by env. The Carlyle EC2 devbox manages
+# its own host-local ~/.aws/config and aws-login, so CARLYLE_EC2=1 skips the aws
+# package (and its config sync) to leave that host-local setup untouched.
+SKIP_PACKAGES=""
+[[ -n "${CARLYLE_EC2:-}" ]] && SKIP_PACKAGES+=" aws"
+
 # Stow packages whose target directory also holds host-local state, so the
 # tracked files must be linked individually rather than by folding the
 # directory itself into a symlink.
-NO_FOLDING="agent-config aws claude codex cursor git-auto-ff pi"
+NO_FOLDING="agent-config aws claude codex cursor git-auto-ff office-tv-relay pi"
 
 # CLI packages to install (must exist in brew + apt/dnf/yum/pacman)
 PACKAGES=(git neovim ripgrep stow zsh eza)
 
 # macOS apps and fonts (brew casks)
 CASKS=(cursor ghostty)
+# adb, which the office TV relay drives
+[[ "$HOST_NAME" == "arrakis" ]] && CASKS+=(android-platform-tools)
 
 info() { printf '  [ .. ] %s\n' "$1"; }
 ok() { printf '  [ OK ] %s\n' "$1"; }
@@ -140,7 +154,7 @@ install_gh() {
 # --- Install dependencies ----------------------------------------------------
 
 install_deps() {
-  local app bin formula installed_casks pkg zsh_path
+  local app bin formula formulae installed_casks pkg zsh_path
 
   info "updating package index"
   pkg_update
@@ -234,8 +248,11 @@ install_deps() {
       fi
     done
 
-    # macOS-only brew formulae
-    for formula in duti tailscale; do
+    # macOS-only brew formulae. arrakis also runs the office-tv tunnel, which
+    # needs cloudflared 2025.7+ for Workers VPC; Homebrew's is current.
+    formulae=(duti tailscale)
+    [[ "$HOST_NAME" == "arrakis" ]] && formulae+=(cloudflared)
+    for formula in "${formulae[@]}"; do
       if command -v "$formula" &>/dev/null ||
         [[ "$formula" == "tailscale" && -d "/Applications/Tailscale.app" ]]; then
         ok "$formula already installed"
@@ -304,16 +321,29 @@ stow_packages() (
       continue
     fi
 
+    # skip arrakis-only packages everywhere else
+    if [[ "$HOST_NAME" != "arrakis" && " $ARRAKIS_ONLY " == *" $pkg "* ]]; then
+      info "skipping $pkg (arrakis only)"
+      continue
+    fi
+
+    # skip packages this host opts out of (e.g. CARLYLE_EC2 disables aws)
+    if [[ " $SKIP_PACKAGES " == *" $pkg "* ]]; then
+      info "skipping $pkg (disabled on this host)"
+      continue
+    fi
+
     # Pin target to $HOME. Stow's default target is the parent of the stow
     # dir, which works when this repo is cloned at ~/dotfiles but not when
     # it's elsewhere.
     if [[ " $NO_FOLDING " == *" $pkg "* ]]; then
       # These packages sit beside mutable host state — agent harnesses under
       # ~/.claude, ~/.codex, ~/.cursor, and ~/.pi, the AWS CLI's SSO token
-      # cache and credentials under ~/.aws, and the timers.target.wants link
-      # that systemctl --user enable writes beside git-auto-ff's units. Link the
-      # tracked files individually so stow never replaces the host-local
-      # directory with a symlink.
+      # cache and credentials under ~/.aws, the timers.target.wants link
+      # that systemctl --user enable writes beside git-auto-ff's units, and
+      # other apps' agents in ~/Library/LaunchAgents. Link the tracked files
+      # individually so stow never replaces the host-local directory with a
+      # symlink.
       backup_conflicts "$pkg" --no-folding
       stow -t "$HOME" --restow --no-folding "$pkg"
     else
@@ -359,6 +389,12 @@ configure_claude_mcp() {
 
   add_claude_mcp fff -- fff-mcp --no-update-check
   add_claude_mcp docs-index --transport http -- https://index.mintlify.com/mcp
+
+  # The rest are Tractorbeam's service accounts, which the Carlyle devbox
+  # has no business reaching.
+  if [[ -n "${CARLYLE_EC2:-}" ]]; then
+    return
+  fi
   add_claude_mcp betterstack --transport http -- https://mcp.betterstack.com
   add_claude_mcp secureframe --transport http -- https://mcp.secureframe.com/
   add_claude_mcp workos --transport http -- https://mcp.workos.com/mcp
@@ -392,17 +428,20 @@ configure_claude_plugins() {
 
   info "updating Claude Code vendor plugins"
   claude plugin marketplace add aws/agent-toolkit-for-aws
-  claude plugin marketplace add cloudflare/skills
   claude plugin marketplace add workos/skills
   claude plugin marketplace update agent-toolkit-for-aws
-  claude plugin marketplace update cloudflare
   claude plugin marketplace update workos
   claude plugin install aws-core@agent-toolkit-for-aws
-  claude plugin install cloudflare@cloudflare
   claude plugin install workos@workos
   claude plugin update aws-core@agent-toolkit-for-aws
-  claude plugin update cloudflare@cloudflare
   claude plugin update workos@workos
+  # Cloudflare is Tractorbeam's account; the Carlyle overlay disables it.
+  if [[ -z "${CARLYLE_EC2:-}" ]]; then
+    claude plugin marketplace add cloudflare/skills
+    claude plugin marketplace update cloudflare
+    claude plugin install cloudflare@cloudflare
+    claude plugin update cloudflare@cloudflare
+  fi
   ok "Claude Code vendor plugins"
 }
 
@@ -526,6 +565,28 @@ install_teams_link_handler() {
   ok "Teams link handler"
 }
 
+# The office TV relay and its Cloudflare Tunnel run as LaunchAgents on arrakis
+# only. Each reads its secret from the login Keychain when it starts, and an
+# agent that exits is retried every 30s, so a missing item is a warning and
+# the agents load anyway. The relay runs on Bun, so this follows `mise install`.
+enable_office_tv_relay() {
+  local label service
+
+  [[ "$HOST_NAME" == "arrakis" ]] || return 0
+
+  for service in office-tv-relay-secret office-tv-tunnel-token; do
+    if ! security find-generic-password -a "$USER" -s "$service" &>/dev/null; then
+      warn "Keychain item $service missing; add it with: security add-generic-password -a \"\$USER\" -s $service -U -w"
+    fi
+  done
+
+  for label in com.wadefletcher.office-tv-relay com.wadefletcher.office-tv-tunnel; do
+    launchctl bootout "gui/$(id -u)/$label" 2>/dev/null || true
+    launchctl bootstrap "gui/$(id -u)" "$HOME/Library/LaunchAgents/$label.plist"
+  done
+  ok "office TV relay and tunnel"
+}
+
 # --- Main --------------------------------------------------------------------
 
 main() {
@@ -540,9 +601,29 @@ main() {
   install_deps
   install_codex_system_config
   stow_packages
-  info "installing AWS CLI config"
-  "$DOTFILES/aws/.local/bin/sync-aws-config"
-  ok "AWS CLI config"
+  if [[ " $SKIP_PACKAGES " == *" aws "* ]]; then
+    info "skipping AWS CLI config (aws disabled on this host)"
+  else
+    info "installing AWS CLI config"
+    "$DOTFILES/aws/.local/bin/sync-aws-config"
+    ok "AWS CLI config"
+  fi
+  # Claude Code has no user-scope settings.local.json, so the Carlyle overlay
+  # is merged into a real ~/.claude/settings.json in place of the stowed
+  # symlink, which would otherwise turn the merge into a git change.
+  if [[ -n "${CARLYLE_EC2:-}" ]]; then
+    info "applying Carlyle EC2 Claude Code overrides"
+    local tmp
+    tmp="$(mktemp "$HOME/.claude/settings.json.XXXXXX")"
+    jq -s '.[0] * .[1]' "$DOTFILES/claude/.claude/settings.json" \
+      "$DOTFILES/claude/.claude/settings.carlyle-ec2.json" >"$tmp" || {
+      rm -f "$tmp"
+      fail "merging Carlyle Claude Code settings (is jq installed?)"
+    }
+    chmod 644 "$tmp"
+    mv -f "$tmp" "$HOME/.claude/settings.json"
+    ok "Claude Code settings (Carlyle EC2)"
+  fi
   configure_claude_mcp
   configure_claude_plugins
   install_claude_ssh_host_keys
@@ -568,6 +649,7 @@ main() {
   fi
 
   install_teams_link_handler
+  enable_office_tv_relay
 
   if [[ "$OS" == "Darwin" ]] && command -v duti &>/dev/null; then
     info "applying default app associations"

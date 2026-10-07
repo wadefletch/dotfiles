@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Refresh the shared Tractorbeam Identity Center session. Lives in the aws
+# package, not a .zshrc alias, so a host that doesn't stow aws can supply its
+# own aws-login.
+
+# Open the sign-in page on the Mac you are using, which may be another one
+# connected over SSH. This also replaces the BROWSER=true that Claude Code
+# sets in background sessions, which turns the browser launch into a no-op.
+export BROWSER=open-url
+
+# The device code flow prints a URL and code that also work from another
+# machine, which the default flow's localhost callback does not.
+exec aws sso login --sso-session tractorbeam --use-device-code "$@"

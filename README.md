@@ -22,6 +22,7 @@ GNU Stow-based dotfiles for macOS (with Linux support for the CLI packages). Eac
 | mise | Mise tool versions (node, python, …) |
 | nightly-maintenance | LaunchAgent for nightly maintenance script (macOS) |
 | nvim | Neovim config and markdownlint |
+| office-tv-relay | Fire TV relay and Cloudflare Tunnel LaunchAgents for beam's `office_tv` tool (arrakis only) |
 | pi | Pi settings and MCP configuration |
 | ssh | SSH config |
 | starship | Starship prompt |
@@ -42,15 +43,17 @@ cd ~/.dotfiles
 ./bootstrap.sh
 ```
 
-`bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, ripgrep, gh, starship, mise, and Claude Code), FFF's MCP server through Homebrew when available, and macOS brew casks. It then stows all packages, adds the portable Claude Code MCP servers when missing, reconciles Codex plugins, installs the locked Mise toolset (including the Fleetctl version matching the Fleet server), configures git hooks, and pins SSH host keys for WARP-reachable machines. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, teams-link, vscode, wallpapers) are skipped on Linux.
+`bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, ripgrep, gh, starship, mise, and Claude Code), FFF's MCP server through Homebrew when available, and macOS brew casks. It then stows all packages, adds the portable Claude Code MCP servers when missing, reconciles Codex plugins, installs the locked Mise toolset (including the Fleetctl version matching the Fleet server), configures git hooks, and pins SSH host keys for WARP-reachable machines. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, teams-link, vscode, wallpapers) are skipped on Linux. `office-tv-relay` is stowed and enabled only on arrakis.
 
 Each harness owns its settings in its conventional Stow package. Claude Code settings live at `claude/.claude/settings.json`; Cursor's CLI configuration is fully host-local and unmanaged. Pi's live `settings.json` is stowed deliberately, so preference and package changes made from Pi update the dotfiles checkout. Runtime caches, account metadata, UI state, credentials, Pi sessions, and installed package contents stay out of Git.
 
-The `aws` package tracks the managed AWS CLI profiles. Bootstrap stows the package without folding so `~/.aws` stays a real directory (SSO cache and credentials are host-local), then `sync-aws-config` writes `~/.aws/config` as a regular file from the tracked profiles plus optional `~/.aws/config.local`. That overlay is where generated Tractorbeam agent profiles live — they must not be a symlink into the repo. Account IDs mirror the infra repo's `data/accounts.json`, which is their source of truth. `aws-login` refreshes the shared Identity Center session.
+The `aws` package tracks the managed AWS CLI profiles. Bootstrap stows the package without folding so `~/.aws` stays a real directory (SSO cache and credentials are host-local), then `sync-aws-config` writes `~/.aws/config` as a regular file from the tracked profiles plus optional `~/.aws/config.local`. That overlay is where generated Tractorbeam agent profiles live — they must not be a symlink into the repo. Account IDs mirror the infra repo's `data/accounts.json`, which is their source of truth. `aws-login` (also in this package) refreshes the shared Identity Center session. Set `CARLYLE_EC2=1` before running bootstrap to skip this package entirely (and its config sync) on a host that manages its own `~/.aws/config` and `aws-login`.
 
 FFF and the public, credential-free documentation index (`docs-index`, served by Mintlify) are configured for Claude Code, Cursor, Codex, and Pi, and so are Better Stack, Secureframe, WorkOS, Okta, Aikido, and the X API (`xapi`). Pi uses built-in MCP (`~/.pi/agent/mcp.json`) for its servers and the native `@ff-labs/pi-fff` package for FFF; Pi loads the Tractorbeam skills as a git package that tracks `tractorbeamai/skills` on `main`. Codemode is on so classifier models such as TypeSafe Jev can run from scripts once a Jev provider is authenticated (`CLOUDFLARE_API_KEY` + `CLOUDFLARE_ACCOUNT_ID`, or `TYPESAFE_API_KEY`). FFF inherits each harness's working directory and refuses to index the home or filesystem root by default. Better Stack, Secureframe, and Cloudflare are remote servers that each harness signs in to once. Aikido offers a browser sign-in on first use and keeps its token in the OS keychain. The X API server uses the app credentials and token that `xurl` keeps in `~/.xurl/auth.yml` (`npx -y @xdevplatform/xurl auth apps add` and `auth oauth2` once per machine). Okta needs the service-app key in the login Keychain (see below); without it that server fails to start on that machine.
 
 The `aws-core`, `cloudflare`, and `workos` plugins come from their vendors' marketplaces, `aws/agent-toolkit-for-aws`, `cloudflare/skills`, and `workos/skills`, in both Claude Code and Codex; bootstrap installs them. Cloudflare's MCP server arrives with its plugin (Cursor and Pi list it directly); the WorkOS plugin carries only skills for Claude Code and Codex, so its server is registered alongside the other shared servers. Its MCP server is named `aws-mcp`, and every harness uses that name. Left alone, that server signs with whatever AWS credentials are in the environment, so each harness pins it to the read-only `agent-read-*` profiles: Claude Code sets `AWS_MCP_PROXY_PROFILES` in its settings `env`, which the plugin's server inherits; Codex's system config defines `aws-mcp` itself, which replaces the plugin's entry by name and launches the installed `mcp-proxy-for-aws-cli`; Pi has no plugin support and defines `aws-mcp` in its `mcp.json`. The profile list mirrors the read profiles in the infra repo, which is the only place write profiles are exposed. The plugin's `signing-in-to-aws` skill contradicts Tractorbeam's `aws-access` rule that agents never authenticate, so it is turned off in Claude Code (`skillOverrides`) and Codex (`skills.config`).
+
+On the Carlyle EC2 devbox (`CARLYLE_EC2=1`), Tractorbeam's AWS conventions don't apply: its `aws-access` skill and `agent-read-*` profiles target Tractorbeam's accounts, not Carlyle's. Claude Code has no user-scope `settings.local.json`, so bootstrap replaces the stowed `~/.claude/settings.json` symlink there with a real file: the shared settings deep-merged (`jq '*'`) with `claude/.claude/settings.carlyle-ec2.json`. That overlay turns off `tractorbeam:aws-access` and the `cloudflare` plugin, and pins the AWS MCP proxy to the host's `gpe-readonly` and `ais` profiles. Bootstrap also skips installing the Cloudflare plugin there and registers only the credential-free `fff` and `docs-index` MCP servers, leaving out Tractorbeam's service accounts (Better Stack, Secureframe, Okta, Aikido, X API). The other Tractorbeam plugins and skills stay on. Settings changes made from Claude Code on that host land in the generated file, not the repo, and the next bootstrap moves them to `settings.json.bak`; put lasting changes in the tracked files.
 
 Repository instructions use `AGENTS.md`. Shared personal workflows live under `agent-config/.agents/skills/` and are stowed into the standard user skill directory.
 
@@ -111,10 +114,25 @@ To stow manually:
 
 ```sh
 stow git zsh ghostty   # individual packages
-stow --no-folding agent-config aws claude codex cursor pi
+stow --no-folding agent-config aws claude codex cursor git-auto-ff office-tv-relay pi
 sync-aws-config          # assemble ~/.aws/config (managed + config.local)
 ./bootstrap.sh         # everything
 ```
+
+## Office TV relay
+
+The `office-tv-relay` package runs on arrakis only: bootstrap stows it there, installs `cloudflared` and the `android-platform-tools` cask (adb), and loads its two LaunchAgents; every other host skips it. `com.wadefletcher.office-tv-relay` is a Bun (TypeScript) relay, `~/.local/share/office-tv-relay/relay.ts` run with mise's `bun`, that serves a fixed allowlist of Fire TV adb actions (status, screenshot, open the sign or a URL, remote keys) on `127.0.0.1:8765` and drives `/opt/homebrew/bin/adb`. The first time it starts, macOS asks whether bun may find devices on the local network; allow it (or turn bun on later under System Settings → Privacy & Security → Local Network). Without that permission the relay still answers but cannot reach the TV. `com.wadefletcher.office-tv-tunnel` runs the `office-tv` Cloudflare Tunnel (account tractorbeam-nonprod), which carries beam's Workers VPC Service to the relay.
+
+Both read a secret from the login Keychain when they start. `office-tv-relay-secret` is the bearer secret beam sends as `OFFICE_TV_RELAY_SECRET`; `office-tv-tunnel-token` is the tunnel's run token. Add each interactively so it stays out of shell history:
+
+```sh
+security add-generic-password -a "$USER" -s office-tv-relay-secret -U -w
+security add-generic-password -a "$USER" -s office-tv-tunnel-token -U -w
+```
+
+Bootstrap warns when either is missing and loads the agents anyway; launchd retries them every 30 seconds until the items exist. Logs go to `/tmp/office-tv-relay.log` and `/tmp/office-tv-tunnel.log`.
+
+The other side lives in `tractorbeamai/beam`: the `office_tv` tool in `agents/beam/office-tv.ts`, and the Fire TV sign app in `firetv/`.
 
 ## Deploying changes
 

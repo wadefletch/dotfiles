@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.wadefletcher.office-tv-tunnel</string>
+	<!-- The office-tv Cloudflare Tunnel (tractorbeam-nonprod), which carries
+	     beam's VPC Service to the relay. The run token stays in the Keychain;
+	     the environment keeps it out of `ps`. -->
+	<key>ProgramArguments</key>
+	<array>
+		<string>/bin/sh</string>
+		<string>-c</string>
+		<string>TUNNEL_TOKEN="$(/usr/bin/security find-generic-password -a "$USER" -s office-tv-tunnel-token -w)" exec /opt/homebrew/bin/cloudflared tunnel --no-autoupdate run</string>
+	</array>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>KeepAlive</key>
+	<true/>
+	<key>ThrottleInterval</key>
+	<integer>30</integer>
+	<key>StandardOutPath</key>
+	<string>/tmp/office-tv-tunnel.log</string>
+	<key>StandardErrorPath</key>
+	<string>/tmp/office-tv-tunnel.log</string>
+</dict>
+</plist>

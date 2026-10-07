@@ -49,15 +49,26 @@ if [[ "$TERM" == "xterm-ghostty" ]]; then
   export FORCE_HYPERLINK=1
 fi
 
-# Don't open browsers on a machine reached over SSH: nobody is at its screen.
-# Claude Code's fullscreen UI captures the mouse and runs $BROWSER (default
-# `open`) on its own host for a clicked link, so a click from a remote terminal
-# opens a tab here instead of on the connecting machine. `true` makes that a
-# no-op, and Claude Code reads BROWSER=true as "no browser available". Open a
-# link on the connecting machine with the terminal's own gesture instead
-# (Ghostty: Shift+Cmd+click, which bypasses the mouse capture).
+# Over SSH, open browsers on the Mac you are using rather than on this one,
+# where nobody is at the screen. Claude Code's fullscreen UI and CLIs such as
+# `aws sso login` launch $BROWSER on their own host; open-url sends the URL to
+# whichever Mac has had recent input.
 if [[ -n "$SSH_CONNECTION" ]]; then
-  export BROWSER=true
+  export BROWSER=open-url
+fi
+
+# macOS shells keep a forwarded agent when one arrived and otherwise use
+# launchd's current agent, including in incoming SSH sessions, so git's SSH
+# commit signing reaches the key without a TTY. This lives here rather than in
+# .zprofile because non-login shells need it too: processes launchd starts
+# without SSH_AUTH_SOCK (the Claude Code daemon, for one) spawn `zsh -c`
+# shells that never read .zprofile.
+if [[ "$OSTYPE" == darwin* && ! -S "${SSH_AUTH_SOCK:-}" ]]; then
+  SSH_AUTH_SOCK=$(
+    launchctl print "gui/$UID/com.openssh.ssh-agent" 2>/dev/null |
+      awk '$1 == "SSH_AUTH_SOCK" && $2 == "=>" { print $3; exit }'
+  )
+  export SSH_AUTH_SOCK
 fi
 
 if [[ -r ~/.zshenv.local ]]; then

@@ -1,3 +1,4 @@
 ^/AGENTS\.md$
 ^/claude-plugin-refresh\.sh$
 \.claude/references
+^/\.claude/settings\.carlyle-ec2\.json$
