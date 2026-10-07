@@ -276,7 +276,8 @@
     "plugin-dev@claude-plugins-official": true,
     "rust-analyzer-lsp@claude-plugins-official": true,
     "tractorbeam@tractorbeam": true,
-    "typescript-lsp@claude-plugins-official": true
+    "typescript-lsp@claude-plugins-official": true,
+    "workos@workos": true
   },
   "extraKnownMarketplaces": {
     "agent-toolkit-for-aws": {
@@ -289,6 +290,12 @@
       "source": {
         "source": "github",
         "repo": "cloudflare/skills"
+      }
+    },
+    "workos": {
+      "source": {
+        "source": "github",
+        "repo": "workos/skills"
       }
     },
     "tractorbeam": {

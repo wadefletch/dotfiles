@@ -397,6 +397,7 @@ configure_claude_mcp() {
   fi
   add_claude_mcp betterstack --transport http -- https://mcp.betterstack.com
   add_claude_mcp secureframe --transport http -- https://mcp.secureframe.com/
+  add_claude_mcp workos --transport http -- https://mcp.workos.com/mcp
   add_claude_mcp okta -- codex-okta-mcp
   add_claude_mcp aikido --env "npm_config_cache=$HOME/.cache/aikido-npx" -- \
     npx -y @aikidosec/mcp
@@ -415,7 +416,7 @@ add_claude_mcp() {
   fi
 }
 
-# aws-core and cloudflare come straight from their vendors' marketplaces, the
+# aws-core, cloudflare, and workos come straight from their vendors' marketplaces, the
 # sources Codex uses, so both harnesses run the same plugins. The settings
 # file already declares the marketplaces and the plugins; this makes the
 # installed copies match it.
@@ -427,9 +428,13 @@ configure_claude_plugins() {
 
   info "updating Claude Code vendor plugins"
   claude plugin marketplace add aws/agent-toolkit-for-aws
+  claude plugin marketplace add workos/skills
   claude plugin marketplace update agent-toolkit-for-aws
+  claude plugin marketplace update workos
   claude plugin install aws-core@agent-toolkit-for-aws
+  claude plugin install workos@workos
   claude plugin update aws-core@agent-toolkit-for-aws
+  claude plugin update workos@workos
   # Cloudflare is Tractorbeam's account; the Carlyle overlay disables it.
   if [[ -z "${CARLYLE_EC2:-}" ]]; then
     claude plugin marketplace add cloudflare/skills
@@ -488,9 +493,11 @@ reconcile_codex_plugins() {
   codex plugin marketplace add https://github.com/tractorbeamai/skills.git
   codex plugin marketplace add aws/agent-toolkit-for-aws
   codex plugin marketplace add cloudflare/skills
+  codex plugin marketplace add workos/skills
   codex plugin marketplace upgrade tractorbeam
   codex plugin marketplace upgrade agent-toolkit-for-aws
   codex plugin marketplace upgrade cloudflare
+  codex plugin marketplace upgrade workos
 
   if [[ -f "$config" ]]; then
     while IFS= read -r plugin; do
@@ -498,7 +505,7 @@ reconcile_codex_plugins() {
         codex plugin remove "$plugin"
       fi
     done < <(
-      sed -nE 's/^\[plugins\."([^"]*@(tractorbeam|agent-toolkit-for-aws|cloudflare))"\]$/\1/p' "$config"
+      sed -nE 's/^\[plugins\."([^"]*@(tractorbeam|agent-toolkit-for-aws|cloudflare|workos))"\]$/\1/p' "$config"
     )
   fi
 

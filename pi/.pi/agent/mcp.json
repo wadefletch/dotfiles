@@ -61,6 +61,11 @@
       ],
       "description": "X (Twitter) API: posts, users, bookmarks, and DMs",
       "exposure": "deferred"
+    },
+    "workos": {
+      "url": "https://mcp.workos.com/mcp",
+      "description": "WorkOS workspace: organizations, users, SSO, directories, and settings",
+      "exposure": "deferred"
     }
   }
 }

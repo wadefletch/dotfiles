@@ -44,6 +44,10 @@ url = "https://mcp.betterstack.com"
 [mcp_servers.secureframe]
 url = "https://mcp.secureframe.com/"
 
+# The workos plugin ships skills only for Codex; its server is registered here.
+[mcp_servers.workos]
+url = "https://mcp.workos.com/mcp"
+
 # codex-okta-mcp reads the Okta service-app key from the login Keychain.
 [mcp_servers.okta]
 command = "codex-okta-mcp"
