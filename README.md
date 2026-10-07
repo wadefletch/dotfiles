@@ -121,7 +121,7 @@ sync-aws-config          # assemble ~/.aws/config (managed + config.local)
 
 ## Office TV relay
 
-The `office-tv-relay` package runs on arrakis only: bootstrap stows it there, installs `cloudflared`, and loads its two LaunchAgents; every other host skips it. `com.wadefletcher.office-tv-relay` serves a fixed allowlist of Fire TV adb actions (status, screenshot, open the sign or a URL, remote keys) on `127.0.0.1:8765`. It runs under Apple's `/usr/bin/python3`, which macOS Local Network privacy lets reach the TV, and drives `/opt/homebrew/bin/adb`. `com.wadefletcher.office-tv-tunnel` runs the `office-tv` Cloudflare Tunnel (account tractorbeam-nonprod), which carries beam's Workers VPC Service to the relay.
+The `office-tv-relay` package runs on arrakis only: bootstrap stows it there, installs `cloudflared` and the `android-platform-tools` cask (adb), and loads its two LaunchAgents; every other host skips it. `com.wadefletcher.office-tv-relay` serves a fixed allowlist of Fire TV adb actions (status, screenshot, open the sign or a URL, remote keys) on `127.0.0.1:8765`. It runs under Apple's `/usr/bin/python3`, which macOS Local Network privacy lets reach the TV, and drives `/opt/homebrew/bin/adb`. `com.wadefletcher.office-tv-tunnel` runs the `office-tv` Cloudflare Tunnel (account tractorbeam-nonprod), which carries beam's Workers VPC Service to the relay.
 
 Both read a secret from the login Keychain when they start. `office-tv-relay-secret` is the bearer secret beam sends as `OFFICE_TV_RELAY_SECRET`; `office-tv-tunnel-token` is the tunnel's run token. Add each interactively so it stays out of shell history:
 

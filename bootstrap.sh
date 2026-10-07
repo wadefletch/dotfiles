@@ -33,6 +33,8 @@ PACKAGES=(git neovim ripgrep stow zsh eza)
 
 # macOS apps and fonts (brew casks)
 CASKS=(cursor ghostty)
+# adb, which the office TV relay drives
+[[ "$HOST_NAME" == "arrakis" ]] && CASKS+=(android-platform-tools)
 
 info() { printf '  [ .. ] %s\n' "$1"; }
 ok() { printf '  [ OK ] %s\n' "$1"; }
