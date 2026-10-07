@@ -324,5 +324,10 @@
   "preferredNotifChannel": "ghostty",
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "deniedMcpServers": [
+    {
+      "serverName": "plugin:aws-core:aws-mcp"
+    }
+  ]
 }

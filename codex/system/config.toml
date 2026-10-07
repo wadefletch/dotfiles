@@ -35,7 +35,6 @@ startup_timeout_sec = 60
 tool_timeout_sec = 300
 
 [mcp_servers.aws-mcp.env]
-AWS_REGION = "us-east-1"
 AWS_MCP_PROXY_PROFILES = "agent-read-management agent-read-audit agent-read-log-archive agent-read-production agent-read-nonprod agent-read-shared-services agent-read-distribution agent-read-sandbox agent-read-brizzco"
 
 [mcp_servers.betterstack]

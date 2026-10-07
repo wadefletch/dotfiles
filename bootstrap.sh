@@ -379,8 +379,8 @@ install_claude_ssh_host_keys() {
 
 # Claude Code stores user-scoped MCP registrations in mutable host state rather
 # than a standalone stowable file. Add the portable servers when they are
-# missing and leave all other registrations alone. The AWS and Cloudflare
-# servers come from their plugins instead.
+# missing and leave all other registrations alone. The Cloudflare server comes
+# from its plugin instead.
 configure_claude_mcp() {
   if ! command -v claude &>/dev/null; then
     warn "claude not found; skipping MCP configuration"
@@ -389,6 +389,10 @@ configure_claude_mcp() {
 
   add_claude_mcp fff -- fff-mcp --no-update-check
   add_claude_mcp docs-index --transport http -- https://index.mintlify.com/mcp
+  # The same installed proxy Codex, Pi, and Cursor run; settings.json denies the
+  # aws-core plugin's copy. The profiles come from AWS_MCP_PROXY_PROFILES in the
+  # settings env, which the Carlyle overlay replaces with that host's own.
+  add_claude_mcp aws-mcp -- mcp-proxy-for-aws-cli https://aws-mcp.us-east-1.api.aws/mcp
 
   # The rest are Tractorbeam's service accounts, which the Carlyle devbox
   # has no business reaching.
@@ -445,18 +449,24 @@ configure_claude_plugins() {
   ok "Claude Code vendor plugins"
 }
 
-# The AWS MCP servers for Codex and Pi launch this executable directly instead
-# of resolving it through uvx on every start. uv comes from the mise toolset,
-# so this runs after `mise install`.
+# Every harness's aws-mcp server launches this executable directly instead of
+# resolving it through uvx on every start. Bump the pin deliberately; uv comes
+# from the mise toolset, so this runs after `mise install`.
+AWS_MCP_PROXY_VERSION=1.7.0
 install_aws_mcp_proxy() {
-  if command -v mcp-proxy-for-aws-cli &>/dev/null; then
-    ok "AWS MCP proxy already installed"
-  elif command -v uv &>/dev/null; then
-    info "installing AWS MCP proxy"
-    uv tool install mcp-proxy-for-aws-cli
-    ok "AWS MCP proxy"
-  else
+  if ! command -v uv &>/dev/null; then
     warn "uv not found; install mcp-proxy-for-aws-cli before using the AWS MCP server"
+    return
+  fi
+  # Captured first: grep -q closing the pipe early would fail it under pipefail.
+  local installed
+  installed="$(uv tool list --color never 2>/dev/null)"
+  if grep -qxF "mcp-proxy-for-aws-cli v$AWS_MCP_PROXY_VERSION" <<<"$installed"; then
+    ok "AWS MCP proxy $AWS_MCP_PROXY_VERSION already installed"
+  else
+    info "installing AWS MCP proxy $AWS_MCP_PROXY_VERSION"
+    uv tool install --force "mcp-proxy-for-aws-cli==$AWS_MCP_PROXY_VERSION"
+    ok "AWS MCP proxy"
   fi
 }
 
