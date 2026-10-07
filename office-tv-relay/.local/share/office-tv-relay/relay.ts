@@ -81,8 +81,25 @@ async function adb(...args: string[]): Promise<Buffer> {
   }
 }
 
-/** Quote one argument for the TV's shell, which `adb shell` hands its string to. */
+/**
+ * `adb shell` always hands its command string to the TV's /bin/sh, so a URL is
+ * the one caller-supplied value that reaches a shell. It is single-quoted, and
+ * the normalized URL must match a strict character set first. That set has no
+ * `'`, the only character that can end a single-quoted string, so the quoting
+ * can't be broken; and none of `$`, backticks, `\`, `;`, `|`, `"`, parentheses,
+ * `!`, `*`, or whitespace either. Quoting is what keeps `&`, `?`, and `#` inert.
+ * Anything outside the set must be percent-encoded.
+ */
+const SHELL_SAFE_URL = /^https:\/\/[A-Za-z0-9\-._~:/?#[\]@%+=&,]+$/;
 const quote = (value: string) => `'${value.replaceAll("'", `'\\''`)}'`;
+
+function safeUrl(url: unknown): string {
+  const href = typeof url === "string" && URL.canParse(url) ? new URL(url).href : "";
+  if (!SHELL_SAFE_URL.test(href)) {
+    throw new BadRequest("open_url needs an https URL (percent-encode quotes, spaces, and other symbols)");
+  }
+  return href;
+}
 
 async function status() {
   const activities = (await adb("shell", "dumpsys activity activities")).toString();
@@ -114,10 +131,7 @@ async function perform(action: unknown, url: unknown) {
   if (action === "status") return status();
   if (action === "open_sign") return adb("shell", `am start -n ${SIGN}`).then(() => ({ ok: true }));
   if (action === "open_url") {
-    if (typeof url !== "string" || !URL.canParse(url) || new URL(url).protocol !== "https:" || /\s/.test(url)) {
-      throw new BadRequest("open_url needs an https URL");
-    }
-    return adb("shell", `am start -n ${SIGN} -e url ${quote(url)}`).then(() => ({ ok: true }));
+    return adb("shell", `am start -n ${SIGN} -e url ${quote(safeUrl(url))}`).then(() => ({ ok: true }));
   }
   if (typeof action === "string" && Object.hasOwn(KEYS, action)) {
     return adb("shell", `input keyevent ${KEYS[action]}`).then(() => ({ ok: true }));
