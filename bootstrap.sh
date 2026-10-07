@@ -552,7 +552,7 @@ install_teams_link_handler() {
 # The office TV relay and its Cloudflare Tunnel run as LaunchAgents on arrakis
 # only. Each reads its secret from the login Keychain when it starts, and an
 # agent that exits is retried every 30s, so a missing item is a warning and
-# the agents load anyway.
+# the agents load anyway. The relay runs on Bun, so this follows `mise install`.
 enable_office_tv_relay() {
   local label service
 

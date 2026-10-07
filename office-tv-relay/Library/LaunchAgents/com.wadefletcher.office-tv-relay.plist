@@ -4,12 +4,13 @@
 <dict>
 	<key>Label</key>
 	<string>com.wadefletcher.office-tv-relay</string>
-	<!-- Apple's python3 on purpose: Local Network privacy lets it reach the TV. -->
+	<!-- Bun via mise. The first start triggers macOS's Local Network prompt;
+	     allow it so the relay can reach the TV. -->
 	<key>ProgramArguments</key>
 	<array>
 		<string>/bin/sh</string>
 		<string>-c</string>
-		<string>exec /usr/bin/python3 -I "$HOME/.local/bin/office-tv-relay"</string>
+		<string>exec "$HOME/.local/share/mise/shims/bun" "$HOME/.local/share/office-tv-relay/relay.ts"</string>
 	</array>
 	<!-- A long-running service: start at login, restart if it exits. -->
 	<key>RunAtLoad</key>

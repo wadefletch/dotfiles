@@ -63,7 +63,7 @@ Both are macOS. Run `hostname` to learn which machine you're on: deploy there di
 | --------------- | ------ |
 | `nightly-maintenance` | `launchctl bootout gui/$(id -u)/com.wadefletcher.nightly-maintenance 2>/dev/null; launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.wadefletcher.nightly-maintenance.plist` |
 | `git-auto-ff` | Restow with `--no-folding`. Only on hosts where it is enabled: rerun `./enable-git-auto-ff.sh` if the timer or plist changed; script-only changes need nothing. Never enable it on a host that hasn't opted in. |
-| `office-tv-relay` | arrakis only; never stow or load it elsewhere. Restow with `--no-folding`, then for each label (`com.wadefletcher.office-tv-relay`, `com.wadefletcher.office-tv-tunnel`): `launchctl bootout gui/$(id -u)/<label> 2>/dev/null; launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/<label>.plist`. Both are long-running, so a script change also needs the relay reloaded. |
+| `office-tv-relay` | arrakis only; never stow or load it elsewhere. Restow with `--no-folding`, then for each label (`com.wadefletcher.office-tv-relay`, `com.wadefletcher.office-tv-tunnel`): `launchctl bootout gui/$(id -u)/<label> 2>/dev/null; launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/<label>.plist`. Both are long-running, so a `relay.ts` change also needs the relay reloaded. |
 | `duti` | `duti ~/.config/duti/default-apps` |
 | `teams-link` | Nothing — the stowed script is what runs. The handler app only needs rebuilding (`./bootstrap.sh`) if `install_teams_link_handler` itself changed. |
 | `ghostty` | No CLI reload — tell the user open Ghostty windows need cmd+shift+, (Reload Configuration). |
