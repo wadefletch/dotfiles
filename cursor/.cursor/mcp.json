@@ -30,13 +30,6 @@
     "okta": {
       "command": "codex-okta-mcp"
     },
-    "aikido": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@aikidosec/mcp"
-      ]
-    },
     "xapi": {
       "command": "npx",
       "args": [

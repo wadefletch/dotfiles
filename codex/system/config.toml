@@ -55,12 +55,6 @@ default_tools_approval_mode = "approve"
 startup_timeout_sec = 60
 tool_timeout_sec = 60
 
-# Aikido offers a browser sign-in on first use and keeps the token in the OS
-# keychain. Aikido publishes no Codex plugin, so the server is registered here.
-[mcp_servers.aikido]
-command = "npx"
-args = ["-y", "@aikidosec/mcp"]
-
 # xurl reads the X app credentials and OAuth token from ~/.xurl/auth.yml.
 [mcp_servers.xapi]
 command = "npx"

@@ -38,15 +38,6 @@
       "description": "Okta directory, groups, apps, and policies (read-only)",
       "exposure": "deferred"
     },
-    "aikido": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@aikidosec/mcp"
-      ],
-      "description": "Aikido security findings",
-      "exposure": "deferred"
-    },
     "xapi": {
       "command": "npx",
       "args": [

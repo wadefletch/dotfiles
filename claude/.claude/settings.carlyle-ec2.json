@@ -6,7 +6,6 @@
     "tractorbeam:aws-access": "off"
   },
   "enabledPlugins": {
-    "aikido@aikido-plugins": false,
     "cloudflare@cloudflare": false,
     "document-skills@anthropic-agent-skills": false,
     "plugin-dev@claude-plugins-official": false

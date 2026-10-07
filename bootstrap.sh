@@ -379,19 +379,18 @@ install_claude_ssh_host_keys() {
 
 # Claude Code stores user-scoped MCP registrations in mutable host state rather
 # than a standalone stowable file. Add the portable servers when they are
-# missing and leave all other registrations alone. The Cloudflare and Aikido
-# servers come from their plugins instead.
+# missing and leave all other registrations alone. The Cloudflare server comes
+# from its plugin instead.
 configure_claude_mcp() {
   if ! command -v claude &>/dev/null; then
     warn "claude not found; skipping MCP configuration"
     return
   fi
 
-  # Earlier bootstraps registered Aikido at user scope; it would load beside
-  # the plugin's server.
+  # Earlier bootstraps registered an Aikido server, which is no longer used.
   if claude mcp get aikido &>/dev/null; then
     claude mcp remove --scope user aikido
-    ok "removed the user-scope Aikido MCP in favor of its plugin"
+    ok "removed the Aikido MCP"
   fi
 
   add_claude_mcp fff -- fff-mcp --no-update-check
@@ -425,10 +424,10 @@ add_claude_mcp() {
   fi
 }
 
-# Vendor plugins come straight from their vendors' marketplaces. aws-core,
-# cloudflare, and workos are the ones Codex installs too; Aikido publishes no
-# Codex plugin. The settings file already declares the marketplaces and the
-# plugins; this makes the installed copies match it.
+# aws-core, cloudflare, and workos come straight from their vendors' marketplaces, the
+# sources Codex uses, so both harnesses run the same plugins. The settings
+# file already declares the marketplaces and the plugins; this makes the
+# installed copies match it.
 configure_claude_plugins() {
   if ! command -v claude &>/dev/null; then
     warn "claude not found; skipping vendor plugins"
@@ -444,17 +443,12 @@ configure_claude_plugins() {
   claude plugin install workos@workos
   claude plugin update aws-core@agent-toolkit-for-aws
   claude plugin update workos@workos
-  # Cloudflare and Aikido are Tractorbeam's accounts; the Carlyle overlay
-  # disables them.
+  # Cloudflare is Tractorbeam's account; the Carlyle overlay disables it.
   if [[ -z "${CARLYLE_EC2:-}" ]]; then
     claude plugin marketplace add cloudflare/skills
-    claude plugin marketplace add AikidoSec/aikido-claude-plugin
     claude plugin marketplace update cloudflare
-    claude plugin marketplace update aikido-plugins
     claude plugin install cloudflare@cloudflare
-    claude plugin install aikido@aikido-plugins
     claude plugin update cloudflare@cloudflare
-    claude plugin update aikido@aikido-plugins
   fi
   ok "Claude Code vendor plugins"
 }
