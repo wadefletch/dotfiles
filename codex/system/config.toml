@@ -1,4 +1,4 @@
-model = "gpt-5.6-sol"
+model = "gpt-6.1-sol"
 model_reasoning_effort = "medium"
 approval_policy = "on-request"
 approvals_reviewer = "auto_review"
@@ -48,7 +48,8 @@ url = "https://mcp.secureframe.com/"
 [mcp_servers.workos]
 url = "https://mcp.workos.com/mcp"
 
-# codex-okta-mcp reads the Okta service-app key from the login Keychain.
+# codex-okta-mcp reads the Okta service-app key from the login Keychain on
+# macOS and from a mode-0600 file elsewhere.
 [mcp_servers.okta]
 command = "codex-okta-mcp"
 default_tools_approval_mode = "approve"
@@ -57,12 +58,10 @@ tool_timeout_sec = 60
 
 # Aikido offers a browser sign-in on first use and keeps the token in the OS
 # keychain. The npm cache is kept out of ~/.npm so the sandbox can write it.
+# Codex doesn't expand $HOME in env values, so sh sets the path at launch.
 [mcp_servers.aikido]
-command = "npx"
-args = ["-y", "@aikidosec/mcp"]
-
-[mcp_servers.aikido.env]
-npm_config_cache = "/Users/wadefletcher/.cache/aikido-npx"
+command = "sh"
+args = ["-c", "npm_config_cache=\"$HOME/.cache/aikido-npx\" exec npx -y @aikidosec/mcp"]
 
 # xurl reads the X app credentials and OAuth token from ~/.xurl/auth.yml.
 [mcp_servers.xapi]

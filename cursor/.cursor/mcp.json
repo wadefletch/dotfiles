@@ -32,14 +32,11 @@
       "command": "codex-okta-mcp"
     },
     "aikido": {
-      "command": "npx",
+      "command": "sh",
       "args": [
-        "-y",
-        "@aikidosec/mcp"
-      ],
-      "env": {
-        "npm_config_cache": "/Users/wadefletcher/.cache/aikido-npx"
-      }
+        "-c",
+        "npm_config_cache=\"$HOME/.cache/aikido-npx\" exec npx -y @aikidosec/mcp"
+      ]
     },
     "xapi": {
       "command": "npx",
