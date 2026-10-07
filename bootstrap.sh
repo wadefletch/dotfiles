@@ -584,7 +584,7 @@ install_teams_link_handler() {
 # agent that exits is retried every 30s, so a missing item is a warning and
 # the agents load anyway. The relay runs on Bun, so this follows `mise install`.
 enable_office_tv_relay() {
-  local label service
+  local label service domain attempt
 
   [[ "$HOST_NAME" == "arrakis" ]] || return 0
 
@@ -594,9 +594,17 @@ enable_office_tv_relay() {
     fi
   done
 
+  domain="gui/$(id -u)"
   for label in com.wadefletcher.office-tv-relay com.wadefletcher.office-tv-tunnel; do
-    launchctl bootout "gui/$(id -u)/$label" 2>/dev/null || true
-    launchctl bootstrap "gui/$(id -u)" "$HOME/Library/LaunchAgents/$label.plist"
+    launchctl bootout "$domain/$label" 2>/dev/null || true
+    # bootout returns before launchd finishes removing the service, and a
+    # bootstrap in that window fails with "5: Input/output error". Wait out
+    # launchd's default 20s exit timeout.
+    for attempt in {1..200}; do
+      launchctl print "$domain/$label" &>/dev/null || break
+      sleep 0.1
+    done
+    launchctl bootstrap "$domain" "$HOME/Library/LaunchAgents/$label.plist"
   done
   ok "office TV relay and tunnel"
 }
