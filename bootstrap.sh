@@ -640,13 +640,9 @@ main() {
 
   install_aws_mcp_proxy
 
-  if [[ "$OS" == "Darwin" ]]; then
-    info "installing Okta MCP server"
-    "$DOTFILES/codex/.local/bin/install-okta-mcp-tool"
-    ok "Okta MCP server"
-  else
-    info "skipping Keychain-backed Okta MCP server (macOS only)"
-  fi
+  info "installing Okta MCP server"
+  "$DOTFILES/codex/.local/bin/install-okta-mcp-tool"
+  ok "Okta MCP server"
 
   install_teams_link_handler
   enable_office_tv_relay
