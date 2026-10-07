@@ -26,6 +26,9 @@
     "npm:pi-goal-x",
     "git:github.com/tractorbeamai/skills"
   ],
+  "skills": [
+    "git/github.com/tractorbeamai/skills/plugins/experimental/skills"
+  ],
   "deviceId": "a8a2dbef-ae85-4da6-8ad4-8785795ef046",
   "hideThinkingBlock": false
 }

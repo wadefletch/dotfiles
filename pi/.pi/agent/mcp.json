@@ -6,7 +6,6 @@
         "https://aws-mcp.us-east-1.api.aws/mcp"
       ],
       "env": {
-        "AWS_REGION": "us-east-1",
         "AWS_MCP_PROXY_PROFILES": "agent-read-management agent-read-audit agent-read-log-archive agent-read-production agent-read-nonprod agent-read-shared-services agent-read-distribution agent-read-sandbox agent-read-brizzco"
       },
       "timeout": 300,
@@ -37,18 +36,6 @@
       "command": "codex-okta-mcp",
       "timeout": 60,
       "description": "Okta directory, groups, apps, and policies (read-only)",
-      "exposure": "deferred"
-    },
-    "aikido": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@aikidosec/mcp"
-      ],
-      "env": {
-        "npm_config_cache": "/Users/wadefletcher/.cache/aikido-npx"
-      },
-      "description": "Aikido security findings",
       "exposure": "deferred"
     },
     "xapi": {
