@@ -389,6 +389,12 @@ configure_claude_mcp() {
 
   add_claude_mcp fff -- fff-mcp --no-update-check
   add_claude_mcp docs-index --transport http -- https://index.mintlify.com/mcp
+
+  # The rest are Tractorbeam's service accounts, which the Carlyle devbox
+  # has no business reaching.
+  if [[ -n "${CARLYLE_EC2:-}" ]]; then
+    return
+  fi
   add_claude_mcp betterstack --transport http -- https://mcp.betterstack.com
   add_claude_mcp secureframe --transport http -- https://mcp.secureframe.com/
   add_claude_mcp okta -- codex-okta-mcp
@@ -421,13 +427,16 @@ configure_claude_plugins() {
 
   info "updating Claude Code vendor plugins"
   claude plugin marketplace add aws/agent-toolkit-for-aws
-  claude plugin marketplace add cloudflare/skills
   claude plugin marketplace update agent-toolkit-for-aws
-  claude plugin marketplace update cloudflare
   claude plugin install aws-core@agent-toolkit-for-aws
-  claude plugin install cloudflare@cloudflare
   claude plugin update aws-core@agent-toolkit-for-aws
-  claude plugin update cloudflare@cloudflare
+  # Cloudflare is Tractorbeam's account; the Carlyle overlay disables it.
+  if [[ -z "${CARLYLE_EC2:-}" ]]; then
+    claude plugin marketplace add cloudflare/skills
+    claude plugin marketplace update cloudflare
+    claude plugin install cloudflare@cloudflare
+    claude plugin update cloudflare@cloudflare
+  fi
   ok "Claude Code vendor plugins"
 }
 
