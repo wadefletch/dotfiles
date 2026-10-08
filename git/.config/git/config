@@ -37,16 +37,8 @@ ff = only
 	helper =
 	helper = !gh auth git-credential
 
-[url "git@github.com:tractorbeamai/"]
-	insteadOf = https://github.com/tractorbeamai/
-[url "git@github.com:wadefletch/"]
-	insteadOf = https://github.com/wadefletch/
-
 [tag]
 	gpgsign = true
 
 [includeIf "gitdir:~/Developer/Tractorbeam/"]
 	path = ~/.config/git/gitconfig-tractorbeam
-
-[includeIf "gitdir:~/Developer/Tractorbeam/client-carlyle/"]
-	path = ~/.config/git/gitconfig-carlyle
