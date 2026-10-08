@@ -15,3 +15,5 @@ node_modules/
 # Claude Code
 **/.claude/settings.local.json
 **/AGENTS.override.md
+
+**/.claude/.cc-writes/
