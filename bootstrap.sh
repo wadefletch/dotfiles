@@ -369,6 +369,41 @@ stow_packages() (
 
 )
 
+# --- Machine-local entry points ----------------------------------------------
+
+# Aikido's endpoint agent appends marked blocks to ~/.zshrc and ~/.zprofile,
+# restores them if they go missing, and sets http.sslCAInfo through
+# `git config --global`. Keep the files it writes machine-local: each zsh file
+# loads its tracked counterpart from ~/.config/zsh, and ~/.gitconfig exists so
+# git writes global settings there instead of the stowed XDG config.
+install_local_entrypoints() {
+  local content name source_line target
+
+  for name in zshrc zprofile; do
+    target="$HOME/.$name"
+    source_line="source \"\$HOME/.config/zsh/$name\""
+    # Older checkouts stowed these files as links into the repo.
+    if [[ -L "$target" && "$(readlink "$target")" == *"/zsh/.$name" ]]; then
+      rm "$target"
+    fi
+    if [[ ! -e "$target" ]]; then
+      printf '# Machine-local; installers may append below.\n%s\n' "$source_line" >"$target"
+      ok ".$name created"
+    elif grep -qxF "$source_line" "$target"; then
+      ok ".$name already loads the tracked config"
+    else
+      content="$(<"$target")"
+      printf '%s\n%s\n' "$source_line" "$content" >"$target"
+      ok ".$name now loads the tracked config"
+    fi
+  done
+
+  if [[ ! -e "$HOME/.gitconfig" ]]; then
+    printf '# Machine-local git config; `git config --global` writes here.\n' >"$HOME/.gitconfig"
+    ok ".gitconfig created"
+  fi
+}
+
 # --- SSH host verification --------------------------------------------------
 
 install_claude_ssh_host_keys() {
@@ -640,6 +675,7 @@ main() {
   install_deps
   install_codex_system_config
   stow_packages
+  install_local_entrypoints
   if [[ " $SKIP_PACKAGES " == *" aws "* ]]; then
     info "skipping AWS CLI config (aws disabled on this host)"
   else

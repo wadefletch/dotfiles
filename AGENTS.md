@@ -5,7 +5,7 @@ GNU Stow-based dotfiles for macOS. Each top-level directory is a stow package mi
 ```
 <package>/          # stow package — contents symlinked into ~
   .config/<app>/    # XDG config (ghostty, git, nvim, starship, alacritty)
-  .zshrc, .zshenv   # shell config (zsh/)
+  .zshenv, .config/zsh/  # shell config (zsh/)
   .ssh/config       # ssh config (ssh/)
   Library/...       # macOS paths (cursor/, vscode/, nightly-maintenance/, office-tv-relay/)
   .cursor/          # Cursor CLI config (cursor/; --no-folding so ~/.cursor stays host-local)
@@ -20,7 +20,7 @@ bootstrap.sh        # installs deps, stows packages, git hooks, WARP SSH host ke
 
 ## Key files
 
-- `zsh/.zshrc` — shell config, aliases (`ga`, `gc`, `gs`, `gp`, `gl`, `gq`), `stopall`, `automerge`
+- `zsh/.config/zsh/zshrc` — shell config, aliases (`ga`, `gc`, `gs`, `gp`, `gl`, `gq`), `stopall`, `automerge`
 - `zsh/.zshenv` — lightweight PATH exports (brew, local bin)
 - `claude/AGENTS.md` — instructions for the Claude stow package itself
 - `agent-config/.agents/AGENTS.md` — user-scoped agent instructions. `claude/.claude/CLAUDE.md`, `codex/.codex/AGENTS.md`, and `pi/.pi/agent/AGENTS.md` are symlinks to it, so edit this file, not the links.
@@ -29,6 +29,7 @@ bootstrap.sh        # installs deps, stows packages, git hooks, WARP SSH host ke
 
 - XDG paths (`.config/`) where the app supports it, macOS `Library/` paths otherwise.
 - Every top-level directory is a stow package.
+- `~/.zshrc`, `~/.zprofile`, and `~/.gitconfig` are machine-local files bootstrap creates; installers such as Aikido's endpoint agent append there. The zsh ones load `zsh/.config/zsh/{zshrc,zprofile}`, and git reads `~/.gitconfig` after the tracked `git/.config/git/config`. Put shared settings in the tracked files.
 - The `claude/` package has a `.stow-local-ignore` — check it before adding files.
 - Packages listed in `bootstrap.sh`'s `NO_FOLDING` target directories that also hold host-local state; stow links their files individually so the directory itself is never replaced.
 - Host-scoped packages (`ARRAKIS_ONLY` in `bootstrap.sh`, matched on the lowercased `LocalHostName`) are stowed only on that host, and bootstrap loads their LaunchAgents there. `office-tv-relay/` is the only one.
