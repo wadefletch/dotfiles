@@ -3,9 +3,8 @@
 
 setopt pipe_fail
 
-# Schedulers provide a minimal PATH, so set tool and temporary paths explicitly.
-export PNPM_HOME="$HOME/Library/pnpm"
-export PATH="$HOME/.local/share/mise/shims:$PNPM_HOME/bin:$PNPM_HOME:$HOME/.local/bin:/opt/homebrew/bin:$HOME/.cargo/bin:$PATH"
+# Tool paths come from ~/.zshenv, which zsh reads for this script too.
+# Schedulers may leave TMPDIR unset.
 export TMPDIR="${TMPDIR:-/tmp}"
 
 LOG=/tmp/nightly-maintenance.log
