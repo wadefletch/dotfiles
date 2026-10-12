@@ -154,11 +154,7 @@ install_gh() {
 # --- Install dependencies ----------------------------------------------------
 
 install_deps() {
-  local app bin formula formulae installed_casks pkg zsh_path
-
-  info "updating package index"
-  pkg_update
-  ok "package index updated"
+  local app bin formula formulae installed_casks pkg zsh_path index_updated=""
 
   for pkg in "${PACKAGES[@]}"; do
     # Map package name -> binary name where they differ (e.g. neovim -> nvim).
@@ -169,6 +165,14 @@ install_deps() {
     if command -v "$bin" &>/dev/null; then
       ok "$pkg already installed"
     else
+      # Refresh the index only when something needs installing, so a run on a
+      # provisioned machine never needs sudo here.
+      if [[ -z "$index_updated" ]]; then
+        info "updating package index"
+        pkg_update
+        ok "package index updated"
+        index_updated=1
+      fi
       info "installing $pkg"
       # Not every distro packages everything (Amazon Linux 2023 has neither
       # neovim nor eza), so a missing package is a warning, not a failure.
