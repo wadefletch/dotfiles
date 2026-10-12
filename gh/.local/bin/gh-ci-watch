@@ -7,7 +7,8 @@
 #
 # PR defaults to the current branch's pull request. Exit codes:
 #   0  every check passed or was skipped
-#   1  a check failed (its annotations and log tail are printed first)
+#   1  a check failed (its steps, annotations, and failed-step log tail are
+#      printed first)
 #   2  no checks registered, or the timeout elapsed
 #   3  the PR's head moved to a new commit; rerun to watch the new one
 #
@@ -25,13 +26,25 @@ while [ $# -gt 0 ]; do
     --interval) interval="$2"; shift ;;
     --timeout) timeout_min="$2"; shift ;;
     --no-steps) steps=0 ;;
-    -h|--help) sed -n '2,17p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,18p' "$0"; exit 0 ;;
     *) pr="$1" ;;
   esac
   shift
 done
 
 say() { printf '%s %s\n' "$(date +%H:%M:%S)" "$*"; }
+
+# Raw log lines of a finished job's failed steps. `gh run view --log-failed`
+# refuses until every job in the run completes, so while siblings still run,
+# fall back to the job's full log from the API, cut after the first ##[error]
+# (post-job cleanup follows it). `gh api` refuses to print the log's ANSI colors
+# without --allow-escape-sequences.
+failed_log() {
+  if ! gh run view --job "$1" --log-failed 2>/dev/null | cut -f3-; then
+    gh api --allow-escape-sequences "repos/{owner}/{repo}/actions/jobs/$1/logs" 2>/dev/null |
+      awk '{ print } /##\[error\]/ { exit }'
+  fi
+}
 
 state_dir=$(mktemp -d "${TMPDIR:-/tmp}/gh-ci-watch.XXXXXX")
 trap 'rm -rf "$state_dir"' EXIT
@@ -100,15 +113,14 @@ while :; do
     say "first failure: $name  $link"
     job_id=$(printf '%s' "$link" | sed -n 's#.*/job/\([0-9][0-9]*\).*#\1#p')
     if [ -n "$job_id" ]; then
-      gh api "repos/{owner}/{repo}/check-runs/$job_id/annotations" \
-        --jq '.[] | "  \(.annotation_level) \(.path):\(.start_line) \(.message | split("\n")[0])"' 2>/dev/null | head -20
+      # The job's steps and annotations.
+      gh run view --job "$job_id" 2>/dev/null
       say "log tail for $name:"
-      # Logs carry ANSI colors, which gh refuses to print without the flag.
-      # Show what led up to the first ##[error]; post-job cleanup follows it.
-      gh api --allow-escape-sequences "repos/{owner}/{repo}/actions/jobs/$job_id/logs" 2>/dev/null |
-        perl -pe 's/\e\[[0-9;]*[A-Za-z]//g; s/^[0-9TZ:.-]+ //' |
-        grep -v '^##\[\(group\|endgroup\|start-action\|end-action\)' |
-        awk '{ print } /^##\[error\]/ { exit }' | tail -60
+      # Strip colors (gh run view prints ESC as a literal "^["), the byte-order
+      # mark, and timestamps.
+      failed_log "$job_id" |
+        perl -pe 's/^\xEF\xBB\xBF//; s/(?:\e|\^\[)\[[0-9;]*[A-Za-z]//g; s/^[0-9TZ:.-]+ //' |
+        grep -v '^##\[\(group\|endgroup\|start-action\|end-action\)' | tail -60
     fi
     exit 1
   fi
