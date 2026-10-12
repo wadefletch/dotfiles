@@ -5,13 +5,14 @@ GNU Stow-based dotfiles for macOS. Each top-level directory is a stow package mi
 ```
 <package>/          # stow package — contents symlinked into ~
   .config/<app>/    # XDG config (ghostty, git, nvim, starship, alacritty)
-  .zshenv, .config/zsh/  # shell config (zsh/)
+  .zshenv           # shell environment (zsh/)
+  .config/zsh/      # zshrc and zprofile, loaded by machine-local ~/.zshrc and ~/.zprofile (zsh/)
   .ssh/config       # ssh config (ssh/)
   Library/...       # macOS paths (cursor/, vscode/, nightly-maintenance/, office-tv-relay/)
   .cursor/          # Cursor CLI config (cursor/; --no-folding so ~/.cursor stays host-local)
   .claude/          # Claude Code runtime files (claude/)
   .pi/agent/        # Pi settings and MCP servers (pi/; --no-folding so ~/.pi stays host-local)
-  .docker/           # tool config (docker/)
+  .docker/          # tool config (docker/)
   .aws/config       # aws cli profiles (aws/) — live ~/.aws/config is assembled; credentials, SSO cache, config.local untracked
 .githooks/          # git hooks (core.hooksPath); post-merge updates submodules
 .retired/           # reference-only packages (yabai, skhd-zig); dot-dirs aren't stowed
