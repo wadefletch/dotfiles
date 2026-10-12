@@ -59,7 +59,7 @@ Repository instructions use `AGENTS.md`. Shared personal workflows live under `a
 
 User-scoped instructions for every harness live in one file, `agent-config/.agents/AGENTS.md`. Each harness reads it through a symlink at its own user-scope path: `~/.claude/CLAUDE.md` for Claude Code, `~/.codex/AGENTS.md` for Codex, and `~/.pi/agent/AGENTS.md` for Pi. Cursor has no file-based user instructions, so it is not covered.
 
-Codex portable defaults live in `codex/system/config.toml` and bootstrap installs them as `/etc/codex/config.toml`. Codex owns `~/.codex/config.toml` as host-local mutable state for project trust, UI preferences, local runtimes, connectors, and plugin metadata; dotfiles never links or edits it. Bootstrap reconciles its managed marketplaces and plugins from `codex/system/plugins.txt`.
+Codex portable defaults live in `codex/system/config.toml`, and bootstrap links `/etc/codex/config.toml` to it, which needs sudo only the first time on each machine. Codex owns `~/.codex/config.toml` as host-local mutable state for project trust, UI preferences, local runtimes, connectors, and plugin metadata; dotfiles never links or edits it. Bootstrap reconciles its managed marketplaces and plugins from `codex/system/plugins.txt`.
 
 Tractorbeam read-only service credentials live in the macOS login Keychain. The
 `fleetctl-readonly` launcher reads the API-only Observer token from the

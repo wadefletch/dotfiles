@@ -41,7 +41,7 @@ bootstrap.sh        # installs deps, stows packages, git hooks, WARP SSH host ke
 - On each: in `~/.dotfiles`, `OLD=$(git rev-parse HEAD); git pull --ff-only` (stop and report a dirty tree or a pull that won't fast-forward), then `git diff --name-only "$OLD"..HEAD | cut -d/ -f1 | sort -u` lists changed packages.
 - Restow packages whose set of files changed with `stow -t "$HOME" --restow <pkg>`, adding `--no-folding` for `NO_FOLDING` packages.
 - Reload what runs in the background: `launchctl bootout gui/$(id -u)/<label>; launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/<label>.plist` for `nightly-maintenance` and `office-tv-relay`'s two agents (arrakis only), `duti ~/.config/duti/default-apps`, `sync-aws-config` for `aws`, and `./enable-git-auto-ff.sh` on hosts that enabled it when its units change. Open Ghostty windows need cmd+shift+, to reload.
-- Run `./bootstrap.sh` when `bootstrap.sh`, `agent-config/` or `codex/system/config.toml` changes, or a package is added.
+- Run `./bootstrap.sh` when `bootstrap.sh` or `agent-config/` changes, or a package is added.
 - Finish by deleting dangling links into the checkout: `find ~ -maxdepth 5 -type l -lname '*.dotfiles/*' ! -exec test -e {} \; -print`.
 
 ## pnpm globals

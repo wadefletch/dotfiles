@@ -490,18 +490,21 @@ install_aws_mcp_proxy() {
 
 # --- Codex configuration ----------------------------------------------------
 
+# Codex reads host-wide defaults only from this fixed path and doesn't check
+# its owner on Unix, so a link into the checkout picks up every pull. Only the
+# first run on a machine needs sudo.
 install_codex_system_config() {
   local source="$DOTFILES/codex/system/config.toml"
   local target="/etc/codex/config.toml"
 
-  if [[ -f "$target" ]] && cmp -s "$source" "$target"; then
-    ok "codex portable defaults already installed"
+  if [[ "$(readlink "$target" 2>/dev/null)" == "$source" ]]; then
+    ok "codex portable defaults already linked"
     return
   fi
 
-  info "installing codex portable defaults"
+  info "linking codex portable defaults (sudo, once per machine)"
   sudo install -d -m 0755 /etc/codex
-  sudo install -m 0644 "$source" "$target"
+  sudo ln -sfn "$source" "$target"
   ok "codex portable defaults"
 }
 
