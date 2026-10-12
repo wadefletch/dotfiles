@@ -43,7 +43,7 @@ cd ~/.dotfiles
 ./bootstrap.sh
 ```
 
-`bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, ripgrep, gh, starship, mise, and Claude Code), updates mise to its latest release, installs FFF's MCP server through Homebrew when available, and macOS brew casks. It then stows all packages, creates machine-local `~/.zshrc`, `~/.zprofile`, and `~/.gitconfig` (the zsh files load the tracked config from `~/.config/zsh`; installers such as Aikido's endpoint agent append to these instead of the repo), adds the portable Claude Code MCP servers when missing, reconciles Codex plugins, installs the locked Mise toolset (including the Fleetctl version matching the Fleet server), configures git hooks, and pins SSH host keys for WARP-reachable machines. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, teams-link, vscode, wallpapers) are skipped on Linux. `office-tv-relay` is stowed and enabled only on arrakis.
+`bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, ripgrep, gh, starship, mise, and Claude Code), updates mise to its latest release, installs FFF's MCP server through Homebrew when available, and macOS brew casks. It then stows all packages, creates machine-local `~/.zshrc`, `~/.zprofile`, and `~/.gitconfig` (see AGENTS.md for why they are not stowed), adds the portable Claude Code MCP servers when missing, reconciles Codex plugins, installs the locked Mise toolset (including the Fleetctl version matching the Fleet server), configures git hooks, and pins SSH host keys for WARP-reachable machines. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, teams-link, vscode, wallpapers) are skipped on Linux. `office-tv-relay` is stowed and enabled only on arrakis.
 
 Each harness owns its settings in its conventional Stow package. Claude Code settings live at `claude/.claude/settings.json`. The `cursor` package tracks Cursor's MCP servers and editor settings; its CLI settings (`~/.cursor/cli-config.json`) stay host-local. Pi's live `settings.json` is stowed deliberately, so preference and package changes made from Pi update the dotfiles checkout. Runtime caches, account metadata, UI state, credentials, Pi sessions, and installed package contents stay out of Git.
 
@@ -111,10 +111,10 @@ install -m 0600 /path/to/okta-mcp-private-key.pem ~/.config/okta-mcp/private-key
 To stow manually:
 
 ```sh
-stow git zsh ghostty   # individual packages
-stow --no-folding agent-config aws claude codex cursor gh git-auto-ff office-tv-relay pi
-sync-aws-config          # assemble ~/.aws/config (managed + config.local)
-./bootstrap.sh         # everything
+stow git zsh ghostty      # individual packages
+stow --no-folding <pkg>   # packages in bootstrap.sh's NO_FOLDING
+sync-aws-config           # assemble ~/.aws/config (managed + config.local)
+./bootstrap.sh            # everything
 ```
 
 ## Office TV relay
