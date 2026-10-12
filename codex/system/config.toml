@@ -14,6 +14,9 @@ default_subagent_reasoning_effort = "max"
 
 [sandbox_workspace_write]
 network_access = true
+# Keep /tmp and $TMPDIR writable, matching Claude Code's sandbox.
+exclude_slash_tmp = false
+exclude_tmpdir_env_var = false
 
 [mcp_servers.fff]
 command = "fff-mcp"

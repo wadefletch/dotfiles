@@ -146,6 +146,8 @@
     ],
     "filesystem": {
       "allowWrite": [
+        "/private/tmp",
+        "/tmp",
         "~/.aws/cli/cache",
         "~/.aws/sso/cache",
         "~/.bun",

@@ -19,7 +19,7 @@ dir_name=$(basename "$current_dir")
 # Model
 model=$(echo "$input" | jq -r '.model.display_name')
 
-# Context window percentage (use new built-in field)
+# Context window percentage, from Claude Code's built-in field
 percent=$(echo "$input" | jq -r '.context_window.used_percentage // 0' | cut -d. -f1)
 
 # Git info

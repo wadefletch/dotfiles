@@ -34,7 +34,7 @@ List all git repos in `~/Developer/*/` and `~/Developer/Tractorbeam/*/` on both 
 Present a summary table and flag:
 - Repos that exist on only one side
 - Remote URL mismatches (different repo names, not just SSH vs HTTPS)
-- Protocol mismatches — all `tractorbeamai/` and `wadefletch/` repos must use SSH (`git@github.com:`)
+- Protocol mismatches — all `tractorbeamai/` and `wadefletch/` repos must use HTTPS (`https://github.com/`); git authenticates through `gh auth git-credential`
 
 **Pause and show the summary before continuing.** Ask about any remote URL mismatches that point to different repos.
 
@@ -100,7 +100,7 @@ Everything should be `dirty:0 ahead:0 behind:0` on main. Flag any exceptions wit
 
 **Safe to do automatically:**
 - `git fetch`, `git pull --rebase`, `git push`
-- Fixing SSH/HTTPS protocol mismatches on known orgs
+- Switching known-org remotes from SSH to HTTPS
 - Committing clearly safe changes (lock files, gitignore updates, formatting)
 - Copying env files that exist on one side only
 - Skipping rebase commits superseded by upstream
