@@ -22,10 +22,6 @@ After a Claude Code session enters a worktree (background jobs always do), it re
 - Act on the exit code: 0 passed, 1 a check failed (fix it from the printed error, then push and watch again), 2 no checks registered or timed out, 3 a newer commit was pushed (watch again).
 - Without `gh-ci-watch`, use `gh pr checks <PR> --watch --fail-fast`. It fails with "no checks reported" if run right after a push, and `--json` turns its watching off. `gh run watch` follows only one workflow run and can't stop at the first failure.
 
-## Shell
-
-- The shell is zsh, which expands an unquoted word starting with `=` to a command's path, so `echo ===` fails with "== not found" and stops the rest of the command. Quote separators (`echo '=== next'`) or use `---`.
-
 ## File search
 
 - For any file search or grep in the current git-indexed directory, use fff tools.

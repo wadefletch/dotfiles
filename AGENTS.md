@@ -45,7 +45,3 @@ bootstrap.sh        # installs deps, stows packages, git hooks, WARP SSH host ke
 - Reload what runs in the background: `launchctl bootout gui/$(id -u)/<label>; launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/<label>.plist` for `nightly-maintenance` and `office-tv-relay`'s two agents (arrakis only), `duti ~/.config/duti/default-apps`, `sync-aws-config` for `aws`, and `./enable-git-auto-ff.sh` on hosts that enabled it when its units change. Open Ghostty windows need cmd+shift+, to reload.
 - Run `./bootstrap.sh` when `bootstrap.sh` or `agent-config/` changes, or a package is added.
 - Finish by deleting dangling links into the checkout: `find ~ -maxdepth 5 -type l -lname '*.dotfiles/*' ! -exec test -e {} \; -print`.
-
-## pnpm globals
-
-- Launchers directly in `$PNPM_HOME` rather than `$PNPM_HOME/bin` come from pnpm before 11. `grep -ho 'global/5/.pnpm/[^/]*@[^/]*' "$PNPM_HOME"/* | sort -u` names their packages (`+` stands for `/`); reinstall those with `pnpm add -g`, run `pnpm approve-builds -g <pkg>` for any it reports as ignored, then delete the old launchers and `$PNPM_HOME/global/5`.
