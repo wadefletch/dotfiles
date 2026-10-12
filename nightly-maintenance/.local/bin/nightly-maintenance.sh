@@ -5,7 +5,7 @@ setopt pipe_fail
 
 # Schedulers provide a minimal PATH, so set tool and temporary paths explicitly.
 export PNPM_HOME="$HOME/Library/pnpm"
-export PATH="$HOME/.local/share/mise/shims:$PNPM_HOME/bin:$PNPM_HOME:/opt/homebrew/bin:$HOME/.cargo/bin:$PATH"
+export PATH="$HOME/.local/share/mise/shims:$PNPM_HOME/bin:$PNPM_HOME:$HOME/.local/bin:/opt/homebrew/bin:$HOME/.cargo/bin:$PATH"
 export TMPDIR="${TMPDIR:-/tmp}"
 
 LOG=/tmp/nightly-maintenance.log
@@ -188,6 +188,7 @@ echo "Starting disk space: $(format_gib "$start_kib") available"
 run_step "Updating Homebrew..." brew update
 run_step "Upgrading Homebrew packages..." brew upgrade
 run_step "Cleaning Homebrew caches..." brew cleanup --prune=all
+run_step "Updating mise..." run_if_available mise mise self-update --yes
 run_step "Pruning unused mise tool versions..." run_if_available mise mise prune --tools --yes
 if cleanup_kib="$(measure_available_kib)"; then
 	integer cleanup_kib
