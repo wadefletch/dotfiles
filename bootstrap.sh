@@ -212,13 +212,7 @@ install_deps() {
   # mise (manages node/python/etc. per the stowed ~/.config/mise/config.toml).
   # Every OS uses the upstream installer, which lands at ~/.local/bin/mise, so
   # macOS and Linux run the same release and `mise self-update` keeps it
-  # current (here, and nightly on macOS). Linux distros don't reliably package
-  # mise, and a second copy from Homebrew would leave shims pointing at
-  # whichever mise last regenerated them, so remove it.
-  if [[ "$OS" == "Darwin" ]] && brew list --formula mise &>/dev/null; then
-    info "removing Homebrew mise in favor of ~/.local/bin/mise"
-    brew uninstall --formula mise
-  fi
+  # current (here, and nightly on macOS).
   if [[ -x "$HOME/.local/bin/mise" ]]; then
     info "updating mise"
     if "$HOME/.local/bin/mise" self-update --yes; then
@@ -232,6 +226,11 @@ install_deps() {
     ok "mise"
   fi
   hash -r
+  # Regenerate shims now so they point at this mise even when `mise install`
+  # below has nothing to install and so never rewrites them.
+  if ! "$HOME/.local/bin/mise" reshim >/dev/null 2>&1; then
+    warn "mise reshim failed"
+  fi
 
   # Switch login shell to zsh. Stowed config only loads if zsh is the
   # actual login shell, but apt/brew installing zsh doesn't change that.
