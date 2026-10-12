@@ -1,10 +1,11 @@
 source ~/.orbstack/shell/init.zsh 2>/dev/null || :
 
-# /etc/zprofile's path_helper reorders PATH after .zshenv. Re-apply brew so
-# login shells keep Homebrew ahead of the system paths, then put mise's shims
-# back in front so mise-managed tools win over Homebrew's, as in .zshenv.
-if [[ -x "${HOMEBREW_PREFIX:-}/bin/brew" ]]; then
-  eval "$("${HOMEBREW_PREFIX}/bin/brew" shellenv)"
+# /etc/zprofile's path_helper runs after .zshenv and moves the system paths
+# ahead of everything .zshenv added. Put Homebrew back ahead of them, then
+# mise's shims in front so mise-managed tools win over Homebrew's, as in
+# .zshenv.
+if [[ -n "${HOMEBREW_PREFIX:-}" ]]; then
+  path=("$HOMEBREW_PREFIX/bin" "$HOMEBREW_PREFIX/sbin" $path)
 fi
 _mise_shims="${MISE_DATA_DIR:-$HOME/.local/share/mise}/shims"
 [[ -d "$_mise_shims" ]] && export PATH="$_mise_shims:$PATH"
