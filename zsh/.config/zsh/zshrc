@@ -72,7 +72,7 @@ alias cdo="cd ~/Obsidian/wadefletch/"
 if command -v git &> /dev/null; then
   alias ga="git add"
   alias gc="git commit -m"
-  alias gcd="git commit -m '$(date -u +\'%Y-%m-%dT%H:%M:%S\')'"
+  alias gcd='git commit -m "$(date -u +%Y-%m-%dT%H:%M:%S)"'
   alias gs="git status -sb"
   alias gp="git push"
   alias gl="git log --oneline -10"
@@ -118,7 +118,19 @@ automerge() {
   gh pr checks $1 --watch && gh pr merge $1 --squash --delete-branch
 }
 
-# Bun completions
+# Completion. Rebuild the dump when it is over a day old; otherwise load it
+# without the security scan, which is most of compinit's cost.
+autoload -Uz compinit
+() {
+  setopt local_options extended_glob
+  if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.mh+24) ]]; then
+    compinit
+  else
+    compinit -C
+  fi
+}
+
+# Bun completions (its file runs compinit only when compinit isn't loaded)
 if [[ -s "$HOME/.bun/_bun" ]]; then
   source "$HOME/.bun/_bun"
 fi
