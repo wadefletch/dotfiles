@@ -134,7 +134,7 @@ The other side lives in `tractorbeamai/beam`: the `office_tv` tool in `agents/be
 
 ## Deploying changes
 
-Changes land on machines by merging to `main`, then pulling on each machine, restowing changed packages, and reloading affected services. The repo-committed skill at `.agents/skills/deploy/SKILL.md` automates this across arrakis and corrino — ask an agent to "deploy dotfiles".
+Changes land on machines by merging to `main`, then pulling on each machine, restowing changed packages, and reloading affected services. The steps for arrakis and corrino are in `AGENTS.md` under Deploying, so an agent asked to "deploy dotfiles" follows them.
 
 ## Other scripts
 
