@@ -15,7 +15,7 @@ GNU Stow-based dotfiles for macOS (with Linux support for the CLI packages). Eac
 | cursor | Cursor editor settings and keybindings (macOS) |
 | docker | Docker daemon config |
 | duti | Default app associations (macOS) |
-| gh | GitHub CLI config (XDG) |
+| gh | GitHub CLI config (XDG) and `gh-ci-watch`, which follows a PR's checks for agents |
 | ghostty | Ghostty terminal |
 | git | Git config (XDG) |
 | git-auto-ff | Fast-forwards chosen checkouts to origin/main daily at 05:00 when safe, via a systemd user timer (Linux) or LaunchAgent (macOS); enable per host with `./enable-git-auto-ff.sh REPO...` |
@@ -43,9 +43,9 @@ cd ~/.dotfiles
 ./bootstrap.sh
 ```
 
-`bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, ripgrep, gh, starship, mise, and Claude Code), FFF's MCP server through Homebrew when available, and macOS brew casks. It then stows all packages, adds the portable Claude Code MCP servers when missing, reconciles Codex plugins, installs the locked Mise toolset (including the Fleetctl version matching the Fleet server), configures git hooks, and pins SSH host keys for WARP-reachable machines. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, teams-link, vscode, wallpapers) are skipped on Linux. `office-tv-relay` is stowed and enabled only on arrakis.
+`bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, ripgrep, gh, starship, mise, and Claude Code), updates mise to its latest release, installs FFF's MCP server through Homebrew when available, and macOS brew casks. It then stows all packages, adds the portable Claude Code MCP servers when missing, reconciles Codex plugins, installs the locked Mise toolset (including the Fleetctl version matching the Fleet server), configures git hooks, and pins SSH host keys for WARP-reachable machines. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, teams-link, vscode, wallpapers) are skipped on Linux. `office-tv-relay` is stowed and enabled only on arrakis.
 
-Each harness owns its settings in its conventional Stow package. Claude Code settings live at `claude/.claude/settings.json`; Cursor's CLI configuration is fully host-local and unmanaged. Pi's live `settings.json` is stowed deliberately, so preference and package changes made from Pi update the dotfiles checkout. Runtime caches, account metadata, UI state, credentials, Pi sessions, and installed package contents stay out of Git.
+Each harness owns its settings in its conventional Stow package. Claude Code settings live at `claude/.claude/settings.json`. The `cursor` package tracks Cursor's MCP servers and editor settings; its CLI settings (`~/.cursor/cli-config.json`) stay host-local. Pi's live `settings.json` is stowed deliberately, so preference and package changes made from Pi update the dotfiles checkout. Runtime caches, account metadata, UI state, credentials, Pi sessions, and installed package contents stay out of Git.
 
 The `aws` package tracks the managed AWS CLI profiles. Bootstrap stows the package without folding so `~/.aws` stays a real directory (SSO cache and credentials are host-local), then `sync-aws-config` writes `~/.aws/config` as a regular file from the tracked profiles plus optional `~/.aws/config.local`. That overlay is where generated Tractorbeam agent profiles live — they must not be a symlink into the repo. Account IDs mirror the infra repo's `data/accounts.json`, which is their source of truth. `aws-login` (also in this package) refreshes the shared Identity Center session. Set `CARLYLE_EC2=1` before running bootstrap to skip this package entirely (and its config sync) on a host that manages its own `~/.aws/config` and `aws-login`.
 
@@ -112,7 +112,7 @@ To stow manually:
 
 ```sh
 stow git zsh ghostty   # individual packages
-stow --no-folding agent-config aws claude codex cursor git-auto-ff office-tv-relay pi
+stow --no-folding agent-config aws claude codex cursor gh git-auto-ff office-tv-relay pi
 sync-aws-config          # assemble ~/.aws/config (managed + config.local)
 ./bootstrap.sh         # everything
 ```

@@ -397,7 +397,7 @@ configure_claude_mcp() {
     return
   fi
 
-  # Earlier bootstraps registered an Aikido server, which is no longer used.
+  # Aikido isn't one of the managed servers; remove any registration of it.
   if claude mcp get aikido &>/dev/null; then
     claude mcp remove --scope user aikido
     ok "removed the Aikido MCP"

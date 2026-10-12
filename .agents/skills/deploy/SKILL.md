@@ -47,7 +47,7 @@ Both are macOS. Run `hostname` to learn which machine you're on: deploy there di
    cd ~/.dotfiles && stow -t "$HOME" --restow <pkg>...
    ```
 
-   Restow `agent-config`, `aws`, `claude`, `codex`, `cursor`, `git-auto-ff`, `office-tv-relay`, and `pi` with `--no-folding` so host-local state under those directories is never replaced by a symlink. Restow is idempotent — when unsure, restow.
+   Restow `agent-config`, `aws`, `claude`, `codex`, `cursor`, `gh`, `git-auto-ff`, `office-tv-relay`, and `pi` with `--no-folding` so host-local state under those directories is never replaced by a symlink. Restow is idempotent — when unsure, restow.
 
 4. **Restart services** per the matrix below, only for packages that actually changed.
 
@@ -66,11 +66,12 @@ Both are macOS. Run `hostname` to learn which machine you're on: deploy there di
 | `office-tv-relay` | arrakis only; never stow or load it elsewhere. Restow with `--no-folding`, then for each label (`com.wadefletcher.office-tv-relay`, `com.wadefletcher.office-tv-tunnel`): `launchctl bootout gui/$(id -u)/<label> 2>/dev/null; launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/<label>.plist`. Both are long-running, so a `relay.ts` change also needs the relay reloaded. |
 | `duti` | `duti ~/.config/duti/default-apps` |
 | `teams-link` | Nothing — the stowed script is what runs. The handler app only needs rebuilding (`./bootstrap.sh`) if `install_teams_link_handler` itself changed. |
-| `ghostty` | No CLI reload — tell the user open Ghostty windows need cmd+shift+, (Reload Configuration). |
-| `zsh`, `starship`, `git`, `gh`, `ssh`, `mise`, `cargo` | Nothing — next shell picks it up. |
+| `ghostty` | No CLI reload — tell the user that open Ghostty windows need cmd+shift+, (Reload Configuration). |
+| `zsh`, `starship`, `git`, `gh`, `ssh`, `mise` | Nothing — next shell picks it up. |
+| `codex` | If `codex/system/config.toml` changed, run `./bootstrap.sh`, which installs it as `/etc/codex/config.toml` (needs `sudo`). Other Codex changes need nothing until the next launch. |
 | `aws` | Restow with `--no-folding`, then `sync-aws-config` so `~/.aws/config` is rebuilt from the tracked profiles plus `~/.aws/config.local`. Nothing to restart. |
 | `pi` | Restow with `--no-folding`. Nothing to restart — next `pi` launch. |
-| `nvim`, `claude`, `codex`, `cursor`, `vscode`, `alacritty`, `docker`, `crowdcontrol`, `terraform`, `wallpapers` | Nothing — next app launch. |
+| `nvim`, `claude`, `cursor`, `vscode`, `alacritty`, `docker`, `crowdcontrol`, `terraform`, `wallpapers` | Nothing — next app launch. |
 | `agent-config`, `bootstrap.sh`, or a brand-new package directory | Run `./bootstrap.sh` so host-local agent settings and plugins are reconciled. |
 
 ## Report

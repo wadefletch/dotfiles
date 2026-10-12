@@ -5,8 +5,9 @@ elif [[ -x "/usr/local/bin/brew" ]]; then
   eval "$(/usr/local/bin/brew shellenv)"
 fi
 
-# PNPM (Node). pnpm 11 stores global binaries in $PNPM_HOME/bin; keep the
-# legacy root on PATH until every pre-v11 global launcher has been refreshed.
+# PNPM (Node). pnpm puts global binaries in $PNPM_HOME/bin. Global packages
+# installed before pnpm 11 keep their launchers in $PNPM_HOME itself, so it
+# stays on PATH until those packages are reinstalled.
 if [[ -d "$HOME/Library/pnpm" ]]; then
   export PNPM_HOME="$HOME/Library/pnpm"
   export PATH="$PNPM_HOME/bin:$PNPM_HOME:$PATH"
