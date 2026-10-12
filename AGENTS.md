@@ -46,4 +46,4 @@ bootstrap.sh        # installs deps, stows packages, git hooks, WARP SSH host ke
 
 ## pnpm globals
 
-- Launchers directly in `$PNPM_HOME` rather than `$PNPM_HOME/bin` come from pnpm before 11. `grep -ho 'global/5/.pnpm/[^/]*' "$PNPM_HOME"/* | sort -u` names their packages (`+` stands for `/`); reinstall those with `pnpm add -g`, run `pnpm approve-builds -g <pkg>` for any it reports as ignored, then delete the old launchers and `$PNPM_HOME/global/5`.
+- Launchers directly in `$PNPM_HOME` rather than `$PNPM_HOME/bin` come from pnpm before 11. `grep -ho 'global/5/.pnpm/[^/]*@[^/]*' "$PNPM_HOME"/* | sort -u` names their packages (`+` stands for `/`); reinstall those with `pnpm add -g`, run `pnpm approve-builds -g <pkg>` for any it reports as ignored, then delete the old launchers and `$PNPM_HOME/global/5`.
