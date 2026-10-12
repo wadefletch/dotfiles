@@ -1,0 +1,126 @@
+#!/usr/bin/env bash
+# Watch a pull request's checks and print one appended line per change, so an
+# agent reading the output incrementally (Claude Code's Monitor tool, a
+# background shell) sees progress as it happens instead of a redrawn table.
+#
+# Usage: gh-ci-watch [PR] [--required] [--interval SECONDS] [--timeout MINUTES] [--no-steps]
+#
+# PR defaults to the current branch's pull request. Exit codes:
+#   0  every check passed or was skipped
+#   1  a check failed (its annotations and log tail are printed first)
+#   2  no checks registered, or the timeout elapsed
+#   3  the PR's head moved to a new commit; rerun to watch the new one
+#
+# `gh pr checks --watch` covers less: right after a push it fails with "no
+# checks reported", it repeats the whole table every interval when stdout isn't
+# a terminal, and it shows nothing within a running job. GitHub only serves a
+# job's log once the job finishes, so step status is the finest live signal.
+
+set -uo pipefail
+
+pr="" required="" interval=15 timeout_min=60 steps=1
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --required) required="--required" ;;
+    --interval) interval="$2"; shift ;;
+    --timeout) timeout_min="$2"; shift ;;
+    --no-steps) steps=0 ;;
+    -h|--help) sed -n '2,17p' "$0"; exit 0 ;;
+    *) pr="$1" ;;
+  esac
+  shift
+done
+
+say() { printf '%s %s\n' "$(date +%H:%M:%S)" "$*"; }
+
+state_dir=$(mktemp -d "${TMPDIR:-/tmp}/gh-ci-watch.XXXXXX")
+trap 'rm -rf "$state_dir"' EXIT
+
+head_sha=$(gh pr view $pr --json headRefOid --jq .headRefOid) || exit 2
+pr_number=$(gh pr view $pr --json number --jq .number) || exit 2
+say "watching PR #$pr_number at ${head_sha:0:10} (interval ${interval}s, timeout ${timeout_min}m)"
+
+# Wait until GitHub has registered checks for this commit. Polling the commit
+# rather than the PR keeps an earlier head's results from being reported.
+deadline=$(( $(date +%s) + timeout_min * 60 ))
+registration_deadline=$(( $(date +%s) + 300 ))
+until [ "$(gh api "repos/{owner}/{repo}/commits/$head_sha/check-runs?per_page=1" --jq .total_count 2>/dev/null || echo 0)" != 0 ]; do
+  if [ "$(date +%s)" -ge "$registration_deadline" ]; then
+    say "no checks registered for ${head_sha:0:10} after 5m"
+    exit 2
+  fi
+  sleep 5
+done
+
+: > "$state_dir/checks"
+: > "$state_dir/steps"
+while :; do
+  current_sha=$(gh pr view "$pr_number" --json headRefOid --jq .headRefOid 2>/dev/null || echo "$head_sha")
+  if [ "$current_sha" != "$head_sha" ]; then
+    say "head moved to ${current_sha:0:10}; stopping"
+    exit 3
+  fi
+
+  # name<TAB>bucket<TAB>state<TAB>link, one check per line. gh exits 8 while
+  # checks are pending, so judge the output rather than the exit status.
+  gh pr checks "$pr_number" $required --json name,bucket,state,link \
+    --jq '.[] | [.name, .bucket, .state, .link] | @tsv' > "$state_dir/checks.new" 2>/dev/null
+
+  if [ -s "$state_dir/checks.new" ]; then
+    awk -F'\t' 'FILENAME == ARGV[1] { seen[$1] = $3; next } seen[$1] != $3 { print $2 "\t" $1 }' \
+      "$state_dir/checks" "$state_dir/checks.new" |
+      while IFS=$'\t' read -r bucket name; do
+        case "$bucket" in
+          pass) mark="✓ pass" ;; fail) mark="✗ FAIL" ;; skipping) mark="- skip" ;;
+          cancel) mark="⊘ cancel" ;; *) mark="… $bucket" ;;
+        esac
+        say "$mark  $name"
+      done
+    mv "$state_dir/checks.new" "$state_dir/checks"
+  fi
+
+  # Step-level progress for Actions jobs still running: one API call each.
+  if [ "$steps" = 1 ]; then
+    : > "$state_dir/steps.new"
+    awk -F'\t' '$2 == "pending" && $4 ~ /\/job\/[0-9]+/ { sub(/.*\/job\//, "", $4); sub(/[^0-9].*/, "", $4); print $1 "\t" $4 }' "$state_dir/checks" |
+      while IFS=$'\t' read -r name job_id; do
+        gh api "repos/{owner}/{repo}/actions/jobs/$job_id" \
+          --jq ".steps[]? | select(.status == \"in_progress\" or .status == \"completed\") | [\"$name\", .name, .status, (.conclusion // \"\")] | @tsv" 2>/dev/null
+      done > "$state_dir/steps.new"
+    awk -F'\t' 'FILENAME == ARGV[1] { seen[$1 FS $2] = $3 $4; next } seen[$1 FS $2] != $3 $4 { print $1 " › " $2 " " ($4 == "" ? $3 : $4) }' \
+      "$state_dir/steps" "$state_dir/steps.new" |
+      while IFS= read -r line; do say "    $line"; done
+    cat "$state_dir/steps.new" >> "$state_dir/steps"
+  fi
+
+  failed=$(awk -F'\t' '$2 == "fail"' "$state_dir/checks" | head -1)
+  if [ -n "$failed" ]; then
+    name=$(printf '%s' "$failed" | cut -f1)
+    link=$(printf '%s' "$failed" | cut -f4)
+    say "first failure: $name  $link"
+    job_id=$(printf '%s' "$link" | sed -n 's#.*/job/\([0-9][0-9]*\).*#\1#p')
+    if [ -n "$job_id" ]; then
+      gh api "repos/{owner}/{repo}/check-runs/$job_id/annotations" \
+        --jq '.[] | "  \(.annotation_level) \(.path):\(.start_line) \(.message | split("\n")[0])"' 2>/dev/null | head -20
+      say "log tail for $name:"
+      # Logs carry ANSI colors, which gh refuses to print without the flag.
+      # Show what led up to the first ##[error]; post-job cleanup follows it.
+      gh api --allow-escape-sequences "repos/{owner}/{repo}/actions/jobs/$job_id/logs" 2>/dev/null |
+        perl -pe 's/\e\[[0-9;]*[A-Za-z]//g; s/^[0-9TZ:.-]+ //' |
+        grep -v '^##\[\(group\|endgroup\|start-action\|end-action\)' |
+        awk '{ print } /^##\[error\]/ { exit }' | tail -60
+    fi
+    exit 1
+  fi
+
+  if [ -s "$state_dir/checks" ] && ! awk -F'\t' '$2 == "pending" { found = 1 } END { exit !found }' "$state_dir/checks"; then
+    say "all checks passed ($(wc -l < "$state_dir/checks" | tr -d ' '))"
+    exit 0
+  fi
+
+  if [ "$(date +%s)" -ge "$deadline" ]; then
+    say "timed out after ${timeout_min}m with checks still pending"
+    exit 2
+  fi
+  sleep "$interval"
+done

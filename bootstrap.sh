@@ -26,7 +26,7 @@ SKIP_PACKAGES=""
 # Stow packages whose target directory also holds host-local state, so the
 # tracked files must be linked individually rather than by folding the
 # directory itself into a symlink.
-NO_FOLDING="agent-config aws claude codex cursor git-auto-ff office-tv-relay pi"
+NO_FOLDING="agent-config aws claude codex cursor gh git-auto-ff office-tv-relay pi"
 
 # CLI packages to install (must exist in brew + apt/dnf/yum/pacman)
 PACKAGES=(git neovim ripgrep stow zsh eza)
