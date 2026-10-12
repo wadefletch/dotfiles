@@ -71,6 +71,16 @@ if [[ "$OSTYPE" == darwin* && ! -S "${SSH_AUTH_SOCK:-}" ]]; then
   export SSH_AUTH_SOCK
 fi
 
+# macOS has no XDG runtime directory, so pnpm 12 falls back to /tmp for its
+# lock directories, which Claude Code's sandbox can't write. pnpm only uses a
+# directory owned by this user that group and others can't write, and
+# ~/Library/Caches is already writable inside the sandbox. Linux sessions
+# keep the one systemd provides.
+if [[ "$OSTYPE" == darwin* && -z "${XDG_RUNTIME_DIR:-}" ]]; then
+  [[ -d "$HOME/Library/Caches/xdg-runtime" ]] || mkdir -m 700 -p "$HOME/Library/Caches/xdg-runtime"
+  export XDG_RUNTIME_DIR="$HOME/Library/Caches/xdg-runtime"
+fi
+
 if [[ -r ~/.zshenv.local ]]; then
   # shellcheck disable=SC1090
   source ~/.zshenv.local
