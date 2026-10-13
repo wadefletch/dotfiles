@@ -545,9 +545,11 @@ configure_claude_plugins() {
 # installer: it keeps the skill in ~/.agents/skills (which Codex and Pi read),
 # links it into ~/.claude/skills, and records the source in
 # ~/.agents/.skill-lock.json. Codex and Cursor also get context7-mcp from
-# Context7's plugins. Bump the installer pin deliberately; node comes from the
-# mise toolset, so this runs after `mise install`.
-SKILLS_INSTALLER_VERSION=1.7.2
+# Context7's plugins. Bump the installer pin deliberately, and only to a
+# release at least a week old: Aikido's npm protection on some machines hides
+# newer versions. Node comes from the mise toolset, so this runs after
+# `mise install`.
+SKILLS_INSTALLER_VERSION=1.7.0
 install_agent_skills() {
   local old="$HOME/.claude/skills/find-docs"
 
