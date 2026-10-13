@@ -5,3 +5,4 @@ mise@tractorbeam
 tractorbeam@tractorbeam
 cloudflare@cloudflare
 workos@workos
+context7@context7-marketplace

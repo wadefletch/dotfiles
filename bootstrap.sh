@@ -465,21 +465,24 @@ install_claude_ssh_host_keys() {
 # Claude Code stores user-scoped MCP registrations in mutable host state rather
 # than a standalone stowable file. Add the portable servers when they are
 # missing and leave all other registrations alone. The Cloudflare server comes
-# from its plugin instead.
+# from its plugin instead, and Context7 from the claude.ai connector.
 configure_claude_mcp() {
+  local name
+
   if ! command -v claude &>/dev/null; then
     warn "claude not found; skipping MCP configuration"
     return
   fi
 
-  # Aikido isn't one of the managed servers; remove any registration of it.
-  if claude mcp get aikido &>/dev/null; then
-    claude mcp remove --scope user aikido
-    ok "removed the Aikido MCP"
-  fi
+  # Servers that aren't managed here; remove any registration of them.
+  for name in aikido docs-index; do
+    if claude mcp get "$name" &>/dev/null; then
+      claude mcp remove --scope user "$name"
+      ok "removed the $name MCP"
+    fi
+  done
 
   add_claude_mcp fff -- fff-mcp --no-update-check
-  add_claude_mcp docs-index --transport http -- https://index.mintlify.com/mcp
   # The same installed proxy Codex, Pi, and Cursor run; settings.json denies the
   # aws-core plugin's copy. The profiles come from AWS_MCP_PROXY_PROFILES in the
   # settings env, which the Carlyle overlay replaces with that host's own.
@@ -596,10 +599,12 @@ reconcile_codex_plugins() {
   codex plugin marketplace add aws/agent-toolkit-for-aws
   codex plugin marketplace add cloudflare/skills
   codex plugin marketplace add workos/skills
+  codex plugin marketplace add upstash/context7
   codex plugin marketplace upgrade tractorbeam
   codex plugin marketplace upgrade agent-toolkit-for-aws
   codex plugin marketplace upgrade cloudflare
   codex plugin marketplace upgrade workos
+  codex plugin marketplace upgrade context7-marketplace
 
   if [[ -f "$config" ]]; then
     while IFS= read -r plugin; do
@@ -607,7 +612,7 @@ reconcile_codex_plugins() {
         codex plugin remove "$plugin"
       fi
     done < <(
-      sed -nE 's/^\[plugins\."([^"]*@(tractorbeam|agent-toolkit-for-aws|cloudflare|workos))"\]$/\1/p' "$config"
+      sed -nE 's/^\[plugins\."([^"]*@(tractorbeam|agent-toolkit-for-aws|cloudflare|workos|context7-marketplace))"\]$/\1/p' "$config"
     )
   fi
 
