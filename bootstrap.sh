@@ -499,19 +499,20 @@ configure_claude_plugins() {
 
   info "updating Claude Code vendor plugins"
   claude plugin marketplace add aws/agent-toolkit-for-aws
-  claude plugin marketplace add workos/skills
   claude plugin marketplace update agent-toolkit-for-aws
-  claude plugin marketplace update workos
   claude plugin install aws-core@agent-toolkit-for-aws
-  claude plugin install workos@workos
   claude plugin update aws-core@agent-toolkit-for-aws
-  claude plugin update workos@workos
-  # Cloudflare is Tractorbeam's account; the Carlyle overlay disables it.
+  # Cloudflare and WorkOS are Tractorbeam's accounts; the Carlyle overlay
+  # disables both.
   if [[ -z "${CARLYLE_EC2:-}" ]]; then
     claude plugin marketplace add cloudflare/skills
+    claude plugin marketplace add workos/skills
     claude plugin marketplace update cloudflare
+    claude plugin marketplace update workos
     claude plugin install cloudflare@cloudflare
+    claude plugin install workos@workos
     claude plugin update cloudflare@cloudflare
+    claude plugin update workos@workos
   fi
   ok "Claude Code vendor plugins"
 }
