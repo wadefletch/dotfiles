@@ -1,0 +1,49 @@
+#!/bin/sh
+# Reject installer output staged in tracked shell and git config. Installers
+# (Aikido's endpoint agent, the tractorbeam mise plugin, conda, OrbStack, …)
+# append to ~/.zshenv, ~/.zprofile, ~/.zshrc, and ~/.gitconfig; those are
+# machine-local files, and their blocks belong there, not in the repo.
+set -eu
+
+git -c core.quotePath=false diff --cached -U0 --no-color --no-ext-diff \
+  --diff-filter=ACMR --src-prefix=a/ --dst-prefix=b/ -- \
+  ':(glob)zsh/**' \
+  ':(glob)git/.config/git/**' \
+  ':(glob)**/*rc' \
+  ':(glob)**/*profile' \
+  ':(glob)**/*zshenv' \
+  ':(glob)**/*.zsh' \
+  ':(glob)**/*.bash' \
+  ':(exclude).githooks/**' |
+  awk '
+    /^\+\+\+ / { file = substr($0, 7); next }
+    /^@@ / { sub(/^@@ -[0-9,]+ \+/, ""); line = $0 + 0; next }
+    /^\+/ {
+      text = substr($0, 2)
+      upper = toupper(text)
+      if (text ~ /^[[:space:]]*# (>>>|<<<) / ||
+          text ~ /aikido-endpoint-/ ||
+          text ~ /^[[:space:]]*# Added by / ||
+          upper ~ /^[[:space:]]*#+[[:space:]]*(BEGIN|END)[[:space:]].*MANAGED/ ||
+          upper ~ /MANAGED BY RANCHER DESKTOP/ ||
+          text ~ /^[[:space:]]*# THIS MUST BE AT THE END OF THE FILE FOR SDKMAN/ ||
+          text ~ /^[[:space:]]*# The next line (updates PATH|enables shell command completion) for / ||
+          text ~ /^[[:space:]]*# Generated for envman/ ||
+          text ~ /^[[:space:]]*# pnpm end/ ||
+          text ~ /\.vite-plus\/env/) {
+        printf "  %s:%d: %s\n", file, line, text
+        found = 1
+      }
+      line++
+    }
+    END { exit found }
+  ' >&2 || {
+  cat >&2 <<'EOF'
+
+pre-commit: installer output staged in tracked config (lines above).
+Move it to the machine-local file it targets (~/.zshenv, ~/.zprofile,
+~/.zshrc, or ~/.gitconfig; per-machine variables go in ~/.zshenv.local),
+unstage it, and commit again. To commit it anyway: git commit --no-verify
+EOF
+  exit 1
+}

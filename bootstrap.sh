@@ -370,26 +370,40 @@ stow_packages() (
 
 # --- Machine-local entry points ----------------------------------------------
 
-# Aikido's endpoint agent appends marked blocks to ~/.zshrc and ~/.zprofile,
-# restores them if they go missing, and sets http.sslCAInfo through
-# `git config --global`. Keep the files it writes machine-local: each zsh file
-# loads its tracked counterpart from ~/.config/zsh, and ~/.gitconfig exists so
-# git writes global settings there instead of the stowed XDG config.
+# Installers append to the shell and git entry points in $HOME: Aikido's
+# endpoint agent adds CA blocks to ~/.zshrc and ~/.zprofile (restoring them if
+# they go missing) and sets http.sslCAInfo with `git config --global`, and the
+# tractorbeam mise plugin adds its shims block to ~/.zshenv and ~/.zprofile.
+# Those files stay machine-local so the appends never land in the repo: each
+# zsh file sources its tracked counterpart from ~/.config/zsh first, and
+# ~/.gitconfig exists so git writes global settings there instead of the
+# stowed XDG config. The pre-commit hook rejects installer blocks staged in
+# tracked config.
 install_local_entrypoints() {
-  local content name source_line target
+  local content entry header migrated="" name script source_line target
+  local -a scripts
+  # name|first line of a new file|line that loads the tracked config (if any)
+  # shellcheck disable=SC2016 # $HOME expands when zsh reads the line
+  local -a entries=(
+    'zshenv|# Machine-local; installers may append below.|source "$HOME/.config/zsh/zshenv"'
+    'zprofile|# Machine-local; installers may append below.|source "$HOME/.config/zsh/zprofile"'
+    'zshrc|# Machine-local; installers may append below.|source "$HOME/.config/zsh/zshrc"'
+    'gitconfig|# Machine-local git config; `git config --global` writes here.|'
+  )
 
-  for name in zshrc zprofile; do
+  for entry in "${entries[@]}"; do
+    IFS='|' read -r name header source_line <<<"$entry"
     target="$HOME/.$name"
-    source_line="source \"\$HOME/.config/zsh/$name\""
-    # Older checkouts stowed these files as links into the repo.
+    # Older checkouts stowed the zsh files as links into the repo.
     if [[ -L "$target" && "$(readlink "$target")" == *"/zsh/.$name" ]]; then
       rm "$target"
+      migrated+=" $name"
     fi
     if [[ ! -e "$target" ]]; then
-      printf '# Machine-local; installers may append below.\n%s\n' "$source_line" >"$target"
+      printf '%s\n' "$header" ${source_line:+"$source_line"} >"$target"
       ok ".$name created"
-    elif grep -qxF "$source_line" "$target"; then
-      ok ".$name already loads the tracked config"
+    elif [[ -z "$source_line" ]] || grep -qxF "$source_line" "$target"; then
+      ok ".$name is machine-local"
     else
       content="$(<"$target")"
       printf '%s\n%s\n' "$source_line" "$content" >"$target"
@@ -397,9 +411,32 @@ install_local_entrypoints() {
     fi
   done
 
-  if [[ ! -e "$HOME/.gitconfig" ]]; then
-    printf '# Machine-local git config; `git config --global` writes here.\n' >"$HOME/.gitconfig"
-    ok ".gitconfig created"
+  # Vite+'s installer appended its env line to ~/.zshenv, which then reached
+  # the tracked file through the old link. Keep it on hosts that have Vite+.
+  if [[ " $migrated " == *" zshenv "* && -f "$HOME/.vite-plus/env" ]] &&
+    ! grep -qF '.vite-plus/env' "$HOME/.zshenv"; then
+    cat >>"$HOME/.zshenv" <<'EOF'
+
+# Vite+ bin
+if [[ -f "$HOME/.vite-plus/env" ]]; then
+  source "$HOME/.vite-plus/env"
+fi
+EOF
+    ok ".zshenv keeps Vite+"
+  fi
+
+  # The tractorbeam mise plugin's setup script appends its shims block to
+  # ~/.zshenv and ~/.zprofile where missing; it must run after the source
+  # lines above so the shims stay first on PATH. The plugin is installed later
+  # in a first bootstrap, so a new machine gets the blocks on the next run.
+  scripts=("$HOME"/.claude/plugins/cache/tractorbeam/mise/*/scripts/setup-shell.sh)
+  script="$(printf '%s\n' "${scripts[@]}" | sort -V | tail -n 1)"
+  if [[ -f "$script" ]]; then
+    if ZDOTDIR="$HOME" sh "$script" >/dev/null; then
+      ok "mise shims blocks"
+    else
+      warn "mise plugin setup-shell.sh failed; re-run $script"
+    fi
   fi
 }
 
