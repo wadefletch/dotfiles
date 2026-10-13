@@ -140,6 +140,7 @@
     "excludedCommands": [
       "docker *",
       "rsync *",
+      "rwx sandbox *",
       "scp *",
       "sftp *",
       "ssh *"
