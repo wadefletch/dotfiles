@@ -40,8 +40,7 @@ bootstrap.sh        # installs deps, stows packages, git hooks, WARP SSH host ke
 
 - Deploy merged `main` only, and never leave a machine on another branch: the checkout is the live config.
 - Machines are arrakis and corrino (macOS). Work locally on the one `hostname` names; reach the other with `ssh -o BatchMode=yes <host> '…'`.
-- On each: in `~/.dotfiles`, `OLD=$(git rev-parse HEAD); git pull --ff-only` (stop and report a dirty tree or a pull that won't fast-forward), then `git diff --name-only "$OLD"..HEAD | cut -d/ -f1 | sort -u` lists changed packages.
-- Restow packages whose set of files changed with `stow -t "$HOME" --restow <pkg>`, adding `--no-folding` for `NO_FOLDING` packages.
-- Reload what runs in the background: `launchctl bootout gui/$(id -u)/<label>; launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/<label>.plist` for `nightly-maintenance` and `office-tv-relay`'s two agents (arrakis only), `duti ~/.config/duti/default-apps`, `sync-aws-config` for `aws`, and `./enable-git-auto-ff.sh` on hosts that enabled it when its units change. Open Ghostty windows need cmd+shift+, to reload.
-- Run `./bootstrap.sh` when `bootstrap.sh` or `agent-config/` changes, or a package is added.
-- Finish by deleting dangling links into the checkout: `find ~ -maxdepth 5 -type l -lname '*.dotfiles/*' ! -exec test -e {} \; -print`.
+- On each: `cd ~/.dotfiles && git pull --ff-only && ./bootstrap.sh deploy`. Stop and report a dirty tree or a pull that won't fast-forward.
+- `deploy` restows every package, refreshes the machine-local entry points, `~/.aws/config`, and pinned SSH host keys, removes dangling links into the checkout, reloads this host's LaunchAgents (and git-auto-ff where it is enabled), and reapplies `duti`. It installs nothing and never needs sudo.
+- Run the full `./bootstrap.sh` instead when its install steps or `agent-config/` change, or a package is added. It asks for sudo only on a machine's first run.
+- Open Ghostty windows need cmd+shift+, to reload.

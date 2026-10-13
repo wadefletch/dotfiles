@@ -117,6 +117,7 @@ stow git zsh ghostty      # individual packages
 stow --no-folding <pkg>   # packages in bootstrap.sh's NO_FOLDING
 sync-aws-config           # assemble ~/.aws/config (managed + config.local)
 ./bootstrap.sh            # everything
+./bootstrap.sh deploy     # restow and reload only; no installs or sudo
 ```
 
 ## Office TV relay
@@ -136,7 +137,7 @@ The other side lives in `tractorbeamai/beam`: the `office_tv` tool in `agents/be
 
 ## Deploying changes
 
-Changes land on machines by merging to `main`, then pulling on each machine, restowing changed packages, and reloading affected services. The steps for arrakis and corrino are in `AGENTS.md` under Deploying, so an agent asked to "deploy dotfiles" follows them.
+Changes land on machines by merging to `main`, then running `git pull --ff-only && ./bootstrap.sh deploy` on each. `deploy` restows every package and reloads the background agents stowed on that host without installing anything or asking for sudo. The steps for arrakis and corrino are in `AGENTS.md` under Deploying, so an agent asked to "deploy dotfiles" follows them.
 
 ## Other scripts
 
