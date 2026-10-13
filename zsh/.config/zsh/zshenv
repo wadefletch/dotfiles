@@ -73,11 +73,11 @@ if [[ "$TERM" == "xterm-ghostty" ]]; then
   export FORCE_HYPERLINK=1
 fi
 
-# Over SSH, open browsers on the Mac you are using rather than on this one,
-# where nobody is at the screen. Claude Code's fullscreen UI and CLIs such as
-# `aws sso login` launch $BROWSER on their own host; open-url sends the URL to
-# whichever Mac has had recent input.
-if [[ -n "$SSH_CONNECTION" ]]; then
+# Over SSH or mosh, open browsers on the device you are using rather than on
+# this one, where nobody is at the screen. Claude Code's fullscreen UI and CLIs
+# such as `aws sso login` launch $BROWSER on their own host; open-url sends the
+# URL to the client named by LC_MESH_CLIENT or SSH_CONNECTION.
+if [[ -n "$SSH_CONNECTION" || -n "$LC_MESH_CLIENT" ]]; then
   export BROWSER=open-url
 fi
 

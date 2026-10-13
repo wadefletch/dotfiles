@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
-# Open a URL on whichever of these Macs someone is using: the one with the
-# most recent keyboard or mouse input, if any had input in the last ten
-# minutes. Lets a browser launched over SSH (an `aws-login` device page, a
-# link clicked in Claude Code) open in front of you on the Mac you are at,
-# whichever of them you connected from. Used as $BROWSER.
+# Open a URL in the browser on the device you are using. Used as $BROWSER in
+# SSH and mosh sessions on arrakis and corrino, so CLIs that launch a browser
+# (`aws sso login`, a link clicked in Claude Code) open it in front of you.
+#
+# The client is LC_MESH_CLIENT (set by ~/.ssh/config, and by Termius's mosh
+# command on the phone) or else the Mac whose Mesh address is in SSH_CONNECTION.
+# On a client Mac, an OAuth URL with a localhost redirect also gets that port
+# forwarded back here for five minutes, so the callback reaches the waiting
+# CLI. Any other client gets the URL printed; finish a localhost callback there
+# with `oauth-callback <the localhost URL the browser lands on>`.
 set -euo pipefail
-
-hosts=(arrakis corrino)
-max_idle=600
 
 url=${1:?usage: open-url <url>}
 case "$url" in
@@ -18,37 +20,59 @@ case "$url" in
     ;;
 esac
 
-# Run from launchd jobs and agent daemons too, which start without an agent.
-if [[ ! -S "${SSH_AUTH_SOCK:-}" ]]; then
-  SSH_AUTH_SOCK=$(launchctl print "gui/$UID/com.openssh.ssh-agent" 2>/dev/null |
-    awk '$1 == "SSH_AUTH_SOCK" && $2 == "=>" { print $3; exit }')
-  export SSH_AUTH_SOCK
-fi
-
-# Single-quoted on purpose: it runs as-is here and on the other Mac.
-# shellcheck disable=SC2016
-idle_seconds='ioreg -c IOHIDSystem | awk "/HIDIdleTime/ && !n++ { print int(\$NF / 1000000000) }"'
 self=$(scutil --get LocalHostName | tr '[:upper:]' '[:lower:]')
 
-best=
-best_idle=$max_idle
-for host in "${hosts[@]}"; do
-  if [[ "$host" == "$self" ]]; then
-    idle=$(eval "$idle_seconds")
-  else
-    idle=$(ssh -o BatchMode=yes -o ConnectTimeout=3 "$host" "$idle_seconds" 2>/dev/null) || continue
+# Called over SSH by the session's host: forward the callback port, then open.
+if [[ "${2:-}" == "--from" ]]; then
+  from=${3:?}
+  port=${4:-}
+  if [[ -n "$port" ]]; then
+    # shellcheck disable=SC2016 # expands in the child shell
+    nohup sh -c '
+      ssh -N -o BatchMode=yes -o ExitOnForwardFailure=yes \
+        -L "$1:localhost:$1" "$2" & pid=$!
+      sleep 300
+      kill "$pid" 2>/dev/null
+    ' forward "$port" "$from" >/dev/null 2>&1 &
+    sleep 1
   fi
-  if [[ "$idle" =~ ^[0-9]+$ ]] && ((idle < best_idle)); then
-    best=$host
-    best_idle=$idle
-  fi
-done
-
-if [[ -z "$best" ]]; then
-  printf 'open-url: no Mac in use; open this yourself:\n%s\n' "$url" >&2
-  exit 1
-elif [[ "$best" == "$self" ]]; then
   exec /usr/bin/open "$url"
-else
-  exec ssh -o BatchMode=yes -o ConnectTimeout=5 "$best" "/usr/bin/open $(printf '%q' "$url")"
 fi
+
+client=${LC_MESH_CLIENT:-}
+if [[ -z "$client" && -n "${SSH_CONNECTION:-}" ]]; then
+  case "${SSH_CONNECTION%% *}" in
+    100.96.0.8) client=arrakis ;;
+    100.96.0.3) client=corrino ;;
+    *) client=unknown ;;
+  esac
+fi
+
+if [[ -z "$client" || "$client" == "$self" ]]; then
+  exec /usr/bin/open "$url"
+fi
+
+# A localhost OAuth redirect, plain or percent-encoded, names the port to
+# forward from the client back to the CLI listening here.
+port=$(printf '%s' "$url" |
+  sed -nE 's/.*redirect_uri=http(:|%3A)(\/\/|%2F%2F)(localhost|127\.0\.0\.1)(:|%3A)([0-9]+).*/\5/p')
+
+case "$client" in
+  arrakis | corrino)
+    # Run from launchd jobs and agent daemons too, which start without an agent.
+    if [[ ! -S "${SSH_AUTH_SOCK:-}" ]]; then
+      SSH_AUTH_SOCK=$(launchctl print "gui/$UID/com.openssh.ssh-agent" 2>/dev/null |
+        awk '$1 == "SSH_AUTH_SOCK" && $2 == "=>" { print $3; exit }')
+      export SSH_AUTH_SOCK
+    fi
+    # shellcheck disable=SC2088 # ~ expands on the client Mac
+    exec ssh -o BatchMode=yes -o ConnectTimeout=5 "$client" \
+      "~/.local/bin/open-url $(printf '%q' "$url") --from $self $port"
+    ;;
+  *)
+    printf 'Open this on your device:\n%s\n' "$url" >&2
+    if [[ -n "$port" ]]; then
+      printf 'After signing in, run here: oauth-callback '\''<localhost URL from the browser>'\''\n' >&2
+    fi
+    ;;
+esac
