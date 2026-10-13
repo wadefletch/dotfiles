@@ -263,11 +263,10 @@ install_deps() {
 
     # macOS-only brew formulae. arrakis also runs the office-tv tunnel, which
     # needs cloudflared 2025.7+ for Workers VPC; Homebrew's is current.
-    formulae=(duti tailscale)
+    formulae=(duti mosh)
     [[ "$HOST_NAME" == "arrakis" ]] && formulae+=(cloudflared)
     for formula in "${formulae[@]}"; do
-      if command -v "$formula" &>/dev/null ||
-        [[ "$formula" == "tailscale" && -d "/Applications/Tailscale.app" ]]; then
+      if command -v "$formula" &>/dev/null; then
         ok "$formula already installed"
       else
         info "installing $formula"
@@ -275,6 +274,13 @@ install_deps() {
         ok "$formula"
       fi
     done
+
+    # arrakis and corrino accept SSH and mosh over Cloudflare Mesh only.
+    if [[ "$HOST_NAME" == "arrakis" || "$HOST_NAME" == "corrino" ]]; then
+      info "configuring Mesh-only sshd (sudo)"
+      sudo "$DOTFILES/ssh/.local/bin/setup-mesh-sshd"
+      ok "Mesh-only sshd"
+    fi
   fi
 
   # FFF publishes its MCP server as a Homebrew formula for macOS and Linux.

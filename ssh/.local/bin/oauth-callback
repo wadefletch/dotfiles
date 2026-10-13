@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Deliver an OAuth localhost redirect to the CLI waiting on this Mac, for when
+# the browser that signed in was on another device (the phone).
+set -euo pipefail
+curl -fsS -o /dev/null "${1:?usage: oauth-callback <http://localhost:PORT/... URL>}"
+echo "Delivered."

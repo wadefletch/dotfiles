@@ -1,0 +1,179 @@
+#!/bin/sh
+# Accept SSH and mosh on this Mac only at its Cloudflare Mesh address:
+#   sudo setup-mesh-sshd
+#
+# Apple's Remote Login cannot be restricted to one address: launchd owns its
+# socket and listens on every interface, so sshd's ListenAddress never applies.
+# This turns Remote Login off and runs Apple's own /usr/sbin/sshd from a
+# LaunchDaemon instead, where sshd binds the socket itself and ListenAddress
+# holds. Until Cloudflare One brings up the Mesh address the bind fails and
+# launchd retries every ten seconds. Tractorbeam's Fleet policy verifies the
+# result: port 22 on the Mesh address only, and no password or root login.
+#
+# sshd authenticates with ~/.ssh/authorized_keys and permits OpenSSH
+# forwarding. Sessions get Homebrew on PATH so non-interactive commands,
+# including mosh's `mosh-server new`, find Homebrew tools. The Cloudflare SSH
+# CA stays trusted until the cutover from the Infrastructure SSH proxy
+# completes; drop TrustedUserCAKeys afterwards.
+#
+# Safe to rerun: it validates the configuration before applying it, restores
+# the prior file when validation fails, and restarts sshd only when the
+# configuration or LaunchDaemon changed. Restarting keeps open sessions.
+
+set -eu
+
+[ "$(id -u)" -eq 0 ] || { echo "Run with sudo" >&2; exit 1; }
+user=${SUDO_USER:?Run with sudo from your own account}
+
+LABEL=local.mesh-sshd
+PLIST=/Library/LaunchDaemons/$LABEL.plist
+CONFIG=/etc/ssh/sshd_config.d/mesh.conf
+LEGACY_CONFIG=/etc/ssh/sshd_config.d/tractorbeam-cloudflare.conf
+CA=/etc/ssh/tractorbeam-cloudflare-ca.pub
+MOSH_SERVER=/opt/homebrew/bin/mosh-server
+FIREWALL=/usr/libexec/ApplicationFirewall/socketfilterfw
+
+mesh_ip=$(/sbin/ifconfig | /usr/bin/awk '
+  $1 == "inet" {
+    split($2, octet, ".")
+    if (octet[1] == 100 && octet[2] >= 96 && octet[2] <= 111) {
+      print $2
+      exit
+    }
+  }
+')
+[ -n "$mesh_ip" ] || {
+  echo "Cloudflare One Client did not report a Mesh IPv4 address" >&2
+  exit 1
+}
+
+if /usr/bin/grep -Eq '^[[:space:]]*ListenAddress[[:space:]]' /etc/ssh/sshd_config; then
+  echo "Refusing to override an existing ListenAddress in sshd_config" >&2
+  exit 1
+fi
+for ssh_config_file in /etc/ssh/sshd_config.d/*
+do
+  [ "$ssh_config_file" = "$CONFIG" ] && continue
+  [ "$ssh_config_file" = "$LEGACY_CONFIG" ] && continue
+  [ -f "$ssh_config_file" ] || continue
+  if /usr/bin/grep -Eq '^[[:space:]]*ListenAddress[[:space:]]' "$ssh_config_file"; then
+    echo "Refusing to override an existing ListenAddress in $ssh_config_file" >&2
+    exit 1
+  fi
+done
+
+ca_tmp=$(/usr/bin/mktemp /tmp/mesh-sshd-ca.XXXXXX)
+config_tmp=$(/usr/bin/mktemp /tmp/mesh-sshd.XXXXXX)
+config_backup=$(/usr/bin/mktemp /tmp/mesh-sshd-backup.XXXXXX)
+plist_tmp=$(/usr/bin/mktemp /tmp/mesh-sshd-plist.XXXXXX)
+trap '/bin/rm -f "$ca_tmp" "$config_tmp" "$config_backup" "$plist_tmp"' EXIT HUP INT TERM
+
+/bin/cat >"$ca_tmp" <<'CA_EOF'
+ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBMb1dCLQe/L7EpzrbSNncz/v4Qc24Y4ctn3qSjx1/ITAAhxVmszeiU9kBivaORH5T5Mmx71+wD7vUe15q9IoAmE= open-ssh-ca@cloudflareaccess.org
+CA_EOF
+
+/bin/cat >"$config_tmp" <<EOF
+ListenAddress $mesh_ip
+AuthenticationMethods publickey
+PubkeyAuthentication yes
+AuthorizedKeysFile .ssh/authorized_keys
+TrustedUserCAKeys $CA
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PermitRootLogin no
+AllowUsers $user
+AllowAgentForwarding yes
+AllowTcpForwarding yes
+X11Forwarding no
+SetEnv PATH=/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin
+EOF
+
+/bin/cat >"$plist_tmp" <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>$LABEL</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/sbin/sshd</string>
+    <string>-D</string>
+  </array>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>ThrottleInterval</key>
+  <integer>10</integer>
+  <key>AbandonProcessGroup</key>
+  <true/>
+</dict>
+</plist>
+EOF
+
+for file in "$ca_tmp" "$config_tmp" "$plist_tmp"; do
+  /bin/chmod 644 "$file"
+  /usr/sbin/chown root:wheel "$file"
+done
+
+changed=false
+/usr/bin/cmp -s "$config_tmp" "$CONFIG" 2>/dev/null || changed=true
+/usr/bin/cmp -s "$plist_tmp" "$PLIST" 2>/dev/null || changed=true
+
+if [ -f "$CONFIG" ]; then
+  /bin/cp -p "$CONFIG" "$config_backup"
+else
+  : >"$config_backup"
+fi
+
+/bin/mv -f "$ca_tmp" "$CA"
+/bin/mv -f "$config_tmp" "$CONFIG"
+/bin/rm -f "$LEGACY_CONFIG"
+
+if ! /usr/sbin/sshd -t; then
+  if [ -s "$config_backup" ]; then
+    /bin/cp -p "$config_backup" "$CONFIG"
+  else
+    /bin/rm -f "$CONFIG"
+  fi
+  echo "Refusing to start sshd with an invalid configuration" >&2
+  exit 1
+fi
+
+# Start the Mesh-bound sshd before touching Remote Login. While Remote Login
+# still holds port 22 the new sshd may fail to bind; launchd retries every ten
+# seconds, so it takes over as soon as Remote Login stops.
+/bin/mv -f "$plist_tmp" "$PLIST"
+if ! /bin/launchctl print "system/$LABEL" >/dev/null 2>&1; then
+  /bin/launchctl bootstrap system "$PLIST"
+elif [ "$changed" = true ]; then
+  /bin/launchctl bootout "system/$LABEL" 2>/dev/null || true
+  /bin/launchctl bootstrap system "$PLIST"
+fi
+
+# Homebrew's mosh-server is not Developer ID signed, so the application
+# firewall's signed-software allowance does not admit its UDP listener.
+if [ -x "$MOSH_SERVER" ]; then
+  mosh_binary=$(/usr/bin/readlink -f "$MOSH_SERVER")
+  "$FIREWALL" --add "$mosh_binary" >/dev/null
+  "$FIREWALL" --unblockapp "$mosh_binary" >/dev/null
+  echo "Application firewall admits $mosh_binary"
+fi
+
+echo "sshd will listen only on Cloudflare Mesh address $mesh_ip"
+echo "For remote access to Desktop, Documents, and Downloads, add /usr/sbin/sshd"
+echo "and /usr/libexec/sshd-session under System Settings > Privacy & Security >"
+echo "Full Disk Access (once per Mac)."
+
+# Turn Remote Login off last. Stopping its launchd job ends the SSH sessions it
+# serves, which may include the one running this script; everything above is
+# already in place by then. systemsetup needs Full Disk Access, so also disable
+# the job directly, which is what the Remote Login toggle does and persists
+# across reboots.
+if /bin/launchctl print system/com.openssh.sshd >/dev/null 2>&1; then
+  echo "Turning off Remote Login; sessions it serves will disconnect."
+  /usr/sbin/systemsetup -f -setremotelogin off >/dev/null 2>&1 || true
+  /bin/launchctl disable system/com.openssh.sshd
+  /bin/launchctl bootout system/com.openssh.sshd 2>/dev/null || true
+fi
