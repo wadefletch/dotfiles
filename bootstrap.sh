@@ -541,6 +541,35 @@ configure_claude_plugins() {
   ok "Claude Code vendor plugins"
 }
 
+# Agent Skills from their upstream repos, installed with the open `skills`
+# installer: it keeps the skill in ~/.agents/skills (which Codex and Pi read),
+# links it into ~/.claude/skills, and records the source in
+# ~/.agents/.skill-lock.json. Codex and Cursor also get context7-mcp from
+# Context7's plugins. Bump the installer pin deliberately; node comes from the
+# mise toolset, so this runs after `mise install`.
+SKILLS_INSTALLER_VERSION=1.7.2
+install_agent_skills() {
+  local old="$HOME/.claude/skills/find-docs"
+
+  if ! command -v npx &>/dev/null; then
+    warn "npx not found; skipping agent skills"
+    return
+  fi
+
+  if npx -y "skills@$SKILLS_INSTALLER_VERSION" add upstash/context7 --skill context7-mcp \
+    --global --agent claude-code pi --yes >/dev/null 2>&1; then
+    ok "context7-mcp skill"
+  else
+    warn "context7-mcp skill install failed"
+  fi
+
+  # Context7's find-docs skill is superseded by context7-mcp.
+  if [[ -d "$old" && ! -L "$old" ]] && grep -qi context7 "$old/SKILL.md" 2>/dev/null; then
+    rm -r "$old"
+    ok "removed Context7's find-docs skill"
+  fi
+}
+
 # Every harness's aws-mcp server launches this executable directly instead of
 # resolving it through uvx on every start. Bump the pin deliberately; uv comes
 # from the mise toolset, so this runs after `mise install`.
@@ -835,6 +864,7 @@ main() {
     ok "mise tools"
   fi
 
+  install_agent_skills
   install_aws_mcp_proxy
 
   info "installing Okta MCP server"
