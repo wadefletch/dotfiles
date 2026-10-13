@@ -12,9 +12,7 @@
 #
 # sshd authenticates with ~/.ssh/authorized_keys and permits OpenSSH
 # forwarding. Sessions get Homebrew on PATH so non-interactive commands,
-# including mosh's `mosh-server new`, find Homebrew tools. The Cloudflare SSH
-# CA stays trusted until the cutover from the Infrastructure SSH proxy
-# completes; drop TrustedUserCAKeys afterwards.
+# including mosh's `mosh-server new`, find Homebrew tools.
 #
 # Safe to rerun: it validates the configuration before applying it, restores
 # the prior file when validation fails, and restarts sshd only when the
@@ -28,8 +26,6 @@ user=${SUDO_USER:?Run with sudo from your own account}
 LABEL=local.mesh-sshd
 PLIST=/Library/LaunchDaemons/$LABEL.plist
 CONFIG=/etc/ssh/sshd_config.d/mesh.conf
-LEGACY_CONFIG=/etc/ssh/sshd_config.d/tractorbeam-cloudflare.conf
-CA=/etc/ssh/tractorbeam-cloudflare-ca.pub
 MOSH_SERVER=/opt/homebrew/bin/mosh-server
 FIREWALL=/usr/libexec/ApplicationFirewall/socketfilterfw
 
@@ -54,7 +50,6 @@ fi
 for ssh_config_file in /etc/ssh/sshd_config.d/*
 do
   [ "$ssh_config_file" = "$CONFIG" ] && continue
-  [ "$ssh_config_file" = "$LEGACY_CONFIG" ] && continue
   [ -f "$ssh_config_file" ] || continue
   if /usr/bin/grep -Eq '^[[:space:]]*ListenAddress[[:space:]]' "$ssh_config_file"; then
     echo "Refusing to override an existing ListenAddress in $ssh_config_file" >&2
@@ -62,22 +57,16 @@ do
   fi
 done
 
-ca_tmp=$(/usr/bin/mktemp /tmp/mesh-sshd-ca.XXXXXX)
 config_tmp=$(/usr/bin/mktemp /tmp/mesh-sshd.XXXXXX)
 config_backup=$(/usr/bin/mktemp /tmp/mesh-sshd-backup.XXXXXX)
 plist_tmp=$(/usr/bin/mktemp /tmp/mesh-sshd-plist.XXXXXX)
-trap '/bin/rm -f "$ca_tmp" "$config_tmp" "$config_backup" "$plist_tmp"' EXIT HUP INT TERM
-
-/bin/cat >"$ca_tmp" <<'CA_EOF'
-ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBMb1dCLQe/L7EpzrbSNncz/v4Qc24Y4ctn3qSjx1/ITAAhxVmszeiU9kBivaORH5T5Mmx71+wD7vUe15q9IoAmE= open-ssh-ca@cloudflareaccess.org
-CA_EOF
+trap '/bin/rm -f "$config_tmp" "$config_backup" "$plist_tmp"' EXIT HUP INT TERM
 
 /bin/cat >"$config_tmp" <<EOF
 ListenAddress $mesh_ip
 AuthenticationMethods publickey
 PubkeyAuthentication yes
 AuthorizedKeysFile .ssh/authorized_keys
-TrustedUserCAKeys $CA
 PasswordAuthentication no
 KbdInteractiveAuthentication no
 PermitRootLogin no
@@ -112,7 +101,7 @@ EOF
 </plist>
 EOF
 
-for file in "$ca_tmp" "$config_tmp" "$plist_tmp"; do
+for file in "$config_tmp" "$plist_tmp"; do
   /bin/chmod 644 "$file"
   /usr/sbin/chown root:wheel "$file"
 done
@@ -127,9 +116,7 @@ else
   : >"$config_backup"
 fi
 
-/bin/mv -f "$ca_tmp" "$CA"
 /bin/mv -f "$config_tmp" "$CONFIG"
-/bin/rm -f "$LEGACY_CONFIG"
 
 if ! /usr/sbin/sshd -t; then
   if [ -s "$config_backup" ]; then
