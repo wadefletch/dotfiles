@@ -17,10 +17,8 @@ After a Claude Code session enters a worktree (background jobs always do), it re
 
 ## Waiting on CI
 
-- Watch a pull request with the `gh watch` extension: `gh watch pr <PR> --interval 15s --exit-on ci-passed,ci-failed,pr-merged,pr-closed`, with the PR number spelled out. It prints one JSON event per line and exits on the first failed check.
-- The first event, `initial-state`, is a snapshot: report it, and if it already shows failed checks, stop and investigate, since no later event fires for them.
-- In Claude Code, run it with the Monitor tool (`timeout_ms` 1800000) or the gh-watch plugin's `/watch-pr` skill; elsewhere, run it in the background. Never in the foreground: it blocks the turn.
-- A `ci-failed` event names the check and its URL. Read the failure with `gh run view --job <id> --log-failed`; while other jobs in the run are still going, gh refuses that, so use `gh api repos/{owner}/{repo}/actions/jobs/<id>/logs` instead.
+- Wait with `gh watch pr <PR> --interval 15s --exit-on ci-passed,ci-failed,pr-merged,pr-closed`, run with the Monitor tool in Claude Code and in the background elsewhere; the Tractorbeam git skill's "Waiting on CI" section has the details.
+- If gh answers `unknown command "watch" for "gh"`, run `gh extension install justincampbell/gh-watch` and retry.
 
 ## File search
 

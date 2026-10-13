@@ -151,23 +151,6 @@ install_gh() {
   ok "gh"
 }
 
-# gh-watch streams a PR's CI, review, and merge events as JSON lines; agents
-# wait on CI with `gh watch pr`. Installing needs a signed-in gh, so a fresh
-# machine gets a warning until `gh auth login` and the next bootstrap.
-install_gh_watch() {
-  if gh extension list 2>/dev/null | grep -q 'justincampbell/gh-watch'; then
-    if gh extension upgrade gh-watch >/dev/null 2>&1; then
-      ok "gh-watch"
-    else
-      warn "gh-watch upgrade failed; keeping the installed version"
-    fi
-  elif gh extension install justincampbell/gh-watch; then
-    ok "gh-watch"
-  else
-    warn "gh-watch not installed; run gh auth login, then bootstrap again"
-  fi
-}
-
 # --- Install dependencies ----------------------------------------------------
 
 install_deps() {
@@ -202,7 +185,6 @@ install_deps() {
   done
 
   install_gh
-  install_gh_watch
 
   # starship (curl installer — not reliably packaged across distros)
   if command -v starship &>/dev/null; then
@@ -515,15 +497,6 @@ configure_claude_plugins() {
     claude plugin marketplace update cloudflare
     claude plugin install cloudflare@cloudflare
     claude plugin update cloudflare@cloudflare
-  fi
-  # gh-watch keeps its marketplace file under plugin/, which `marketplace add`
-  # can't target, so settings.json declares it with a path. Claude Code adds
-  # declared marketplaces when a session starts, so on a fresh machine the
-  # install waits for the first session and the next bootstrap.
-  if claude plugin install gh-watch@gh-watch >/dev/null 2>&1; then
-    claude plugin update gh-watch@gh-watch >/dev/null 2>&1 || true
-  else
-    warn "gh-watch plugin not installed yet; start Claude Code once, then bootstrap again"
   fi
   ok "Claude Code vendor plugins"
 }

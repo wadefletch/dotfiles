@@ -80,7 +80,6 @@
     "code-style@tractorbeam": true,
     "document-skills@anthropic-agent-skills": true,
     "experimental@tractorbeam": true,
-    "gh-watch@gh-watch": true,
     "mise@tractorbeam": true,
     "plugin-dev@claude-plugins-official": true,
     "rust-analyzer-lsp@claude-plugins-official": true,
@@ -100,14 +99,6 @@
         "source": "github",
         "repo": "cloudflare/skills"
       }
-    },
-    "gh-watch": {
-      "source": {
-        "source": "github",
-        "repo": "justincampbell/gh-watch",
-        "path": "plugin/.claude-plugin/marketplace.json"
-      },
-      "autoUpdate": true
     },
     "workos": {
       "source": {
