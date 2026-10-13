@@ -154,11 +154,7 @@ install_gh() {
 # --- Install dependencies ----------------------------------------------------
 
 install_deps() {
-  local app bin formula formulae installed_casks pkg zsh_path
-
-  info "updating package index"
-  pkg_update
-  ok "package index updated"
+  local app bin formula formulae installed_casks pkg zsh_path index_updated=""
 
   for pkg in "${PACKAGES[@]}"; do
     # Map package name -> binary name where they differ (e.g. neovim -> nvim).
@@ -169,6 +165,14 @@ install_deps() {
     if command -v "$bin" &>/dev/null; then
       ok "$pkg already installed"
     else
+      # Refresh the index only when something needs installing, so a run on a
+      # provisioned machine never needs sudo here.
+      if [[ -z "$index_updated" ]]; then
+        info "updating package index"
+        pkg_update
+        ok "package index updated"
+        index_updated=1
+      fi
       info "installing $pkg"
       # Not every distro packages everything (Amazon Linux 2023 has neither
       # neovim nor eza), so a missing package is a warning, not a failure.
@@ -208,13 +212,7 @@ install_deps() {
   # mise (manages node/python/etc. per the stowed ~/.config/mise/config.toml).
   # Every OS uses the upstream installer, which lands at ~/.local/bin/mise, so
   # macOS and Linux run the same release and `mise self-update` keeps it
-  # current (here, and nightly on macOS). Linux distros don't reliably package
-  # mise, and a second copy from Homebrew would leave shims pointing at
-  # whichever mise last regenerated them, so remove it.
-  if [[ "$OS" == "Darwin" ]] && brew list --formula mise &>/dev/null; then
-    info "removing Homebrew mise in favor of ~/.local/bin/mise"
-    brew uninstall --formula mise
-  fi
+  # current (here, and nightly on macOS).
   if [[ -x "$HOME/.local/bin/mise" ]]; then
     info "updating mise"
     if "$HOME/.local/bin/mise" self-update --yes; then
@@ -228,6 +226,11 @@ install_deps() {
     ok "mise"
   fi
   hash -r
+  # Regenerate shims now so they point at this mise even when `mise install`
+  # below has nothing to install and so never rewrites them.
+  if ! "$HOME/.local/bin/mise" reshim >/dev/null 2>&1; then
+    warn "mise reshim failed"
+  fi
 
   # Switch login shell to zsh. Stowed config only loads if zsh is the
   # actual login shell, but apt/brew installing zsh doesn't change that.
@@ -365,6 +368,41 @@ stow_packages() (
 
 )
 
+# --- Machine-local entry points ----------------------------------------------
+
+# Aikido's endpoint agent appends marked blocks to ~/.zshrc and ~/.zprofile,
+# restores them if they go missing, and sets http.sslCAInfo through
+# `git config --global`. Keep the files it writes machine-local: each zsh file
+# loads its tracked counterpart from ~/.config/zsh, and ~/.gitconfig exists so
+# git writes global settings there instead of the stowed XDG config.
+install_local_entrypoints() {
+  local content name source_line target
+
+  for name in zshrc zprofile; do
+    target="$HOME/.$name"
+    source_line="source \"\$HOME/.config/zsh/$name\""
+    # Older checkouts stowed these files as links into the repo.
+    if [[ -L "$target" && "$(readlink "$target")" == *"/zsh/.$name" ]]; then
+      rm "$target"
+    fi
+    if [[ ! -e "$target" ]]; then
+      printf '# Machine-local; installers may append below.\n%s\n' "$source_line" >"$target"
+      ok ".$name created"
+    elif grep -qxF "$source_line" "$target"; then
+      ok ".$name already loads the tracked config"
+    else
+      content="$(<"$target")"
+      printf '%s\n%s\n' "$source_line" "$content" >"$target"
+      ok ".$name now loads the tracked config"
+    fi
+  done
+
+  if [[ ! -e "$HOME/.gitconfig" ]]; then
+    printf '# Machine-local git config; `git config --global` writes here.\n' >"$HOME/.gitconfig"
+    ok ".gitconfig created"
+  fi
+}
+
 # --- SSH host verification --------------------------------------------------
 
 install_claude_ssh_host_keys() {
@@ -486,18 +524,21 @@ install_aws_mcp_proxy() {
 
 # --- Codex configuration ----------------------------------------------------
 
+# Codex reads host-wide defaults only from this fixed path and doesn't check
+# its owner on Unix, so a link into the checkout picks up every pull. Only the
+# first run on a machine needs sudo.
 install_codex_system_config() {
   local source="$DOTFILES/codex/system/config.toml"
   local target="/etc/codex/config.toml"
 
-  if [[ -f "$target" ]] && cmp -s "$source" "$target"; then
-    ok "codex portable defaults already installed"
+  if [[ "$(readlink "$target" 2>/dev/null)" == "$source" ]]; then
+    ok "codex portable defaults already linked"
     return
   fi
 
-  info "installing codex portable defaults"
+  info "linking codex portable defaults (sudo, once per machine)"
   sudo install -d -m 0755 /etc/codex
-  sudo install -m 0644 "$source" "$target"
+  sudo ln -sfn "$source" "$target"
   ok "codex portable defaults"
 }
 
@@ -633,6 +674,7 @@ main() {
   install_deps
   install_codex_system_config
   stow_packages
+  install_local_entrypoints
   if [[ " $SKIP_PACKAGES " == *" aws "* ]]; then
     info "skipping AWS CLI config (aws disabled on this host)"
   else

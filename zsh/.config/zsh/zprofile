@@ -1,0 +1,17 @@
+source ~/.orbstack/shell/init.zsh 2>/dev/null || :
+
+# /etc/zprofile's path_helper runs after .zshenv and moves the system paths
+# ahead of everything .zshenv added. Put Homebrew back ahead of them, then
+# mise's shims in front so mise-managed tools win over Homebrew's, as in
+# .zshenv.
+if [[ -n "${HOMEBREW_PREFIX:-}" ]]; then
+  path=("$HOMEBREW_PREFIX/bin" "$HOMEBREW_PREFIX/sbin" $path)
+fi
+_mise_shims="${MISE_DATA_DIR:-$HOME/.local/share/mise}/shims"
+[[ -d "$_mise_shims" ]] && export PATH="$_mise_shims:$PATH"
+unset _mise_shims
+
+# Local macOS sessions load keychain keys into the agent .zshenv found.
+if [[ "$OSTYPE" == darwin* && -z "${SSH_CONNECTION:-}" ]]; then
+  ssh-add --apple-load-keychain 2>/dev/null
+fi

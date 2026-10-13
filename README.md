@@ -15,7 +15,7 @@ GNU Stow-based dotfiles for macOS (with Linux support for the CLI packages). Eac
 | cursor | Cursor editor settings and keybindings (macOS) |
 | docker | Docker daemon config |
 | duti | Default app associations (macOS) |
-| gh | GitHub CLI config (XDG) and `gh-ci-watch`, which follows a PR's checks for agents |
+| gh | GitHub CLI config (XDG) |
 | ghostty | Ghostty terminal |
 | git | Git config (XDG) |
 | git-auto-ff | Fast-forwards chosen checkouts to origin/main daily at 05:00 when safe, via a systemd user timer (Linux) or LaunchAgent (macOS); enable per host with `./enable-git-auto-ff.sh REPO...` |
@@ -43,7 +43,7 @@ cd ~/.dotfiles
 ./bootstrap.sh
 ```
 
-`bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, ripgrep, gh, starship, mise, and Claude Code), updates mise to its latest release, installs FFF's MCP server through Homebrew when available, and macOS brew casks. It then stows all packages, adds the portable Claude Code MCP servers when missing, reconciles Codex plugins, installs the locked Mise toolset (including the Fleetctl version matching the Fleet server), configures git hooks, and pins SSH host keys for WARP-reachable machines. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, teams-link, vscode, wallpapers) are skipped on Linux. `office-tv-relay` is stowed and enabled only on arrakis.
+`bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, ripgrep, gh, starship, mise, and Claude Code), updates mise to its latest release, installs FFF's MCP server through Homebrew when available, and macOS brew casks. It then stows all packages, creates machine-local `~/.zshrc`, `~/.zprofile`, and `~/.gitconfig` (see AGENTS.md for why they are not stowed), adds the portable Claude Code MCP servers when missing, reconciles Codex plugins, installs the locked Mise toolset (including the Fleetctl version matching the Fleet server), configures git hooks, and pins SSH host keys for WARP-reachable machines. Safe to re-run. macOS-only packages (cursor, duti, nightly-maintenance, teams-link, vscode, wallpapers) are skipped on Linux. `office-tv-relay` is stowed and enabled only on arrakis.
 
 Each harness owns its settings in its conventional Stow package. Claude Code settings live at `claude/.claude/settings.json`. The `cursor` package tracks Cursor's MCP servers and editor settings; its CLI settings (`~/.cursor/cli-config.json`) stay host-local. Pi's live `settings.json` is stowed deliberately, so preference and package changes made from Pi update the dotfiles checkout. Runtime caches, account metadata, UI state, credentials, Pi sessions, and installed package contents stay out of Git.
 
@@ -53,13 +53,15 @@ FFF and the public, credential-free documentation index (`docs-index`, served by
 
 The `aws-core`, `cloudflare`, and `workos` plugins come from their vendors' marketplaces, `aws/agent-toolkit-for-aws`, `cloudflare/skills`, and `workos/skills`, in both Claude Code and Codex; bootstrap installs them. Cloudflare's MCP server arrives with its plugin (Cursor and Pi list it directly); the WorkOS plugin carries only skills for Claude Code and Codex, so its server is registered alongside the other shared servers. The `aws-core` plugin bundles an `aws-mcp` server that signs with whatever AWS credentials are in the environment, so no harness runs it. Instead every harness defines its own `aws-mcp`, which launches the `mcp-proxy-for-aws-cli` that bootstrap installs at a pinned version, restricted to the read-only `agent-read-*` profiles through `AWS_MCP_PROXY_PROFILES`. Claude Code registers that server at user scope, denies the plugin's copy (`deniedMcpServers`), and sets the profiles in its settings `env`; Codex's system config entry replaces the plugin's by name; Pi and Cursor list it in their `mcp.json`. The profile list mirrors the read profiles in the infra repo, which is the only place write profiles are exposed. The plugin's `signing-in-to-aws` skill contradicts Tractorbeam's `aws-access` rule that agents never authenticate, so it is turned off in Claude Code (`skillOverrides`) and Codex (`skills.config`).
 
+Agents wait on CI with the [gh-watch](https://github.com/justincampbell/gh-watch) extension, following the Tractorbeam git skill, which installs it when it's missing.
+
 On the Carlyle EC2 devbox (`CARLYLE_EC2=1`), Tractorbeam's AWS conventions don't apply: its `aws-access` skill and `agent-read-*` profiles target Tractorbeam's accounts, not Carlyle's. Claude Code has no user-scope `settings.local.json`, so bootstrap replaces the stowed `~/.claude/settings.json` symlink there with a real file: the shared settings deep-merged (`jq '*'`) with `claude/.claude/settings.carlyle-ec2.json`. That overlay turns off `tractorbeam:aws-access` and the `cloudflare` plugin, and pins the AWS MCP proxy to the host's `gpe-readonly` and `ais` profiles. Bootstrap also skips installing the Cloudflare plugin there and registers only the `fff`, `docs-index`, and `aws-mcp` MCP servers, leaving out Tractorbeam's service accounts (Better Stack, Secureframe, WorkOS, Okta, X API). The other Tractorbeam plugins and skills stay on. Settings changes made from Claude Code on that host land in the generated file, not the repo, and the next bootstrap moves them to `settings.json.bak`; put lasting changes in the tracked files.
 
 Repository instructions use `AGENTS.md`. Shared personal workflows live under `agent-config/.agents/skills/` and are stowed into the standard user skill directory.
 
 User-scoped instructions for every harness live in one file, `agent-config/.agents/AGENTS.md`. Each harness reads it through a symlink at its own user-scope path: `~/.claude/CLAUDE.md` for Claude Code, `~/.codex/AGENTS.md` for Codex, and `~/.pi/agent/AGENTS.md` for Pi. Cursor has no file-based user instructions, so it is not covered.
 
-Codex portable defaults live in `codex/system/config.toml` and bootstrap installs them as `/etc/codex/config.toml`. Codex owns `~/.codex/config.toml` as host-local mutable state for project trust, UI preferences, local runtimes, connectors, and plugin metadata; dotfiles never links or edits it. Bootstrap reconciles its managed marketplaces and plugins from `codex/system/plugins.txt`.
+Codex portable defaults live in `codex/system/config.toml`, and bootstrap links `/etc/codex/config.toml` to it, which needs sudo only the first time on each machine. Codex owns `~/.codex/config.toml` as host-local mutable state for project trust, UI preferences, local runtimes, connectors, and plugin metadata; dotfiles never links or edits it. Bootstrap reconciles its managed marketplaces and plugins from `codex/system/plugins.txt`.
 
 Tractorbeam read-only service credentials live in the macOS login Keychain. The
 `fleetctl-readonly` launcher reads the API-only Observer token from the
@@ -111,10 +113,10 @@ install -m 0600 /path/to/okta-mcp-private-key.pem ~/.config/okta-mcp/private-key
 To stow manually:
 
 ```sh
-stow git zsh ghostty   # individual packages
-stow --no-folding agent-config aws claude codex cursor gh git-auto-ff office-tv-relay pi
-sync-aws-config          # assemble ~/.aws/config (managed + config.local)
-./bootstrap.sh         # everything
+stow git zsh ghostty      # individual packages
+stow --no-folding <pkg>   # packages in bootstrap.sh's NO_FOLDING
+sync-aws-config           # assemble ~/.aws/config (managed + config.local)
+./bootstrap.sh            # everything
 ```
 
 ## Office TV relay

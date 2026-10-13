@@ -12,15 +12,17 @@
 
 input=$(cat)
 
-# Current directory
-current_dir=$(echo "$input" | jq -r '.workspace.current_dir')
-dir_name=$(basename "$current_dir")
-
-# Model
-model=$(echo "$input" | jq -r '.model.display_name')
-
-# Context window percentage, from Claude Code's built-in field
-percent=$(echo "$input" | jq -r '.context_window.used_percentage // 0' | cut -d. -f1)
+# Directory, model, and context window percentage (Claude Code's built-in
+# field), extracted in one jq call: jq runs through a mise shim, so each extra
+# call adds noticeable latency to every status line render.
+IFS=$'\t' read -r current_dir model percent < <(
+    printf '%s' "$input" | jq -r '[
+        (.workspace.current_dir | tostring),
+        (.model.display_name | tostring),
+        (.context_window.used_percentage // 0 | floor)
+    ] | @tsv'
+)
+dir_name=${current_dir##*/}
 
 # Git info
 branch=""

@@ -1,18 +1,37 @@
-# Homebrew - loaded here so it's available in non-interactive shells (e.g. SSH commands)
-if [[ -x "/opt/homebrew/bin/brew" ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-elif [[ -x "/usr/local/bin/brew" ]]; then
-  eval "$(/usr/local/bin/brew shellenv)"
+# Keep PATH and FPATH free of duplicates: prepending a dir that is already
+# present moves it to the front, so nested shells don't grow them. The scalar
+# names need the flag too, or `PATH="dir:$PATH"` assignments keep duplicates.
+typeset -U PATH path FPATH fpath
+
+# Agents and scripts write `echo ===`-style separators; zsh's EQUALS expansion
+# would turn that unquoted word into a command lookup ("== not found").
+unsetopt equals
+
+# Homebrew - loaded here so it's available in non-interactive shells (e.g. SSH
+# commands). A literal copy of what `brew shellenv` prints, so no shell forks
+# brew at startup.
+if [[ -x /opt/homebrew/bin/brew ]]; then
+  export HOMEBREW_PREFIX=/opt/homebrew HOMEBREW_REPOSITORY=/opt/homebrew
+elif [[ -x /usr/local/bin/brew ]]; then
+  export HOMEBREW_PREFIX=/usr/local HOMEBREW_REPOSITORY=/usr/local/Homebrew
+fi
+if [[ -x "${HOMEBREW_PREFIX:-}/bin/brew" ]]; then
+  export HOMEBREW_CELLAR="$HOMEBREW_PREFIX/Cellar"
+  path=("$HOMEBREW_PREFIX/bin" "$HOMEBREW_PREFIX/sbin" $path)
+  fpath=("$HOMEBREW_PREFIX/share/zsh/site-functions" $fpath)
+  export FPATH
+  # A leading ":" makes man search its default path after MANPATH's entries.
+  [ -z "${MANPATH-}" ] || { export MANPATH="${MANPATH%"${MANPATH##*[!:]}"}"; export MANPATH=":${MANPATH#"${MANPATH%%[!:]*}"}"; }
+  export INFOPATH="$HOMEBREW_PREFIX/share/info:${INFOPATH#"$HOMEBREW_PREFIX/share/info:"}"
 fi
 
-# PNPM (Node). pnpm puts global binaries in $PNPM_HOME/bin. $PNPM_HOME stays
-# on PATH for launchers left by pnpm before 11; AGENTS.md says how to clear them.
+# PNPM (Node). pnpm puts global binaries in $PNPM_HOME/bin.
 if [[ -d "$HOME/Library/pnpm" ]]; then
   export PNPM_HOME="$HOME/Library/pnpm"
-  export PATH="$PNPM_HOME/bin:$PNPM_HOME:$PATH"
+  export PATH="$PNPM_HOME/bin:$PATH"
 elif [[ -d "$HOME/.local/share/pnpm" ]]; then
   export PNPM_HOME="$HOME/.local/share/pnpm"
-  export PATH="$PNPM_HOME/bin:$PNPM_HOME:$PATH"
+  export PATH="$PNPM_HOME/bin:$PATH"
 fi
 
 # Cargo-installed Binaries (Rust)
@@ -76,6 +95,11 @@ if [[ -r ~/.zshenv.local ]]; then
   source ~/.zshenv.local
 fi
 
+# Vite+ bin
+if [[ -f "$HOME/.vite-plus/env" ]]; then
+  source "$HOME/.vite-plus/env"
+fi
+
 # >>> mise shims (tractorbeam mise plugin) >>>
 # Keep this block last in this file: the shims dir must land ahead of every
 # other PATH prepend so repo-pinned tools shadow globals. Shims re-resolve
@@ -91,8 +115,3 @@ _mise_shims="${MISE_DATA_DIR:-$HOME/.local/share/mise}/shims"
 [ -d "$_mise_shims" ] && export PATH="$_mise_shims:$PATH"
 unset _mise_shims
 # <<< mise shims (tractorbeam mise plugin) <<<
-
-# Vite+ bin
-if [[ -f "$HOME/.vite-plus/env" ]]; then
-  source "$HOME/.vite-plus/env"
-fi
