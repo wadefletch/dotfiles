@@ -6,9 +6,6 @@
         "--no-update-check"
       ]
     },
-    "docs-index": {
-      "url": "https://index.mintlify.com/mcp"
-    },
     "aws-mcp": {
       "command": "mcp-proxy-for-aws-cli",
       "args": [

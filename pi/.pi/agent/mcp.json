@@ -12,9 +12,9 @@
       "exposure": "deferred",
       "description": "Approved Tractorbeam AWS inspection proxy. Use an explicit agent-read profile on every call; no mutations or secret values."
     },
-    "docs-index": {
-      "url": "https://index.mintlify.com/mcp",
-      "description": "Public documentation index",
+    "context7": {
+      "url": "https://mcp.context7.com/mcp",
+      "description": "Current library and framework documentation",
       "exposure": "direct"
     },
     "cloudflare": {

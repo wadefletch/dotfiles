@@ -19,9 +19,6 @@ network_access = true
 command = "fff-mcp"
 args = ["--no-update-check"]
 
-[mcp_servers.docs-index]
-url = "https://index.mintlify.com/mcp"
-
 # Replaces the aws-core plugin's aws-mcp entry by name. The plugin's own entry
 # signs with whatever AWS credentials are in the environment; this one launches
 # the installed proxy with the read-only agent profiles and nothing else. The
