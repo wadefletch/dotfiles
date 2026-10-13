@@ -380,7 +380,7 @@ stow_packages() (
 # stowed XDG config. The pre-commit hook rejects installer blocks staged in
 # tracked config.
 install_local_entrypoints() {
-  local content entry header migrated="" name script source_line target
+  local content entry header name script source_line target
   local -a scripts
   # name|first line of a new file|line that loads the tracked config (if any)
   # shellcheck disable=SC2016 # $HOME expands when zsh reads the line
@@ -394,10 +394,9 @@ install_local_entrypoints() {
   for entry in "${entries[@]}"; do
     IFS='|' read -r name header source_line <<<"$entry"
     target="$HOME/.$name"
-    # Older checkouts stowed the zsh files as links into the repo.
-    if [[ -L "$target" && "$(readlink "$target")" == *"/zsh/.$name" ]]; then
+    # Writing through a broken link would create its target, possibly in the repo.
+    if [[ -L "$target" && ! -e "$target" ]]; then
       rm "$target"
-      migrated+=" $name"
     fi
     if [[ ! -e "$target" ]]; then
       printf '%s\n' "$header" ${source_line:+"$source_line"} >"$target"
@@ -410,20 +409,6 @@ install_local_entrypoints() {
       ok ".$name now loads the tracked config"
     fi
   done
-
-  # Vite+'s installer appended its env line to ~/.zshenv, which then reached
-  # the tracked file through the old link. Keep it on hosts that have Vite+.
-  if [[ " $migrated " == *" zshenv "* && -f "$HOME/.vite-plus/env" ]] &&
-    ! grep -qF '.vite-plus/env' "$HOME/.zshenv"; then
-    cat >>"$HOME/.zshenv" <<'EOF'
-
-# Vite+ bin
-if [[ -f "$HOME/.vite-plus/env" ]]; then
-  source "$HOME/.vite-plus/env"
-fi
-EOF
-    ok ".zshenv keeps Vite+"
-  fi
 
   # The tractorbeam mise plugin's setup script appends its shims block to
   # ~/.zshenv and ~/.zprofile where missing; it must run after the source
@@ -467,20 +452,10 @@ install_claude_ssh_host_keys() {
 # missing and leave all other registrations alone. The Cloudflare server comes
 # from its plugin instead, and Context7 from the claude.ai connector.
 configure_claude_mcp() {
-  local name
-
   if ! command -v claude &>/dev/null; then
     warn "claude not found; skipping MCP configuration"
     return
   fi
-
-  # Servers that aren't managed here; remove any registration of them.
-  for name in aikido docs-index; do
-    if claude mcp get "$name" &>/dev/null; then
-      claude mcp remove --scope user "$name"
-      ok "removed the $name MCP"
-    fi
-  done
 
   add_claude_mcp fff -- fff-mcp --no-update-check
   # The same installed proxy Codex, Pi, and Cursor run; settings.json denies the
@@ -551,8 +526,6 @@ configure_claude_plugins() {
 # `mise install`.
 SKILLS_INSTALLER_VERSION=1.7.0
 install_agent_skills() {
-  local old="$HOME/.claude/skills/find-docs"
-
   if ! command -v npx &>/dev/null; then
     warn "npx not found; skipping agent skills"
     return
@@ -563,12 +536,6 @@ install_agent_skills() {
     ok "context7-mcp skill"
   else
     warn "context7-mcp skill install failed"
-  fi
-
-  # Context7's find-docs skill is superseded by context7-mcp.
-  if [[ -d "$old" && ! -L "$old" ]] && grep -qi context7 "$old/SKILL.md" 2>/dev/null; then
-    rm -r "$old"
-    ok "removed Context7's find-docs skill"
   fi
 }
 
