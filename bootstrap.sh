@@ -667,12 +667,35 @@ install_teams_link_handler() {
   ok "Teams link handler"
 }
 
+# (Re)load a stowed LaunchAgent so launchd picks up its current plist. Setting
+# DOTFILES_SKIP_SERVICES=1 skips it, for test runs against a throwaway $HOME.
+reload_launch_agent() {
+  local label="$1"
+  local domain attempt
+
+  if [[ -n "${DOTFILES_SKIP_SERVICES:-}" ]]; then
+    info "skipping $label reload (DOTFILES_SKIP_SERVICES)"
+    return 0
+  fi
+
+  domain="gui/$(id -u)"
+  launchctl bootout "$domain/$label" 2>/dev/null || true
+  # bootout returns before launchd finishes removing the service, and a
+  # bootstrap in that window fails with "5: Input/output error". Wait out
+  # launchd's default 20s exit timeout.
+  for attempt in {1..200}; do
+    launchctl print "$domain/$label" &>/dev/null || break
+    sleep 0.1
+  done
+  launchctl bootstrap "$domain" "$HOME/Library/LaunchAgents/$label.plist"
+}
+
 # The office TV relay and its Cloudflare Tunnel run as LaunchAgents on arrakis
 # only. Each reads its secret from the login Keychain when it starts, and an
 # agent that exits is retried every 30s, so a missing item is a warning and
 # the agents load anyway. The relay runs on Bun, so this follows `mise install`.
 enable_office_tv_relay() {
-  local label service domain attempt
+  local label service
 
   [[ "$HOST_NAME" == "arrakis" ]] || return 0
 
@@ -682,19 +705,98 @@ enable_office_tv_relay() {
     fi
   done
 
-  domain="gui/$(id -u)"
   for label in com.wadefletcher.office-tv-relay com.wadefletcher.office-tv-tunnel; do
-    launchctl bootout "$domain/$label" 2>/dev/null || true
-    # bootout returns before launchd finishes removing the service, and a
-    # bootstrap in that window fails with "5: Input/output error". Wait out
-    # launchd's default 20s exit timeout.
-    for attempt in {1..200}; do
-      launchctl print "$domain/$label" &>/dev/null || break
-      sleep 0.1
-    done
-    launchctl bootstrap "$domain" "$HOME/Library/LaunchAgents/$label.plist"
+    reload_launch_agent "$label"
   done
   ok "office TV relay and tunnel"
+}
+
+# nightly-maintenance runs on every Mac; launchd loads it from the stowed plist
+# at login, and this reloads it so a changed plist takes effect now.
+reload_nightly_maintenance() {
+  [[ "$OS" == "Darwin" ]] || return 0
+  reload_launch_agent com.wadefletcher.nightly-maintenance
+  ok "nightly maintenance agent"
+}
+
+# git-auto-ff is opt-in per host (./enable-git-auto-ff.sh), so reload it only
+# where it is already running.
+reload_git_auto_ff() {
+  local label=com.wadefletcher.git-auto-ff
+
+  [[ -z "${DOTFILES_SKIP_SERVICES:-}" ]] || return 0
+
+  if [[ "$OS" == "Darwin" ]]; then
+    launchctl print "gui/$(id -u)/$label" &>/dev/null || return 0
+    reload_launch_agent "$label"
+  else
+    systemctl --user is-enabled git-auto-ff.timer &>/dev/null || return 0
+    systemctl --user daemon-reload
+  fi
+  ok "git-auto-ff"
+}
+
+apply_default_apps() {
+  if [[ "$OS" != "Darwin" ]] || ! command -v duti &>/dev/null; then
+    return 0
+  fi
+  if [[ -n "${DOTFILES_SKIP_SERVICES:-}" ]]; then
+    info "skipping default app associations (DOTFILES_SKIP_SERVICES)"
+    return 0
+  fi
+  info "applying default app associations"
+  duti "$HOME/.config/duti/default-apps" 2>/dev/null || true
+  ok "default app associations"
+}
+
+sync_aws_config() {
+  if [[ " $SKIP_PACKAGES " == *" aws "* ]]; then
+    info "skipping AWS CLI config (aws disabled on this host)"
+    return 0
+  fi
+  info "installing AWS CLI config"
+  "$DOTFILES/aws/.local/bin/sync-aws-config"
+  ok "AWS CLI config"
+}
+
+# Claude Code has no user-scope settings.local.json, so the Carlyle overlay is
+# merged into a real ~/.claude/settings.json in place of the stowed symlink,
+# which would otherwise turn the merge into a git change. Restowing replaces
+# the merged file with the link again, so this runs after every stow.
+apply_carlyle_claude_settings() {
+  local tmp
+
+  [[ -n "${CARLYLE_EC2:-}" ]] || return 0
+
+  info "applying Carlyle EC2 Claude Code overrides"
+  tmp="$(mktemp "$HOME/.claude/settings.json.XXXXXX")"
+  jq -s '.[0] * .[1]' "$DOTFILES/claude/.claude/settings.json" \
+    "$DOTFILES/claude/.claude/settings.carlyle-ec2.json" >"$tmp" || {
+    rm -f "$tmp"
+    fail "merging Carlyle Claude Code settings (is jq installed?)"
+  }
+  chmod 644 "$tmp"
+  mv -f "$tmp" "$HOME/.claude/settings.json"
+  ok "Claude Code settings (Carlyle EC2)"
+}
+
+# Remove symlinks in $HOME that point into this checkout but no longer resolve,
+# left behind when a tracked file is deleted or moved. Stow writes relative
+# targets (../../.dotfiles/...), so match on the checkout's directory name.
+remove_dangling_links() {
+  local link removed=0
+  local name
+  name="$(basename "$DOTFILES")"
+
+  while IFS= read -r -d '' link; do
+    rm "$link"
+    info "removed dangling link $link"
+    removed=$((removed + 1))
+  done < <(
+    find "$HOME" -maxdepth 5 -path "$DOTFILES" -prune -o \
+      -type l -lname "*$name/*" ! -exec test -e {} \; -print0 2>/dev/null || true
+  )
+  ok "dangling links ($removed removed)"
 }
 
 # --- Main --------------------------------------------------------------------
@@ -712,29 +814,8 @@ main() {
   install_codex_system_config
   stow_packages
   install_local_entrypoints
-  if [[ " $SKIP_PACKAGES " == *" aws "* ]]; then
-    info "skipping AWS CLI config (aws disabled on this host)"
-  else
-    info "installing AWS CLI config"
-    "$DOTFILES/aws/.local/bin/sync-aws-config"
-    ok "AWS CLI config"
-  fi
-  # Claude Code has no user-scope settings.local.json, so the Carlyle overlay
-  # is merged into a real ~/.claude/settings.json in place of the stowed
-  # symlink, which would otherwise turn the merge into a git change.
-  if [[ -n "${CARLYLE_EC2:-}" ]]; then
-    info "applying Carlyle EC2 Claude Code overrides"
-    local tmp
-    tmp="$(mktemp "$HOME/.claude/settings.json.XXXXXX")"
-    jq -s '.[0] * .[1]' "$DOTFILES/claude/.claude/settings.json" \
-      "$DOTFILES/claude/.claude/settings.carlyle-ec2.json" >"$tmp" || {
-      rm -f "$tmp"
-      fail "merging Carlyle Claude Code settings (is jq installed?)"
-    }
-    chmod 644 "$tmp"
-    mv -f "$tmp" "$HOME/.claude/settings.json"
-    ok "Claude Code settings (Carlyle EC2)"
-  fi
+  sync_aws_config
+  apply_carlyle_claude_settings
   configure_claude_mcp
   configure_claude_plugins
   install_claude_ssh_host_keys
@@ -757,15 +838,39 @@ main() {
 
   install_teams_link_handler
   enable_office_tv_relay
-
-  if [[ "$OS" == "Darwin" ]] && command -v duti &>/dev/null; then
-    info "applying default app associations"
-    duti "$HOME/.config/duti/default-apps" 2>/dev/null || true
-    ok "default app associations"
-  fi
+  apply_default_apps
 
   echo ""
   echo "  done"
 }
 
-main
+# Apply a pulled checkout to this machine: relink every package, refresh the
+# files assembled from tracked sources, and reload the background agents whose
+# plists are stowed here. Installs nothing and never needs sudo.
+deploy() {
+  echo ""
+  echo "  deploying dotfiles ($OS)"
+  echo ""
+
+  command -v stow &>/dev/null || fail "stow not found — run ./bootstrap.sh first"
+
+  stow_packages
+  install_local_entrypoints
+  sync_aws_config
+  apply_carlyle_claude_settings
+  install_claude_ssh_host_keys
+  remove_dangling_links
+  reload_nightly_maintenance
+  enable_office_tv_relay
+  reload_git_auto_ff
+  apply_default_apps
+
+  echo ""
+  echo "  done"
+}
+
+case "${1:-}" in
+"") main ;;
+deploy) deploy ;;
+*) fail "usage: $0 [deploy]" ;;
+esac
