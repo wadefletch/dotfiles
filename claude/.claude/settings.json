@@ -178,7 +178,11 @@
         "*.github.com",
         "*.githubusercontent.com",
         "github.com",
-        "githubusercontent.com"
+        "githubusercontent.com",
+        "*.npmjs.com",
+        "*.npmjs.org",
+        "npmjs.com",
+        "npmjs.org"
       ],
       "allowLocalBinding": true,
       "allowAllUnixSockets": true
