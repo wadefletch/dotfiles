@@ -10,6 +10,9 @@ Archive without asking:
 - Everything from these senders, in any bucket: `united.com`, `cursor.com`, `amazon.com`, `beehiiv.com`.
 - Older copies of any repeated notification; keep only the newest.
 - Dead mail: invites to past events, expired access requests, and date-bound promos whose date has passed. Keep cold pitches Wade could still answer.
+- Wade's own forwards: mail from his addresses (`wade@tractorbeam.ai`, `wbfletch@gmail.com`) that comes back through a group list he belongs to. He already sent it.
+- Customer payment notices, such as Ramp's "payment on the way" from a customer. Mention the payment in the report.
+- Vendor membership and role changes ("you were added to Admins", "X was removed from the organization"). When a teammate was removed, name it in the report in case it was unintended.
 
 ## Ask first
 

@@ -27,6 +27,8 @@ The inbox is usually several hundred threads, and `search_threads` pages are big
 - Classify every thread into one bucket (below) using sender, subject, and label IDs.
 - Return `threadId | sender | subject (≤60 chars) | date` per thread, collapsing large repetitive groups to one line with a count **plus every thread ID** — the IDs are needed to act.
 
+When resuming on a later day, start with `in:inbox after:<last run date>` instead of the whole inbox: apply the auto-archive rules to the new mail, report only what's new, and re-check the open bucket H items for overnight replies.
+
 Gmail's `label:` operator does not match Superhuman's `[Superhuman]/AI/*` label names, so classify by the label IDs on each message instead. Get the current ID↔name map from `list_labels`; [rules.md](rules.md) records the last known mapping.
 
 ### 2. Buckets
@@ -68,13 +70,23 @@ Unread doesn't mean open: Wade often handles things outside email. Before listin
 | WorkOS team invites | WorkOS `workspaceMembers` |
 | Signatures | A DocuSign "Completed" email for the same document; a re-sent envelope under a new name supersedes the old one |
 | Meeting follow-ups | Granola (read-only: it can't approve share requests) |
+| Slack notification emails (DMs, mentions) | Slack: search Wade's DMs or the channel with that person after the message date; a reply from Wade means it's handled |
 | Threads with people | Later replies, Wade's sent mail, and calendar invites that show a meeting got booked |
 
-### 6. Clear dead mail
+### 6. Read vendor release notes against open work
+
+Release notes and changelogs from tools Tractorbeam uses can unblock planned work: a vendor adding SSO, SCIM, an API, or a pricing change can settle an open issue. For each release-notes email, pull the announced features and search for open work they affect:
+
+- Linear: `list_issues` with keyword queries for the vendor and each feature, excluding completed and canceled states.
+- GitHub: `gh search issues --owner tractorbeamai --state open "<vendor> <feature>"` and `gh search prs --owner tractorbeamai --state open "<vendor>"`.
+
+Report each match with the release-note line and the issue or PR link. Leave release-note emails where they are; they're reading material, not something to unsubscribe from.
+
+### 7. Clear dead mail
 
 Archive invites to events that have passed, expired access requests, and promos tied to past dates. Keep cold pitches Wade could still answer, and keep newsletters: Superhuman is his reading queue.
 
-### 7. Report and prioritize
+### 8. Report and prioritize
 
 Lead with counts per bucket and what was archived. Then list bucket H in priority order:
 
