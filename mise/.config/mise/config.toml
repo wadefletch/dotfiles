@@ -13,7 +13,8 @@ trusted_config_paths = [
   "~/Developer/wadefletch",
 ]
 activate_aggressive = true
-idiomatic_version_file_enable_tools = ["node", "python"]
+# pnpm follows each project's packageManager in package.json.
+idiomatic_version_file_enable_tools = ["node", "pnpm", "python"]
 lockfile = true
 minimum_release_age = "7d"
 
