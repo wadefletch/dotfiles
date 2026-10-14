@@ -9,11 +9,32 @@ Archive without asking:
 - Buckets D (login codes and security notices), E (low-value notifications), F (paid receipts), and G (monitoring and infra alerts). Infra alerts are tracked elsewhere, so archive all of them, not just older copies.
 - Everything from these senders, in any bucket: `united.com`, `cursor.com`, `amazon.com`, `beehiiv.com`.
 - Older copies of any repeated notification; keep only the newest.
+- Dead mail: invites to past events, expired access requests, and date-bound promos whose date has passed. Keep cold pitches Wade could still answer.
 
 ## Ask first
 
-- Newsletters (A), marketing (B), and cold pitches (C): list subjects grouped by vendor and let Wade choose per vendor — archive, unsubscribe, or unsubscribe from marketing only.
+- Newsletters (A), marketing (B), and cold pitches (C): list subjects grouped by vendor and let Wade choose per vendor — archive, unsubscribe, or unsubscribe from marketing only. Don't suggest unsubscribing from newsletters or marketing lists he hasn't named; he reads them in Superhuman.
 - Anything in bucket H.
+
+## Never
+
+- Gmail filters. Wade triages in Superhuman, so routing belongs there, not in Gmail.
+
+## Notification settings already changed
+
+These sources were turned down at the source. If their mail starts arriving again, the setting reverted; tell Wade instead of archiving quietly.
+
+- **Google Calendar:** Event responses emails are off on his calendar, so accepts and declines no longer arrive. New, changed, and cancelled event emails stay on.
+- **Zoom:** the "attendees join meeting before host" email is off.
+- **Secureframe:** only the weekly Admin summary, plus event alerts for auditor activity, a disabled integration, and an assigned questionnaire.
+
+## Closed accounts
+
+Mail from these means something is still billing or open; flag it.
+
+- **Brex:** closed. Cards and spend moved to Ramp.
+- **Blacksmith:** account closed, GitHub app uninstalled, Ramp fund archived.
+- **Gem:** cancelled.
 
 ## Calendar mail
 
