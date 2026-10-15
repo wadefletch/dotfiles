@@ -5,7 +5,6 @@
     "CLAUDE_CODE_ENABLE_FINE_GRAINED_TOOL_STREAMING": "1",
     "CLAUDE_CODE_DISABLE_FAST_MODE": "1",
     "DISABLE_ERROR_REPORTING": "1",
-    "ENABLE_LSP_TOOL": "1",
     "ENABLE_CLAUDEAI_MCP_SERVERS": "true",
     "AWS_MCP_PROXY_PROFILES": "agent-read-management agent-read-audit agent-read-log-archive agent-read-production agent-read-nonprod agent-read-shared-services agent-read-distribution agent-read-sandbox agent-read-brizzco",
     "NODE_USE_ENV_PROXY": "1"
@@ -82,9 +81,7 @@
     "experimental@tractorbeam": true,
     "mise@tractorbeam": true,
     "plugin-dev@claude-plugins-official": true,
-    "rust-analyzer-lsp@claude-plugins-official": true,
     "tractorbeam@tractorbeam": true,
-    "typescript-lsp@claude-plugins-official": true,
     "workos@workos": true
   },
   "extraKnownMarketplaces": {
@@ -157,7 +154,6 @@
         "~/.cargo/git",
         "~/.cargo/registry",
         "~/.config/gh",
-        "~/.config/rwx/lsp-server",
         "~/.kube",
         "~/.local/bin",
         "~/.local/share/mise",
