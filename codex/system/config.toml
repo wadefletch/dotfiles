@@ -37,9 +37,6 @@ AWS_MCP_PROXY_PROFILES = "agent-read-management agent-read-audit agent-read-log-
 [mcp_servers.betterstack]
 url = "https://mcp.betterstack.com"
 
-[mcp_servers.secureframe]
-url = "https://mcp.secureframe.com/"
-
 # The workos plugin ships skills only for Codex; its server is registered here.
 [mcp_servers.workos]
 url = "https://mcp.workos.com/mcp"

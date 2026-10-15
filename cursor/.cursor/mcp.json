@@ -12,9 +12,6 @@
     "betterstack": {
       "url": "https://mcp.betterstack.com"
     },
-    "secureframe": {
-      "url": "https://mcp.secureframe.com/"
-    },
     "xapi": {
       "command": "npx",
       "args": [

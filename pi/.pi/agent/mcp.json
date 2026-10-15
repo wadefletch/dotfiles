@@ -15,11 +15,6 @@
       "description": "Better Stack monitors, incidents, and logs",
       "exposure": "deferred"
     },
-    "secureframe": {
-      "url": "https://mcp.secureframe.com/",
-      "description": "Secureframe compliance controls, tests, and evidence",
-      "exposure": "deferred"
-    },
     "xapi": {
       "command": "npx",
       "args": [

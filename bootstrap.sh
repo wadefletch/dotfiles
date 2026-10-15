@@ -457,8 +457,9 @@ install_claude_ssh_host_keys() {
 # than a standalone stowable file. Add the portable servers when they are
 # missing and leave all other registrations alone. The Cloudflare server comes
 # from its plugin instead, and Context7 and WorkOS from claude.ai connectors.
-# Okta and Tractorbeam's AWS MCP are scoped to the infra repository, whose
-# .mcp.json defines them, so they stay out of every other project's context.
+# Okta and Tractorbeam's AWS MCP are scoped to the infra repository, and
+# Secureframe to infra and the handbook, whose .mcp.json files define them, so
+# they stay out of every other project's context.
 configure_claude_mcp() {
   if ! command -v claude &>/dev/null; then
     warn "claude not found; skipping MCP configuration"
@@ -476,7 +477,6 @@ configure_claude_mcp() {
     return
   fi
   add_claude_mcp betterstack --transport http -- https://mcp.betterstack.com
-  add_claude_mcp secureframe --transport http -- https://mcp.secureframe.com/
   add_claude_mcp xapi -- npx -y @xdevplatform/xurl mcp https://api.x.com/mcp
 }
 
