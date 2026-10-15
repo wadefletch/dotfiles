@@ -37,20 +37,9 @@ AWS_MCP_PROXY_PROFILES = "agent-read-management agent-read-audit agent-read-log-
 [mcp_servers.betterstack]
 url = "https://mcp.betterstack.com"
 
-[mcp_servers.secureframe]
-url = "https://mcp.secureframe.com/"
-
 # The workos plugin ships skills only for Codex; its server is registered here.
 [mcp_servers.workos]
 url = "https://mcp.workos.com/mcp"
-
-# codex-okta-mcp reads the Okta service-app key from the login Keychain on
-# macOS and from a mode-0600 file elsewhere.
-[mcp_servers.okta]
-command = "codex-okta-mcp"
-default_tools_approval_mode = "approve"
-startup_timeout_sec = 60
-tool_timeout_sec = 60
 
 # xurl reads the X app credentials and OAuth token from ~/.xurl/auth.yml.
 [mcp_servers.xapi]
