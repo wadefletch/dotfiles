@@ -51,13 +51,13 @@ The `aws` package tracks the managed AWS CLI profiles. Bootstrap stows the packa
 
 [Context7](https://context7.com) serves current library and framework documentation to every harness over MCP, through each one's managed distribution where it has one: Claude Code uses the claude.ai Context7 connector (add it once from claude.ai's connector directory and sign in), Codex installs Context7's plugin (`context7@context7-marketplace` from `upstash/context7`) during bootstrap, Cursor installs it from the Cursor Marketplace with `/add-plugin context7` once per machine, and Pi, which has no managed version, lists the server in its `mcp.json`. Every harness also gets Context7's official `context7-mcp` skill, which tells agents when and how to call those tools: Codex and Cursor through the plugins, and Claude Code and Pi through bootstrap, which installs it from `upstash/context7` with the open [`skills`](https://github.com/vercel-labs/skills) installer into `~/.agents/skills`.
 
-FFF is configured for Claude Code, Cursor, Codex, and Pi, and so are Better Stack, Secureframe, WorkOS, Okta, and the X API (`xapi`). Pi uses built-in MCP (`~/.pi/agent/mcp.json`) for its servers and the native `@ff-labs/pi-fff` package for FFF; Pi loads the Tractorbeam skills as a git package that tracks `tractorbeamai/skills` on `main`. Codemode is on so classifier models such as TypeSafe Jev can run from scripts once a Jev provider is authenticated (`CLOUDFLARE_API_KEY` + `CLOUDFLARE_ACCOUNT_ID`, or `TYPESAFE_API_KEY`). FFF inherits each harness's working directory and refuses to index the home or filesystem root by default. Better Stack, Secureframe, and Cloudflare are remote servers that each harness signs in to once. The X API server uses the app credentials and token that `xurl` keeps in `~/.xurl/auth.yml` (`npx -y @xdevplatform/xurl auth apps add` and `auth oauth2` once per machine). Okta needs the service-app key in the login Keychain on macOS, or in a private key file elsewhere (see below); without it that server fails to start on that machine.
+FFF is configured for Claude Code, Cursor, Codex, and Pi, and so are Better Stack, Secureframe, WorkOS, and the X API (`xapi`); Claude Code takes WorkOS, like Context7, from its claude.ai connector. Okta is not registered here, and Tractorbeam's AWS MCP only for Codex (see below): the infra repository defines both for every harness, so they load only in sessions there and stay out of every other project's context. Pi uses built-in MCP (`~/.pi/agent/mcp.json`) for its servers and the native `@ff-labs/pi-fff` package for FFF; Pi loads the Tractorbeam skills as a git package that tracks `tractorbeamai/skills` on `main`. Codemode is on so classifier models such as TypeSafe Jev can run from scripts once a Jev provider is authenticated (`CLOUDFLARE_API_KEY` + `CLOUDFLARE_ACCOUNT_ID`, or `TYPESAFE_API_KEY`). FFF inherits each harness's working directory and refuses to index the home or filesystem root by default. Better Stack, Secureframe, and Cloudflare are remote servers that each harness signs in to once. The X API server uses the app credentials and token that `xurl` keeps in `~/.xurl/auth.yml` (`npx -y @xdevplatform/xurl auth apps add` and `auth oauth2` once per machine).
 
-The `aws-core`, `cloudflare`, and `workos` plugins come from their vendors' marketplaces, `aws/agent-toolkit-for-aws`, `cloudflare/skills`, and `workos/skills`, in both Claude Code and Codex; bootstrap installs them. Cloudflare's MCP server arrives with its plugin (Cursor and Pi list it directly); the WorkOS plugin carries only skills for Claude Code and Codex, so its server is registered alongside the other shared servers. The `aws-core` plugin bundles an `aws-mcp` server that signs with whatever AWS credentials are in the environment, so no harness runs it. Instead every harness defines its own `aws-mcp`, which launches the `mcp-proxy-for-aws-cli` that bootstrap installs at a pinned version, restricted to the read-only `agent-read-*` profiles through `AWS_MCP_PROXY_PROFILES`. Claude Code registers that server at user scope, denies the plugin's copy (`deniedMcpServers`), and sets the profiles in its settings `env`; Codex's system config entry replaces the plugin's by name; Pi and Cursor list it in their `mcp.json`. The profile list mirrors the read profiles in the infra repo, which is the only place write profiles are exposed. The plugin's `signing-in-to-aws` skill contradicts Tractorbeam's `aws-access` rule that agents never authenticate, so it is turned off in Claude Code (`skillOverrides`) and Codex (`skills.config`).
+The `aws-core`, `cloudflare`, and `workos` plugins come from their vendors' marketplaces, `aws/agent-toolkit-for-aws`, `cloudflare/skills`, and `workos/skills`, in both Claude Code and Codex; bootstrap installs them. Cloudflare's MCP server arrives with its plugin (Cursor and Pi list it directly); the WorkOS plugin carries only skills, so Claude Code takes its server from the claude.ai connector and Codex, Pi, and Cursor register it alongside the other shared servers. The `aws-core` plugin bundles an `aws-mcp` server that signs with whatever AWS credentials are in the environment, so no harness runs it. Claude Code denies the plugin's copy (`deniedMcpServers`) and Codex's system config entry replaces it by name with the `mcp-proxy-for-aws-cli` that bootstrap installs at a pinned version, restricted to the read-only `agent-read-*` profiles through `AWS_MCP_PROXY_PROFILES`. Claude Code, Pi, and Cursor otherwise get `aws-mcp` only from the infra repository's configuration, which is the only place write profiles are exposed. The plugin's `signing-in-to-aws` skill contradicts Tractorbeam's `aws-access` rule that agents never authenticate, so it is turned off in Claude Code (`skillOverrides`) and Codex (`skills.config`).
 
 Agents wait on CI with the [gh-watch](https://github.com/justincampbell/gh-watch) extension, following the Tractorbeam git skill, which installs it when it's missing.
 
-On the Carlyle EC2 devbox (`CARLYLE_EC2=1`), Tractorbeam's AWS conventions don't apply: its `aws-access` skill and `agent-read-*` profiles target Tractorbeam's accounts, not Carlyle's. Claude Code has no user-scope `settings.local.json`, so bootstrap replaces the stowed `~/.claude/settings.json` symlink there with a real file: the shared settings deep-merged (`jq '*'`) with `claude/.claude/settings.carlyle-ec2.json`. That overlay turns off `tractorbeam:aws-access` and the `cloudflare` and `workos` plugins, and pins the AWS MCP proxy to the host's `gpe-readonly` and `ais` profiles. Bootstrap also skips installing the Cloudflare and WorkOS plugins there and registers only the `fff` and `aws-mcp` MCP servers, leaving out Tractorbeam's service accounts (Better Stack, Secureframe, WorkOS, Okta, X API). The other Tractorbeam plugins and skills stay on. Settings changes made from Claude Code on that host land in the generated file, not the repo, and the next bootstrap moves them to `settings.json.bak`; put lasting changes in the tracked files.
+On the Carlyle EC2 devbox (`CARLYLE_EC2=1`), Tractorbeam's AWS conventions don't apply: its `aws-access` skill and `agent-read-*` profiles target Tractorbeam's accounts, not Carlyle's. Claude Code has no user-scope `settings.local.json`, so bootstrap replaces the stowed `~/.claude/settings.json` symlink there with a real file: the shared settings deep-merged (`jq '*'`) with `claude/.claude/settings.carlyle-ec2.json`. That overlay turns off `tractorbeam:aws-access` and the `cloudflare` and `workos` plugins, and pins the AWS MCP proxy to the host's `gpe-readonly` and `ais` profiles. Bootstrap also skips installing the Cloudflare and WorkOS plugins there and registers only the `fff` and `aws-mcp` MCP servers, the latter only on that host, leaving out Tractorbeam's service accounts (Better Stack, Secureframe, X API). The other Tractorbeam plugins and skills stay on. Settings changes made from Claude Code on that host land in the generated file, not the repo, and the next bootstrap moves them to `settings.json.bak`; put lasting changes in the tracked files.
 
 Repository instructions use `AGENTS.md`. Shared personal workflows live under `agent-config/.agents/skills/` and are stowed into the standard user skill directory.
 
@@ -69,17 +69,10 @@ Tractorbeam read-only service credentials live in the macOS login Keychain. The
 `fleetctl-readonly` launcher reads the API-only Observer token from the
 `fleet-observer-api-token` service and builds a mode-0600 disposable Fleet
 config for each invocation; it never reads the ordinary `~/.fleet/config`. The
-`install-okta-mcp-tool` installs the pinned Okta MCP server into uv's persistent
-tool environment. `codex-okta-mcp` launches that installed executable, reads the
-Okta service app private key, and exposes only the app's read-scoped tools. On
-macOS the key is base64-encoded in the `okta-mcp-private-key` Keychain service;
-other hosts keep the PEM at `~/.config/okta-mcp/private-key.pem` (override with
-`OKTA_MCP_PRIVATE_KEY_FILE`), and the launcher refuses a file that group or
-other users can read. The upstream server's
-OAuth access-token cache is redirected away from the macOS Keychain into a
-mode-0600 disposable file that the launcher removes on exit, avoiding Python
-Keychain authorization prompts. Credential values are host-local and never
-stowed.
+infra repository's Okta MCP launcher (`mise run mcp:okta`) reads the Okta
+service app private key from the `okta-mcp-private-key` Keychain service when
+it is there; its `okta` skill covers storing it. Credential values are
+host-local and never stowed.
 
 Add the Fleet token interactively so it does not enter shell history:
 
@@ -89,27 +82,6 @@ security add-generic-password \
   -s fleet-observer-api-token \
   -U \
   -w
-```
-
-Store the Okta PEM as one base64-encoded Keychain password. The value passed to
-`security` is briefly present in that process's arguments, so perform this once
-from a trusted local terminal and clear the shell variable immediately:
-
-```sh
-private_key_base64=$(base64 < /path/to/okta-mcp-private-key.pem | tr -d '\n')
-security add-generic-password \
-  -a "$USER" \
-  -s okta-mcp-private-key \
-  -U \
-  -w "$private_key_base64"
-unset private_key_base64
-```
-
-On a host without a Keychain, install the PEM readable only by you:
-
-```sh
-install -d -m 0700 ~/.config/okta-mcp
-install -m 0600 /path/to/okta-mcp-private-key.pem ~/.config/okta-mcp/private-key.pem
 ```
 
 To stow manually:

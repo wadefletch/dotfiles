@@ -44,14 +44,6 @@ url = "https://mcp.secureframe.com/"
 [mcp_servers.workos]
 url = "https://mcp.workos.com/mcp"
 
-# codex-okta-mcp reads the Okta service-app key from the login Keychain on
-# macOS and from a mode-0600 file elsewhere.
-[mcp_servers.okta]
-command = "codex-okta-mcp"
-default_tools_approval_mode = "approve"
-startup_timeout_sec = 60
-tool_timeout_sec = 60
-
 # xurl reads the X app credentials and OAuth token from ~/.xurl/auth.yml.
 [mcp_servers.xapi]
 command = "npx"

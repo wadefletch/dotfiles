@@ -456,7 +456,9 @@ install_claude_ssh_host_keys() {
 # Claude Code stores user-scoped MCP registrations in mutable host state rather
 # than a standalone stowable file. Add the portable servers when they are
 # missing and leave all other registrations alone. The Cloudflare server comes
-# from its plugin instead, and Context7 from the claude.ai connector.
+# from its plugin instead, and Context7 and WorkOS from claude.ai connectors.
+# Okta and Tractorbeam's AWS MCP are scoped to the infra repository, whose
+# .mcp.json defines them, so they stay out of every other project's context.
 configure_claude_mcp() {
   if ! command -v claude &>/dev/null; then
     warn "claude not found; skipping MCP configuration"
@@ -464,20 +466,17 @@ configure_claude_mcp() {
   fi
 
   add_claude_mcp fff -- fff-mcp --no-update-check
-  # The same installed proxy Codex, Pi, and Cursor run; settings.json denies the
-  # aws-core plugin's copy. The profiles come from AWS_MCP_PROXY_PROFILES in the
-  # settings env, which the Carlyle overlay replaces with that host's own.
-  add_claude_mcp aws-mcp -- mcp-proxy-for-aws-cli https://aws-mcp.us-east-1.api.aws/mcp
 
-  # The rest are Tractorbeam's service accounts, which the Carlyle devbox
-  # has no business reaching.
+  # The Carlyle devbox has no infra checkout, so its AWS MCP is registered
+  # here, pinned to the host's profiles by the Carlyle overlay's settings env;
+  # settings.json denies the aws-core plugin's copy. Tractorbeam's service
+  # accounts stay off that host.
   if [[ -n "${CARLYLE_EC2:-}" ]]; then
+    add_claude_mcp aws-mcp -- mcp-proxy-for-aws-cli https://aws-mcp.us-east-1.api.aws/mcp
     return
   fi
   add_claude_mcp betterstack --transport http -- https://mcp.betterstack.com
   add_claude_mcp secureframe --transport http -- https://mcp.secureframe.com/
-  add_claude_mcp workos --transport http -- https://mcp.workos.com/mcp
-  add_claude_mcp okta -- codex-okta-mcp
   add_claude_mcp xapi -- npx -y @xdevplatform/xurl mcp https://api.x.com/mcp
 }
 
@@ -842,10 +841,6 @@ main() {
 
   install_agent_skills
   install_aws_mcp_proxy
-
-  info "installing Okta MCP server"
-  "$DOTFILES/codex/.local/bin/install-okta-mcp-tool"
-  ok "Okta MCP server"
 
   install_teams_link_handler
   enable_office_tv_relay
