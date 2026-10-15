@@ -144,6 +144,7 @@
     "filesystem": {
       "allowWrite": [
         "/private/tmp",
+        "/private/var/folders/*/*/T/**/*",
         "/tmp",
         "~/.aws/cli/cache",
         "~/.aws/sso/cache",
