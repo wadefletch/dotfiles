@@ -12,7 +12,9 @@
 #
 # sshd authenticates with ~/.ssh/authorized_keys and permits OpenSSH
 # forwarding. Sessions get Homebrew on PATH so non-interactive commands,
-# including mosh's `mosh-server new`, find Homebrew tools.
+# including mosh's `mosh-server new`, find Homebrew tools, and mosh-server
+# exits after 12 hours without hearing from its client, so sessions whose
+# client vanished (a closed laptop, a lost phone connection) don't linger.
 #
 # Safe to rerun: it validates the configuration before applying it, restores
 # the prior file when validation fails, and restarts sshd only when the
@@ -74,7 +76,7 @@ AllowUsers $user
 AllowAgentForwarding yes
 AllowTcpForwarding yes
 X11Forwarding no
-SetEnv PATH=/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin
+SetEnv PATH=/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin MOSH_SERVER_NETWORK_TMOUT=43200
 EOF
 
 /bin/cat >"$plist_tmp" <<EOF
