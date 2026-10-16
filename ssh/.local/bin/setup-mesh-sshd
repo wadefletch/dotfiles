@@ -108,9 +108,10 @@ for file in "$config_tmp" "$plist_tmp"; do
   /usr/sbin/chown root:wheel "$file"
 done
 
-changed=false
-/usr/bin/cmp -s "$config_tmp" "$CONFIG" 2>/dev/null || changed=true
-/usr/bin/cmp -s "$plist_tmp" "$PLIST" 2>/dev/null || changed=true
+config_changed=false
+plist_changed=false
+/usr/bin/cmp -s "$config_tmp" "$CONFIG" 2>/dev/null || config_changed=true
+/usr/bin/cmp -s "$plist_tmp" "$PLIST" 2>/dev/null || plist_changed=true
 
 if [ -f "$CONFIG" ]; then
   /bin/cp -p "$CONFIG" "$config_backup"
@@ -132,13 +133,25 @@ fi
 
 # Start the Mesh-bound sshd before touching Remote Login. While Remote Login
 # still holds port 22 the new sshd may fail to bind; launchd retries every ten
-# seconds, so it takes over as soon as Remote Login stops.
+# seconds, so it takes over as soon as Remote Login stops. A new configuration
+# needs only a restart of the running job. A new LaunchDaemon needs the job
+# unloaded, and bootout returns before launchd finishes removing it, so wait
+# for that: bootstrapping too early fails with "5: Input/output error" and
+# leaves sshd stopped.
 /bin/mv -f "$plist_tmp" "$PLIST"
 if ! /bin/launchctl print "system/$LABEL" >/dev/null 2>&1; then
   /bin/launchctl bootstrap system "$PLIST"
-elif [ "$changed" = true ]; then
+elif [ "$plist_changed" = true ]; then
   /bin/launchctl bootout "system/$LABEL" 2>/dev/null || true
+  tries=0
+  while /bin/launchctl print "system/$LABEL" >/dev/null 2>&1; do
+    tries=$((tries + 1))
+    [ "$tries" -le 50 ] || { echo "launchd did not unload $LABEL" >&2; exit 1; }
+    /bin/sleep 0.2
+  done
   /bin/launchctl bootstrap system "$PLIST"
+elif [ "$config_changed" = true ]; then
+  /bin/launchctl kickstart -k "system/$LABEL"
 fi
 
 # Homebrew's mosh-server is not Developer ID signed, so the application
