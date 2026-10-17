@@ -17,11 +17,19 @@ HOST_NAME=""
 [[ "$OS" == "Darwin" ]] && HOST_NAME="$(scutil --get LocalHostName | tr '[:upper:]' '[:lower:]')"
 ARRAKIS_ONLY="office-tv-relay"
 
+# arrakis and corrino reach each other with SSH and mosh over Cloudflare Mesh.
+MESH_HOST=""
+[[ "$HOST_NAME" == "arrakis" || "$HOST_NAME" == "corrino" ]] && MESH_HOST=1
+
 # Packages this host opts out of, driven by env. The Carlyle EC2 devbox manages
 # its own host-local ~/.aws/config and aws-login, so CARLYLE_EC2=1 skips the aws
 # package (and its config sync) to leave that host-local setup untouched.
 SKIP_PACKAGES=""
 [[ -n "${CARLYLE_EC2:-}" ]] && SKIP_PACKAGES+=" aws"
+# The ssh package serves only the Mesh Macs, and its authorized_keys admits
+# only personal keys, so stowing it anywhere else (the Carlyle EC2 devbox)
+# would replace that host's own keys.
+[[ -n "$MESH_HOST" ]] || SKIP_PACKAGES+=" ssh"
 
 # Stow packages whose target directory also holds host-local state, so the
 # tracked files must be linked individually rather than by folding the
@@ -276,7 +284,7 @@ install_deps() {
     done
 
     # arrakis and corrino accept SSH and mosh over Cloudflare Mesh only.
-    if [[ "$HOST_NAME" == "arrakis" || "$HOST_NAME" == "corrino" ]]; then
+    if [[ -n "$MESH_HOST" ]]; then
       info "configuring Mesh-only sshd (sudo)"
       sudo "$DOTFILES/ssh/.local/bin/setup-mesh-sshd"
       ok "Mesh-only sshd"
@@ -348,6 +356,8 @@ stow_packages() (
 
     # skip packages this host opts out of (e.g. CARLYLE_EC2 disables aws)
     if [[ " $SKIP_PACKAGES " == *" $pkg "* ]]; then
+      # earlier bootstraps stowed ssh on every host; remove those links
+      [[ "$pkg" == "ssh" ]] && stow -t "$HOME" -D "$pkg"
       info "skipping $pkg (disabled on this host)"
       continue
     fi
