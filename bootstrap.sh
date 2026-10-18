@@ -9,7 +9,7 @@ OS="$(uname -s)"
 export PATH="$HOME/.local/bin:$PATH"
 
 # macOS-only stow packages (contain Library/ paths or macOS-only tools)
-MACOS_ONLY="cursor duti nightly-maintenance teams-link vscode wallpapers"
+MACOS_ONLY="cursor duti linearmouse nightly-maintenance teams-link vscode wallpapers"
 
 # Packages for one machine, matched on its lowercased LocalHostName (empty on
 # Linux, so none of them apply there).
@@ -40,7 +40,7 @@ NO_FOLDING="agent-config aws claude codex cursor gh git-auto-ff office-tv-relay 
 PACKAGES=(git neovim ripgrep stow zsh eza)
 
 # macOS apps and fonts (brew casks)
-CASKS=(cursor ghostty)
+CASKS=(cursor ghostty helium-browser linearmouse)
 # adb, which the office TV relay drives
 [[ "$HOST_NAME" == "arrakis" ]] && CASKS+=(android-platform-tools)
 
@@ -768,6 +768,15 @@ apply_default_apps() {
   ok "default app associations"
 }
 
+# System-wide macOS preferences. Scroll bars appear only while scrolling, as
+# with a trackpad, even when a mouse is connected; apps pick it up on relaunch.
+apply_macos_defaults() {
+  [[ "$OS" == "Darwin" ]] || return 0
+  info "applying macOS defaults"
+  defaults write -g AppleShowScrollBars -string WhenScrolling
+  ok "macOS defaults"
+}
+
 sync_aws_config() {
   if [[ " $SKIP_PACKAGES " == *" aws "* ]]; then
     info "skipping AWS CLI config (aws disabled on this host)"
@@ -855,6 +864,7 @@ main() {
   install_teams_link_handler
   enable_office_tv_relay
   apply_default_apps
+  apply_macos_defaults
 
   echo ""
   echo "  done"
@@ -880,6 +890,7 @@ deploy() {
   enable_office_tv_relay
   reload_git_auto_ff
   apply_default_apps
+  apply_macos_defaults
 
   echo ""
   echo "  done"
