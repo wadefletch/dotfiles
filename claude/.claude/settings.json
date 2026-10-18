@@ -58,7 +58,7 @@
       "~/.claude/references"
     ]
   },
-  "model": "opus",
+  "model": "opus[1m]",
   "skillOverrides": {
     "aws-core:signing-in-to-aws": "off"
   },
@@ -114,33 +114,32 @@
         "source": "github",
         "repo": "anthropics/skills"
       }
+    },
+    "planetscale": {
+      "source": {
+        "source": "github",
+        "repo": "planetscale/claude-plugin"
+      }
     }
   },
-  "feedbackDrafts": "off",
-  "showClearContextOnPlanAccept": true,
-  "askUserQuestionTimeout": "60s",
-  "autoUpdatesChannel": "latest",
-  "autoMemoryEnabled": false,
-  "skipDangerousModePermissionPrompt": true,
-  "theme": "auto",
-  "verbose": true,
-  "preferredNotifChannel": "ghostty",
-  "inputNeededNotifEnabled": true,
-  "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true,
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
     "allowUnsandboxedCommands": true,
-    "enableWeakerNetworkIsolation": true,
-    "excludedCommands": [
-      "docker *",
-      "rsync *",
-      "rwx sandbox *",
-      "scp *",
-      "sftp *",
-      "ssh *"
-    ],
+    "network": {
+      "allowedDomains": [
+        "*.github.com",
+        "*.githubusercontent.com",
+        "github.com",
+        "githubusercontent.com",
+        "*.npmjs.com",
+        "*.npmjs.org",
+        "npmjs.com",
+        "npmjs.org"
+      ],
+      "allowAllUnixSockets": true,
+      "allowLocalBinding": true
+    },
     "filesystem": {
       "allowWrite": [
         "/private/tmp",
@@ -169,19 +168,27 @@
         "~/Library/pnpm"
       ]
     },
-    "network": {
-      "allowedDomains": [
-        "*.github.com",
-        "*.githubusercontent.com",
-        "github.com",
-        "githubusercontent.com",
-        "*.npmjs.com",
-        "*.npmjs.org",
-        "npmjs.com",
-        "npmjs.org"
-      ],
-      "allowLocalBinding": true,
-      "allowAllUnixSockets": true
-    }
-  }
+    "enableWeakerNetworkIsolation": true,
+    "excludedCommands": [
+      "docker *",
+      "rsync *",
+      "rwx sandbox *",
+      "scp *",
+      "sftp *",
+      "ssh *"
+    ]
+  },
+  "feedbackDrafts": "off",
+  "showClearContextOnPlanAccept": true,
+  "askUserQuestionTimeout": "60s",
+  "autoUpdatesChannel": "latest",
+  "autoMemoryEnabled": false,
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "auto",
+  "verbose": true,
+  "preferredNotifChannel": "ghostty",
+  "switchModelsOnFlag": true,
+  "inputNeededNotifEnabled": true,
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true
 }
