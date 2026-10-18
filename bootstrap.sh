@@ -9,7 +9,7 @@ OS="$(uname -s)"
 export PATH="$HOME/.local/bin:$PATH"
 
 # macOS-only stow packages (contain Library/ paths or macOS-only tools)
-MACOS_ONLY="cursor duti nightly-maintenance teams-link vscode wallpapers"
+MACOS_ONLY="cursor duti helium linearmouse nightly-maintenance teams-link vscode wallpapers"
 
 # Packages for one machine, matched on its lowercased LocalHostName (empty on
 # Linux, so none of them apply there).
@@ -34,13 +34,13 @@ SKIP_PACKAGES=""
 # Stow packages whose target directory also holds host-local state, so the
 # tracked files must be linked individually rather than by folding the
 # directory itself into a symlink.
-NO_FOLDING="agent-config aws claude codex cursor gh git-auto-ff office-tv-relay pi"
+NO_FOLDING="agent-config aws claude codex cursor gh git-auto-ff helium office-tv-relay pi"
 
 # CLI packages to install (must exist in brew + apt/dnf/yum/pacman)
 PACKAGES=(git neovim ripgrep stow zsh eza)
 
 # macOS apps and fonts (brew casks)
-CASKS=(cursor ghostty)
+CASKS=(cursor ghostty helium-browser linearmouse)
 # adb, which the office TV relay drives
 [[ "$HOST_NAME" == "arrakis" ]] && CASKS+=(android-platform-tools)
 
@@ -367,7 +367,7 @@ stow_packages() (
     # it's elsewhere.
     if [[ " $NO_FOLDING " == *" $pkg "* ]]; then
       # These packages sit beside mutable host state — agent harnesses under
-      # ~/.claude, ~/.codex, ~/.cursor, and ~/.pi, the AWS CLI's SSO token
+      # ~/.claude, ~/.codex, ~/.cursor, and ~/.pi, Helium's profile, the AWS CLI's SSO token
       # cache and credentials under ~/.aws, the timers.target.wants link
       # that systemctl --user enable writes beside git-auto-ff's units, and
       # other apps' agents in ~/Library/LaunchAgents. Link the tracked files
@@ -768,6 +768,15 @@ apply_default_apps() {
   ok "default app associations"
 }
 
+# System-wide macOS preferences. Scroll bars appear only while scrolling, as
+# with a trackpad, even when a mouse is connected; apps pick it up on relaunch.
+apply_macos_defaults() {
+  [[ "$OS" == "Darwin" ]] || return 0
+  info "applying macOS defaults"
+  defaults write -g AppleShowScrollBars -string WhenScrolling
+  ok "macOS defaults"
+}
+
 sync_aws_config() {
   if [[ " $SKIP_PACKAGES " == *" aws "* ]]; then
     info "skipping AWS CLI config (aws disabled on this host)"
@@ -855,6 +864,7 @@ main() {
   install_teams_link_handler
   enable_office_tv_relay
   apply_default_apps
+  apply_macos_defaults
 
   echo ""
   echo "  done"
@@ -880,6 +890,7 @@ deploy() {
   enable_office_tv_relay
   reload_git_auto_ff
   apply_default_apps
+  apply_macos_defaults
 
   echo ""
   echo "  done"

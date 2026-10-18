@@ -4,10 +4,10 @@ GNU Stow-based dotfiles for macOS. Each top-level directory is a stow package mi
 
 ```
 <package>/          # stow package — contents symlinked into ~
-  .config/<app>/    # XDG config (ghostty, git, nvim, starship, alacritty)
+  .config/<app>/    # XDG config (ghostty, git, nvim, starship, alacritty, linearmouse)
   .config/zsh/      # zshenv, zprofile, zshrc, sourced by machine-local ~/.zshenv, ~/.zprofile, ~/.zshrc (zsh/)
   .ssh/config       # ssh config (ssh/)
-  Library/...       # macOS paths (cursor/, vscode/, nightly-maintenance/, office-tv-relay/)
+  Library/...       # macOS paths (cursor/, helium/, vscode/, nightly-maintenance/, office-tv-relay/)
   .cursor/          # Cursor CLI config (cursor/; --no-folding so ~/.cursor stays host-local)
   .claude/          # Claude Code runtime files (claude/)
   .pi/agent/        # Pi settings and MCP servers (pi/; --no-folding so ~/.pi stays host-local)
@@ -40,6 +40,6 @@ bootstrap.sh        # installs deps, stows packages, git hooks, WARP SSH host ke
 - Deploy merged `main` only, and never leave a machine on another branch: the checkout is the live config.
 - Machines are arrakis and corrino (macOS). Work locally on the one `hostname` names; reach the other with `ssh -o BatchMode=yes <host> '…'`.
 - On each: `cd ~/.dotfiles && git pull --ff-only && ./bootstrap.sh deploy`. Stop and report a dirty tree or a pull that won't fast-forward.
-- `deploy` restows every package, refreshes the machine-local entry points, `~/.aws/config`, and pinned SSH host keys, removes dangling links into the checkout, reloads this host's LaunchAgents (and git-auto-ff where it is enabled), and reapplies `duti`. It installs nothing and never needs sudo.
+- `deploy` restows every package, refreshes the machine-local entry points, `~/.aws/config`, and pinned SSH host keys, removes dangling links into the checkout, reloads this host's LaunchAgents (and git-auto-ff where it is enabled), and reapplies `duti` and the macOS defaults. It installs nothing and never needs sudo.
 - Run the full `./bootstrap.sh` instead when its install steps or `agent-config/` change, or a package is added. It asks for sudo only on a machine's first run.
 - Open Ghostty windows need cmd+shift+, to reload.
