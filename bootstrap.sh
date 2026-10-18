@@ -9,7 +9,7 @@ OS="$(uname -s)"
 export PATH="$HOME/.local/bin:$PATH"
 
 # macOS-only stow packages (contain Library/ paths or macOS-only tools)
-MACOS_ONLY="cursor duti linearmouse nightly-maintenance teams-link vscode wallpapers"
+MACOS_ONLY="cursor duti helium linearmouse nightly-maintenance teams-link vscode wallpapers"
 
 # Packages for one machine, matched on its lowercased LocalHostName (empty on
 # Linux, so none of them apply there).
@@ -34,7 +34,7 @@ SKIP_PACKAGES=""
 # Stow packages whose target directory also holds host-local state, so the
 # tracked files must be linked individually rather than by folding the
 # directory itself into a symlink.
-NO_FOLDING="agent-config aws claude codex cursor gh git-auto-ff office-tv-relay pi"
+NO_FOLDING="agent-config aws claude codex cursor gh git-auto-ff helium office-tv-relay pi"
 
 # CLI packages to install (must exist in brew + apt/dnf/yum/pacman)
 PACKAGES=(git neovim ripgrep stow zsh eza)
@@ -367,7 +367,7 @@ stow_packages() (
     # it's elsewhere.
     if [[ " $NO_FOLDING " == *" $pkg "* ]]; then
       # These packages sit beside mutable host state — agent harnesses under
-      # ~/.claude, ~/.codex, ~/.cursor, and ~/.pi, the AWS CLI's SSO token
+      # ~/.claude, ~/.codex, ~/.cursor, and ~/.pi, Helium's profile, the AWS CLI's SSO token
       # cache and credentials under ~/.aws, the timers.target.wants link
       # that systemctl --user enable writes beside git-auto-ff's units, and
       # other apps' agents in ~/Library/LaunchAgents. Link the tracked files

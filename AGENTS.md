@@ -7,7 +7,7 @@ GNU Stow-based dotfiles for macOS. Each top-level directory is a stow package mi
   .config/<app>/    # XDG config (ghostty, git, nvim, starship, alacritty, linearmouse)
   .config/zsh/      # zshenv, zprofile, zshrc, sourced by machine-local ~/.zshenv, ~/.zprofile, ~/.zshrc (zsh/)
   .ssh/config       # ssh config (ssh/)
-  Library/...       # macOS paths (cursor/, vscode/, nightly-maintenance/, office-tv-relay/)
+  Library/...       # macOS paths (cursor/, helium/, vscode/, nightly-maintenance/, office-tv-relay/)
   .cursor/          # Cursor CLI config (cursor/; --no-folding so ~/.cursor stays host-local)
   .claude/          # Claude Code runtime files (claude/)
   .pi/agent/        # Pi settings and MCP servers (pi/; --no-folding so ~/.pi stays host-local)

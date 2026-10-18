@@ -19,6 +19,7 @@ GNU Stow-based dotfiles for macOS (with Linux support for the CLI packages). Eac
 | ghostty | Ghostty terminal |
 | git | Git config (XDG) |
 | git-auto-ff | Fast-forwards chosen checkouts to origin/main daily at 05:00 when safe, via a systemd user timer (Linux) or LaunchAgent (macOS); enable per host with `./enable-git-auto-ff.sh REPO...` |
+| helium | Helium extensions, offered for install from the Chrome Web Store on each machine (macOS) |
 | linearmouse | LinearMouse scrolling for mice: native stepped wheel scrolling at 0.7× acceleration (macOS) |
 | mise | Mise tool versions (node, python, …) |
 | nightly-maintenance | LaunchAgent for nightly maintenance script (macOS) |
@@ -34,6 +35,8 @@ GNU Stow-based dotfiles for macOS (with Linux support for the CLI packages). Eac
 
 Window management is Raycast's, configured in the app itself.
 
+Helium has no profile sync, so the `helium` package carries its extension list instead: one `External Extensions/<id>.json` per Chrome Web Store extension, which Helium offers to install on its next launch. Add or remove an extension by adding or deleting its file. Helium won't reinstall an extension you uninstalled in the browser, and bookmarks, history, and passwords stay out of the repo (passwords live in Bitwarden).
+
 `.retired/` holds packages kept only for reference — `yabai/` and `skhd-zig/`, whose configs document the workarounds they needed (yabai's scripting addition, the PAC ABI loader patch, the Ghostty native-tab relayout signal). Dot-directories aren't stow packages, so nothing in there is deployed.
 
 ## Setup
@@ -44,7 +47,7 @@ cd ~/.dotfiles
 ./bootstrap.sh
 ```
 
-`bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, ripgrep, gh, starship, mise, and Claude Code), updates mise to its latest release, installs FFF's MCP server through Homebrew when available, and macOS brew casks (Cursor, Ghostty, Helium, LinearMouse). It then stows all packages, creates machine-local `~/.zshenv`, `~/.zprofile`, `~/.zshrc`, and `~/.gitconfig` that load the tracked config and take installer appends (see AGENTS.md for why they are not stowed), runs the tractorbeam mise plugin's shell setup when the plugin is installed, adds the portable Claude Code MCP servers when missing, reconciles Codex plugins, installs the locked Mise toolset (including the Fleetctl version matching the Fleet server), configures git hooks, and pins SSH host keys for WARP-reachable machines. Safe to re-run. On macOS it also sets system defaults: scroll bars show only while scrolling, as with a trackpad. macOS-only packages (cursor, duti, linearmouse, nightly-maintenance, teams-link, vscode, wallpapers) are skipped on Linux. `office-tv-relay` is stowed and enabled only on arrakis.
+`bootstrap.sh` installs cross-platform dependencies (stow, zsh, neovim, ripgrep, gh, starship, mise, and Claude Code), updates mise to its latest release, installs FFF's MCP server through Homebrew when available, and macOS brew casks (Cursor, Ghostty, Helium, LinearMouse). It then stows all packages, creates machine-local `~/.zshenv`, `~/.zprofile`, `~/.zshrc`, and `~/.gitconfig` that load the tracked config and take installer appends (see AGENTS.md for why they are not stowed), runs the tractorbeam mise plugin's shell setup when the plugin is installed, adds the portable Claude Code MCP servers when missing, reconciles Codex plugins, installs the locked Mise toolset (including the Fleetctl version matching the Fleet server), configures git hooks, and pins SSH host keys for WARP-reachable machines. Safe to re-run. On macOS it also sets system defaults: scroll bars show only while scrolling, as with a trackpad. macOS-only packages (cursor, duti, helium, linearmouse, nightly-maintenance, teams-link, vscode, wallpapers) are skipped on Linux. `office-tv-relay` is stowed and enabled only on arrakis.
 
 Each harness owns its settings in its conventional Stow package. Claude Code settings live at `claude/.claude/settings.json`. The `cursor` package tracks Cursor's MCP servers and editor settings; its CLI settings (`~/.cursor/cli-config.json`) stay host-local. Pi's live `settings.json` is stowed deliberately, so preference and package changes made from Pi update the dotfiles checkout. Runtime caches, account metadata, UI state, credentials, Pi sessions, and installed package contents stay out of Git.
 
