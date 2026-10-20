@@ -4,6 +4,7 @@
 - Do not create a replacement clone, relocate the worktree, alter Git metadata paths, broaden filesystem permissions, or enable full access solely to bypass protected Git metadata.
 - Preserve normal Git safety constraints when escalating. Never escalate destructive or history-rewriting Git operations unless the user explicitly authorized them.
 - If a push updates the remote but fails to update a local remote-tracking ref, verify the remote state before retrying the push.
+- Inside a worktree, run each `git` or `gh` command on its own from the worktree root with literal arguments: no `git -C`, `cd $(…)`, command substitution, or loops around them. Look an ID up in one call and pass it literally in the next.
 
 ## Waiting on CI
 

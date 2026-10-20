@@ -10,5 +10,8 @@
     "document-skills@anthropic-agent-skills": false,
     "plugin-dev@claude-plugins-official": false,
     "workos@workos": false
+  },
+  "sandbox": {
+    "enabled": false
   }
 }

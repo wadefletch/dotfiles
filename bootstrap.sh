@@ -476,7 +476,9 @@ configure_claude_mcp() {
     return
   fi
 
-  add_claude_mcp fff -- fff-mcp --no-update-check
+  # Background and daemon sessions start without ~/.local/bin on PATH, so
+  # register the resolved path rather than the bare command name.
+  add_claude_mcp fff -- "$(command -v fff-mcp || echo fff-mcp)" --no-update-check
 
   # The Carlyle devbox has no infra checkout, so its AWS MCP is registered
   # here, pinned to the host's profiles by the Carlyle overlay's settings env;
