@@ -8,5 +8,8 @@
   "enabledPlugins": {
     "cloudflare@cloudflare": false,
     "workos@workos": false
+  },
+  "sandbox": {
+    "enabled": false
   }
 }
