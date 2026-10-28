@@ -1,0 +1,84 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  // Zed installs these on first start: Oxc runs Oxlint and Oxfmt, and tsgo runs
+  // a TypeScript 7 language server. A project's settings can enable their
+  // servers but not install them.
+  "auto_install_extensions": {
+    "oxc": true,
+    "tsgo": true,
+  },
+  "markdown_preview": {
+    "limit_content_width": true
+  },
+  "which_key": {
+    "enabled": true
+  },
+  "buffer_line_height": "standard",
+  "buffer_font_size": 14.0,
+  "buffer_font_weight": 400.0,
+  "terminal": {
+    "font_family": "JetBrains Mono",
+    "font_weight": 300.0
+  },
+  "text_rendering_mode": "grayscale",
+  "agent_servers": {
+    "claude-acp": {
+      "default_config_options": {
+        "mode": "auto"
+      },
+      "type": "registry"
+    }
+  },
+  "project_panel": {
+    "dock": "left"
+  },
+  "outline_panel": {
+    "dock": "right"
+  },
+  "collaboration_panel": {
+    "dock": "right"
+  },
+  "git_panel": {
+    "dock": "right"
+  },
+  "agent_buffer_font_size": 14.0,
+  "ui_font_weight": 400.0,
+  "ui_font_family": ".ZedSans",
+  "buffer_font_family": "JetBrains Mono",
+  "icon_theme": "Zed (Default)",
+  "agent": {
+    "limit_content_width": false,
+    "max_content_width": 850.0,
+    "dock": "left",
+    "default_profile": "write",
+    "inline_assistant_model": {
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-thinking-latest",
+    },
+    "play_sound_when_agent_done": "always",
+    "default_model": {
+      "provider": "anthropic",
+      "model": "claude-opus-4-5-thinking-latest",
+    },
+  },
+  "base_keymap": "VSCode",
+  "ui_font_size": 16,
+  "theme": {
+    "mode": "light",
+    "light": "Min Light (Blurred)",
+    "dark": "macOS Classic Dark",
+  },
+  "vim_mode": true,
+  "diagnostics": {
+    "inline": {
+      "enabled": true,
+    },
+  },
+}
