@@ -72,7 +72,7 @@
   "ui_font_size": 16,
   "theme": {
     "mode": "light",
-    "light": "macOS Classic Light",
+    "light": "Min Light (Blurred)",
     "dark": "macOS Classic Dark",
   },
   "vim_mode": true,
