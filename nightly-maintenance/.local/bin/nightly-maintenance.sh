@@ -100,18 +100,15 @@ run_if_available() {
 	"$@"
 }
 
-# brew upgrade replaces cloudflared's binary but not the running tunnel, which
-# keeps the old version until launchd restarts it. Restart the office-tv tunnel
-# (arrakis only) when it runs a binary other than the one Homebrew links.
+# brew upgrade replaces cloudflared on disk, but the running tunnel keeps the
+# old binary until launchd restarts it. Skips machines without the agent.
 restart_stale_office_tv_tunnel() {
-	local target="gui/$(id -u)/$OFFICE_TV_TUNNEL"
-	local pid
-	pid="$(launchctl print "$target" 2>/dev/null | awk '$1 == "pid" { print $3; exit }')"
+	local target="gui/$UID/$OFFICE_TV_TUNNEL"
+	local pid="$(launchctl print "$target" 2>/dev/null | awk '$1 == "pid" { print $3; exit }')"
 	[[ "$pid" == <-> ]] || return 0
 
-	local running current
-	running="$(lsof -a -p "$pid" -d txt -Fn 2>/dev/null | awk '/^n/ { print substr($0, 2); exit }')"
-	current="${CLOUDFLARED:A}"
+	local running="$(lsof -a -p "$pid" -d txt -Fn 2>/dev/null | awk '/^n/ { print substr($0, 2); exit }')"
+	local current="${CLOUDFLARED:A}"
 	if [[ -z "$running" || ! -x "$current" ]]; then
 		echo "  unable to compare $running with $current"
 		return 1
