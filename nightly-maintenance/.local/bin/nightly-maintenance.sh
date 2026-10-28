@@ -15,6 +15,8 @@ CODEX_WORKTREES="$HOME/.codex/worktrees"
 CONSTELLATION="$DEVELOPER/Tractorbeam/constellation"
 DATA_VOLUME=/System/Volumes/Data
 MIN_FREE_GIB=150
+CLOUDFLARED=/opt/homebrew/bin/cloudflared
+OFFICE_TV_TUNNEL=com.wadefletcher.office-tv-tunnel
 
 mkdir -p "$TMPDIR" || exit 1
 cd "$HOME" || exit 1
@@ -96,6 +98,28 @@ run_if_available() {
 		return 0
 	fi
 	"$@"
+}
+
+# brew upgrade replaces cloudflared on disk, but the running tunnel keeps the
+# old binary until launchd restarts it. Skips machines without the agent.
+restart_stale_office_tv_tunnel() {
+	local target="gui/$UID/$OFFICE_TV_TUNNEL"
+	local pid="$(launchctl print "$target" 2>/dev/null | awk '$1 == "pid" { print $3; exit }')"
+	[[ "$pid" == <-> ]] || return 0
+
+	local running="$(lsof -a -p "$pid" -d txt -Fn 2>/dev/null | awk '/^n/ { print substr($0, 2); exit }')"
+	local current="${CLOUDFLARED:A}"
+	if [[ -z "$running" || ! -x "$current" ]]; then
+		echo "  unable to compare $running with $current"
+		return 1
+	fi
+	if [[ "$running" == "$current" ]]; then
+		echo "  current: $running"
+		return 0
+	fi
+
+	echo "  restarting: $running is not $current"
+	launchctl kickstart -k "$target"
 }
 
 clean_merged_constellation_targets() {
@@ -186,6 +210,7 @@ echo "Starting disk space: $(format_gib "$start_kib") available"
 
 run_step "Updating Homebrew..." brew update
 run_step "Upgrading Homebrew packages..." brew upgrade
+run_step "Restarting a stale office-tv tunnel..." restart_stale_office_tv_tunnel
 run_step "Cleaning Homebrew caches..." brew cleanup --prune=all
 run_step "Updating mise..." run_if_available mise mise self-update --yes
 run_step "Pruning unused mise tool versions..." run_if_available mise mise prune --tools --yes

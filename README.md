@@ -108,6 +108,8 @@ security add-generic-password -a "$USER" -s office-tv-tunnel-token -U -w
 
 Bootstrap warns when either is missing and loads the agents anyway; launchd retries them every 30 seconds until the items exist. Logs go to `/tmp/office-tv-relay.log` and `/tmp/office-tv-tunnel.log`.
 
+Nightly maintenance restarts the tunnel when `brew upgrade` replaces `cloudflared`, so a security release takes effect the same night instead of at the next reboot.
+
 The other side lives in `tractorbeamai/beam`: the `office_tv` tool in `agents/beam/office-tv.ts`, and the Fire TV sign app in `firetv/`.
 
 ## Deploying changes
