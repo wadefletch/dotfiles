@@ -29,4 +29,5 @@
 ## File search
 
 - To search the current git-indexed directory, use the fff tools: for file contents, `grep` from the fff MCP server or `ffgrep` in Pi; for several patterns at once, `multi_grep` or `fff-multi-grep`; for file paths, `find_files` or `fffind`. Use them instead of the harness's built-in search tools (including Pi's own `grep` and `find`) and instead of `rg`, `grep`, `find`, `fd`, or `ls -R` in the shell, including searches chained with pipes, `xargs`, or loops.
+- Include the directory or module you already know in the first search. Read more of a file only when the returned lines need more context.
 - Use shell search only outside the git-indexed directory, or for a search fff can't express, such as one across files that aren't tracked by git.
