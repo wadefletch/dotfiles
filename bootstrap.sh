@@ -614,7 +614,9 @@ reconcile_codex_plugins() {
   codex plugin marketplace add aws/agent-toolkit-for-aws
   codex plugin marketplace add cloudflare/skills
   codex plugin marketplace add workos/skills
-  codex plugin marketplace add upstash/context7
+  # Codex gives a marketplace clone 30s; the full context7 repo needs longer.
+  codex plugin marketplace add upstash/context7 \
+    --sparse .agents/plugins --sparse plugins/codex/context7
   codex plugin marketplace upgrade tractorbeam
   codex plugin marketplace upgrade agent-toolkit-for-aws
   codex plugin marketplace upgrade cloudflare
