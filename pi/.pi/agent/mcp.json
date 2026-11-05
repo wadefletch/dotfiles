@@ -10,11 +10,6 @@
       "description": "Cloudflare account, Workers, DNS, and platform APIs",
       "exposure": "deferred"
     },
-    "betterstack": {
-      "url": "https://mcp.betterstack.com",
-      "description": "Better Stack monitors, incidents, and logs",
-      "exposure": "deferred"
-    },
     "xapi": {
       "command": "npx",
       "args": [
