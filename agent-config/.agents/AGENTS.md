@@ -28,4 +28,5 @@
 
 ## File search
 
-- For any file search or grep in the current git-indexed directory, use fff tools.
+- To search the current git-indexed directory, use the fff MCP tools: `grep` for file contents, `multi_grep` for several patterns at once, and `find_files` for file paths. Use them instead of the harness's own search tools and instead of `rg`, `grep`, `find`, `fd`, or `ls -R` in the shell, including searches chained with pipes, `xargs`, or loops.
+- Use shell search only outside the git-indexed directory, or for a search fff can't express, such as one across files that aren't tracked by git.
