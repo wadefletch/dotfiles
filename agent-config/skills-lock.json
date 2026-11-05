@@ -29,6 +29,10 @@
       "source": "mattpocock/skills",
       "sourceType": "github"
     },
+    "shadcn": {
+      "source": "shadcn/ui",
+      "sourceType": "github"
+    },
     "sync-developer-repos": {
       "source": "./skills/sync-developer-repos",
       "sourceType": "local"
