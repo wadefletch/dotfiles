@@ -37,7 +37,7 @@ SKIP_PACKAGES=""
 NO_FOLDING="agent-config aws claude codex cursor gh git-auto-ff office-tv-relay pi zed"
 
 # CLI packages to install (must exist in brew + apt/dnf/yum/pacman)
-PACKAGES=(git neovim ripgrep stow zsh eza)
+PACKAGES=(git neovim ripgrep stow zsh eza jq)
 
 # macOS apps and fonts (brew casks)
 CASKS=(cursor ghostty helium-browser linearmouse)
@@ -533,27 +533,30 @@ configure_claude_plugins() {
   ok "Claude Code vendor plugins"
 }
 
-# Agent Skills from their upstream repos, installed with the open `skills`
-# installer: it keeps the skill in ~/.agents/skills (which Codex and Pi read),
-# links it into ~/.claude/skills, and records the source in
-# ~/.agents/.skill-lock.json. Codex and Cursor also get context7-mcp from
-# Context7's plugins. Bump the installer pin deliberately, and only to a
-# release at least a week old: Aikido's npm protection on some machines hides
-# newer versions. Node comes from the mise toolset, so this runs after
+# Agent Skills declared in agent-config/skills-lock.json, installed with the
+# open `skills` installer: it keeps each skill in ~/.agents/skills (which Codex
+# and Pi read) and links it into ~/.claude/skills. A `local` source is a path
+# relative to the lock file. Codex and Cursor also get context7-mcp from
+# Context7's plugins. Node comes from the mise toolset, so this runs after
 # `mise install`.
-SKILLS_INSTALLER_VERSION=1.7.0
 install_agent_skills() {
   if ! command -v npx &>/dev/null; then
     warn "npx not found; skipping agent skills"
     return
   fi
 
-  if npx -y "skills@$SKILLS_INSTALLER_VERSION" add upstash/context7 --skill context7-mcp \
-    --global --agent claude-code pi --yes >/dev/null 2>&1; then
-    ok "context7-mcp skill"
-  else
-    warn "context7-mcp skill install failed"
-  fi
+  (
+    cd "$DOTFILES/agent-config"
+    jq -r '.skills | to_entries[] | "\(.value.source) \(.key)"' skills-lock.json |
+      while read -r source skill; do
+        if npx -y skills add "$source" --skill "$skill" \
+          --global --agent claude-code pi --yes </dev/null >/dev/null 2>&1; then
+          ok "$skill skill"
+        else
+          warn "$skill skill install failed"
+        fi
+      done
+  )
 }
 
 # Every harness's aws-mcp server launches this executable directly instead of

@@ -24,6 +24,7 @@ bootstrap.sh        # installs deps, stows packages, git hooks, WARP SSH host ke
 - `zsh/.config/zsh/zshenv` — environment for every zsh: PATH exports (brew, local bin), then `~/.zshenv.local` for per-machine variables
 - `claude/AGENTS.md` — instructions for the Claude stow package itself
 - `agent-config/.agents/AGENTS.md` — user-scoped agent instructions. `claude/.claude/CLAUDE.md`, `codex/.codex/AGENTS.md`, and `pi/.pi/agent/AGENTS.md` are symlinks to it, so edit this file, not the links.
+- `agent-config/skills-lock.json` — user-scope skills bootstrap installs with the `skills` CLI; personal ones live in `agent-config/skills/` as `local` sources. `agent-config/.stow-local-ignore` keeps both out of stow.
 
 ## Conventions
 
