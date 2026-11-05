@@ -8,6 +8,13 @@
 - Push back. When something learned mid-task (a constraint, a cost, a framework limit) changes the tradeoffs behind the request, stop and say so with a recommendation before building the original plan. "This doesn't earn its place" is a valid answer; agreement is not the default.
 - Build only what was asked: no speculative options, abstractions, or "for later" code. Name what you skipped in one line.
 
+## Skills
+
+- Before writing or reviewing code, load the matching `code-style` skill: `typescript`, `rust`, `frontend`, `terraform`, `github-actions`, or `mise`. Load `code-style:testing` before writing or changing a test. A repository's own skill on the same topic overrides it.
+- When editing docs, comments, or any prose, load `no-accretive-writing`; when the reader is an agent (`AGENTS.md`, `CLAUDE.md`, a skill), also load `writing-for-agents`.
+- Before committing, pushing, opening or updating a pull request, resolving conflicts, or cleaning up branches, load the Tractorbeam `git` skill.
+- Before reading, filing, or updating Linear issues, projects, initiatives, or milestones, load the Tractorbeam `linear` skill.
+
 ## Git metadata
 
 - When a Git command required by the user fails because `.git` or linked-worktree metadata is read-only, retry that narrowly scoped command with sandbox escalation. Treat this as an expected approval boundary, not a broken checkout.
