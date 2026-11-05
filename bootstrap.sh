@@ -37,7 +37,7 @@ SKIP_PACKAGES=""
 NO_FOLDING="agent-config aws claude codex cursor gh git-auto-ff office-tv-relay pi zed"
 
 # CLI packages to install (must exist in brew + apt/dnf/yum/pacman)
-PACKAGES=(git neovim ripgrep stow zsh eza)
+PACKAGES=(git neovim ripgrep stow zsh eza jq)
 
 # macOS apps and fonts (brew casks)
 CASKS=(cursor ghostty helium-browser linearmouse)
@@ -468,9 +468,10 @@ install_claude_ssh_host_keys() {
 # than a standalone stowable file. Add the portable servers when they are
 # missing and leave all other registrations alone. The Cloudflare server comes
 # from its plugin instead, and Context7 and WorkOS from claude.ai connectors.
-# Okta and Tractorbeam's AWS MCP are scoped to the infra repository, and
-# Secureframe to infra and the handbook, whose .mcp.json files define them, so
-# they stay out of every other project's context.
+# Okta and Tractorbeam's AWS MCP are scoped to the infra repository, Better
+# Stack to infra and Constellation, and Secureframe to infra and the handbook,
+# whose .mcp.json files define them, so they stay out of every other project's
+# context.
 configure_claude_mcp() {
   if ! command -v claude &>/dev/null; then
     warn "claude not found; skipping MCP configuration"
@@ -487,7 +488,6 @@ configure_claude_mcp() {
     add_claude_mcp aws-mcp -- mcp-proxy-for-aws-cli https://aws-mcp.us-east-1.api.aws/mcp
     return
   fi
-  add_claude_mcp betterstack --transport http -- https://mcp.betterstack.com
   add_claude_mcp xapi -- npx -y @xdevplatform/xurl mcp https://api.x.com/mcp
 }
 
@@ -503,10 +503,12 @@ add_claude_mcp() {
   fi
 }
 
-# aws-core, cloudflare, and workos come straight from their vendors' marketplaces, the
-# sources Codex uses, so both harnesses run the same plugins. The settings
-# file already declares the marketplaces and the plugins; this makes the
-# installed copies match it.
+# Vendor plugins come straight from their vendors' marketplaces, the sources
+# Codex uses, so both harnesses run the same plugins. The settings file already
+# declares the marketplaces and the plugins; this makes the installed copies
+# match it. Cloudflare is Tractorbeam's account, so the Carlyle devbox gets
+# aws-core instead, which everywhere else only the infra and Constellation
+# repositories enable, along with WorkOS, PostHog, Aikido, and Mobbin.
 configure_claude_plugins() {
   if ! command -v claude &>/dev/null; then
     warn "claude not found; skipping vendor plugins"
@@ -514,46 +516,44 @@ configure_claude_plugins() {
   fi
 
   info "updating Claude Code vendor plugins"
-  claude plugin marketplace add aws/agent-toolkit-for-aws
-  claude plugin marketplace update agent-toolkit-for-aws
-  claude plugin install aws-core@agent-toolkit-for-aws
-  claude plugin update aws-core@agent-toolkit-for-aws
-  # Cloudflare and WorkOS are Tractorbeam's accounts; the Carlyle overlay
-  # disables both.
-  if [[ -z "${CARLYLE_EC2:-}" ]]; then
+  if [[ -n "${CARLYLE_EC2:-}" ]]; then
+    claude plugin marketplace add aws/agent-toolkit-for-aws
+    claude plugin marketplace update agent-toolkit-for-aws
+    claude plugin install aws-core@agent-toolkit-for-aws
+    claude plugin update aws-core@agent-toolkit-for-aws
+  else
     claude plugin marketplace add cloudflare/skills
-    claude plugin marketplace add workos/skills
     claude plugin marketplace update cloudflare
-    claude plugin marketplace update workos
     claude plugin install cloudflare@cloudflare
-    claude plugin install workos@workos
     claude plugin update cloudflare@cloudflare
-    claude plugin update workos@workos
   fi
   ok "Claude Code vendor plugins"
 }
 
-# Agent Skills from their upstream repos, installed with the open `skills`
-# installer: it keeps the skill in ~/.agents/skills (which Codex and Pi read),
-# links it into ~/.claude/skills, and records the source in
-# ~/.agents/.skill-lock.json. Codex and Cursor also get context7-mcp from
-# Context7's plugins. Bump the installer pin deliberately, and only to a
-# release at least a week old: Aikido's npm protection on some machines hides
-# newer versions. Node comes from the mise toolset, so this runs after
+# Agent Skills declared in agent-config/skills-lock.json, installed with the
+# open `skills` installer: it keeps each skill in ~/.agents/skills (which Codex
+# and Pi read) and links it into ~/.claude/skills. A `local` source is a path
+# relative to the lock file. Codex and Cursor also get context7-mcp from
+# Context7's plugins. Node comes from the mise toolset, so this runs after
 # `mise install`.
-SKILLS_INSTALLER_VERSION=1.7.0
 install_agent_skills() {
   if ! command -v npx &>/dev/null; then
     warn "npx not found; skipping agent skills"
     return
   fi
 
-  if npx -y "skills@$SKILLS_INSTALLER_VERSION" add upstash/context7 --skill context7-mcp \
-    --global --agent claude-code pi --yes >/dev/null 2>&1; then
-    ok "context7-mcp skill"
-  else
-    warn "context7-mcp skill install failed"
-  fi
+  (
+    cd "$DOTFILES/agent-config"
+    jq -r '.skills | to_entries[] | "\(.value.source) \(.key)"' skills-lock.json |
+      while read -r source skill; do
+        if npx -y skills add "$source" --skill "$skill" \
+          --global --agent claude-code pi --yes </dev/null >/dev/null 2>&1; then
+          ok "$skill skill"
+        else
+          warn "$skill skill install failed"
+        fi
+      done
+  )
 }
 
 # Every harness's aws-mcp server launches this executable directly instead of

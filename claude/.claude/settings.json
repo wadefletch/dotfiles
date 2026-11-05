@@ -73,7 +73,7 @@
     "command": "~/.claude/statusline.sh"
   },
   "enabledPlugins": {
-    "aws-core@agent-toolkit-for-aws": true,
+    "aws-core@agent-toolkit-for-aws": false,
     "cloudflare@cloudflare": true,
     "code-style@tractorbeam": true,
     "document-skills@anthropic-agent-skills": false,
@@ -81,7 +81,7 @@
     "mise@tractorbeam": false,
     "plugin-dev@claude-plugins-official": false,
     "tractorbeam@tractorbeam": true,
-    "workos@workos": true
+    "workos@workos": false
   },
   "extraKnownMarketplaces": {
     "agent-toolkit-for-aws": {
@@ -94,12 +94,6 @@
       "source": {
         "source": "github",
         "repo": "cloudflare/skills"
-      }
-    },
-    "workos": {
-      "source": {
-        "source": "github",
-        "repo": "workos/skills"
       }
     },
     "tractorbeam": {

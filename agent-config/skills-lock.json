@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "skills": {
+    "codebase-design": {
+      "source": "mattpocock/skills",
+      "sourceType": "github"
+    },
+    "context7-mcp": {
+      "source": "upstash/context7",
+      "sourceType": "github"
+    },
+    "domain-modeling": {
+      "source": "mattpocock/skills",
+      "sourceType": "github"
+    },
+    "grill-with-docs": {
+      "source": "mattpocock/skills",
+      "sourceType": "github"
+    },
+    "grilling": {
+      "source": "mattpocock/skills",
+      "sourceType": "github"
+    },
+    "improve-codebase-architecture": {
+      "source": "mattpocock/skills",
+      "sourceType": "github"
+    },
+    "retro": {
+      "source": "mattpocock/skills",
+      "sourceType": "github"
+    },
+    "sync-developer-repos": {
+      "source": "./skills/sync-developer-repos",
+      "sourceType": "local"
+    },
+    "writing-for-agents": {
+      "source": "mattpocock/skills",
+      "sourceType": "github"
+    }
+  }
+}

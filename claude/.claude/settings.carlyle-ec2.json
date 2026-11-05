@@ -6,7 +6,7 @@
     "tractorbeam:aws-access": "off"
   },
   "enabledPlugins": {
-    "cloudflare@cloudflare": false,
-    "workos@workos": false
+    "aws-core@agent-toolkit-for-aws": true,
+    "cloudflare@cloudflare": false
   }
 }

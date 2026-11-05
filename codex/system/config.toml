@@ -34,9 +34,6 @@ tool_timeout_sec = 300
 [mcp_servers.aws-mcp.env]
 AWS_MCP_PROXY_PROFILES = "agent-read-management agent-read-audit agent-read-log-archive agent-read-production agent-read-nonprod agent-read-shared-services agent-read-distribution agent-read-sandbox agent-read-brizzco"
 
-[mcp_servers.betterstack]
-url = "https://mcp.betterstack.com"
-
 # The workos plugin ships skills only for Codex; its server is registered here.
 [mcp_servers.workos]
 url = "https://mcp.workos.com/mcp"
