@@ -7,7 +7,8 @@
 
 ## Waiting on CI
 
-- Wait with `gh watch pr <PR> --interval 15s --exit-on ci-passed,ci-failed,pr-merged,pr-closed`, run with the Monitor tool in Claude Code and in the background elsewhere; the Tractorbeam git skill's "Waiting on CI" section has the details.
+- When a repository's own instructions or skills say how to wait on its CI (for example with `rwx results`), follow them instead of this section.
+- Otherwise, wait with `gh watch pr <PR> --interval 15s --exit-on ci-passed,ci-failed,pr-merged,pr-closed`, run with the Monitor tool in Claude Code and in the background elsewhere; the Tractorbeam git skill's "Waiting on CI" section has the details.
 - If gh answers `unknown command "watch" for "gh"`, run `gh extension install justincampbell/gh-watch --pin v0.4.0` and retry.
 
 ## Library documentation
