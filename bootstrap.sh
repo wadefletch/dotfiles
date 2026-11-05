@@ -9,7 +9,7 @@ OS="$(uname -s)"
 export PATH="$HOME/.local/bin:$PATH"
 
 # macOS-only stow packages (contain Library/ paths or macOS-only tools)
-MACOS_ONLY="cursor duti linearmouse nightly-maintenance teams-link vscode wallpapers"
+MACOS_ONLY="cursor display-brightness duti linearmouse nightly-maintenance teams-link vscode wallpapers"
 
 # Packages for one machine, matched on its lowercased LocalHostName (empty on
 # Linux, so none of them apply there).
@@ -40,7 +40,7 @@ NO_FOLDING="agent-config aws claude codex cursor gh git-auto-ff office-tv-relay 
 PACKAGES=(git neovim ripgrep stow zsh eza jq)
 
 # macOS apps and fonts (brew casks)
-CASKS=(cursor ghostty helium-browser linearmouse)
+CASKS=(betterdisplay cursor ghostty helium-browser linearmouse)
 # adb, which the office TV relay drives
 [[ "$HOST_NAME" == "arrakis" ]] && CASKS+=(android-platform-tools)
 
@@ -739,6 +739,14 @@ reload_nightly_maintenance() {
   ok "nightly maintenance agent"
 }
 
+# display-brightness follows the appearance on every Mac; on one without
+# BetterDisplay running it does nothing.
+reload_display_brightness() {
+  [[ "$OS" == "Darwin" ]] || return 0
+  reload_launch_agent com.wadefletcher.display-brightness
+  ok "display brightness agent"
+}
+
 # git-auto-ff is opt-in per host (./enable-git-auto-ff.sh), so reload it only
 # where it is already running.
 reload_git_auto_ff() {
@@ -888,6 +896,7 @@ deploy() {
   install_claude_ssh_host_keys
   remove_dangling_links
   reload_nightly_maintenance
+  reload_display_brightness
   enable_office_tv_relay
   reload_git_auto_ff
   apply_default_apps
