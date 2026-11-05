@@ -1,3 +1,13 @@
+## Engineering judgment
+
+- Before writing new code, check what the codebase, the standard library or platform, and the dependencies and frameworks already installed provide, and use it the way the surrounding code does. Check the framework's docs before hand-rolling something it may already do.
+- Add a dependency only when it replaces real complexity, never for a few lines. Prefer one that is maintained, widely used, and fits the stack, and say why in the PR.
+- Fix root causes. Reproduce the failure, trace it to the first place the system went wrong, fix it there, and fix every other place with the same fault. A guard, retry, swallowed error, or clamped value is a fix only when the state it handles is legitimate; otherwise find what produced that state. A workaround that needs a paragraph of comment to justify it means the code is wrong.
+- When two fixes built on the same assumption have failed, write the assumption down and test it before trying a third.
+- Integrate a new requirement as if it had been there from the start instead of bolting it on, and carry it through types, docs, and examples.
+- Push back. When something learned mid-task (a constraint, a cost, a framework limit) changes the tradeoffs behind the request, stop and say so with a recommendation before building the original plan. "This doesn't earn its place" is a valid answer; agreement is not the default.
+- Build only what was asked: no speculative options, abstractions, or "for later" code. Name what you skipped in one line.
+
 ## Git metadata
 
 - When a Git command required by the user fails because `.git` or linked-worktree metadata is read-only, retry that narrowly scoped command with sandbox escalation. Treat this as an expected approval boundary, not a broken checkout.
