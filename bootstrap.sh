@@ -269,7 +269,7 @@ install_deps() {
     # provides the command named by its last segment. arrakis also runs the
     # office-tv tunnel, which needs cloudflared 2025.7+ for Workers VPC;
     # Homebrew's is current.
-    formulae=(duti mosh rwx-cloud/tap/rwx)
+    formulae=(duti fonttools mosh rwx-cloud/tap/rwx)
     [[ "$HOST_NAME" == "arrakis" ]] && formulae+=(cloudflared)
     for formula in "${formulae[@]}"; do
       if command -v "${formula##*/}" &>/dev/null; then
