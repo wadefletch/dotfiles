@@ -21,14 +21,10 @@ ARRAKIS_ONLY="office-tv-relay"
 MESH_HOST=""
 [[ "$HOST_NAME" == "arrakis" || "$HOST_NAME" == "corrino" ]] && MESH_HOST=1
 
-# Packages this host opts out of, driven by env. The Carlyle EC2 devbox manages
-# its own host-local ~/.aws/config and aws-login, so CARLYLE_EC2=1 skips the aws
-# package (and its config sync) to leave that host-local setup untouched.
+# Packages this host opts out of. The ssh package serves only the Mesh Macs,
+# and its authorized_keys admits only personal keys, so stowing it anywhere
+# else would replace that host's own keys.
 SKIP_PACKAGES=""
-[[ -n "${CARLYLE_EC2:-}" ]] && SKIP_PACKAGES+=" aws"
-# The ssh package serves only the Mesh Macs, and its authorized_keys admits
-# only personal keys, so stowing it anywhere else (the Carlyle EC2 devbox)
-# would replace that host's own keys.
 [[ -n "$MESH_HOST" ]] || SKIP_PACKAGES+=" ssh"
 
 # Stow packages whose target directory also holds host-local state, so the
@@ -354,7 +350,7 @@ stow_packages() (
       continue
     fi
 
-    # skip packages this host opts out of (e.g. CARLYLE_EC2 disables aws)
+    # skip packages this host opts out of (ssh off the Mesh Macs)
     if [[ " $SKIP_PACKAGES " == *" $pkg "* ]]; then
       # earlier bootstraps stowed ssh on every host; remove those links
       [[ "$pkg" == "ssh" ]] && stow -t "$HOME" -D "$pkg"
@@ -479,15 +475,6 @@ configure_claude_mcp() {
   fi
 
   add_claude_mcp fff -- fff-mcp --no-update-check
-
-  # The Carlyle devbox has no infra checkout, so its AWS MCP is registered
-  # here, pinned to the host's profiles by the Carlyle overlay's settings env;
-  # settings.json denies the aws-core plugin's copy. Tractorbeam's service
-  # accounts stay off that host.
-  if [[ -n "${CARLYLE_EC2:-}" ]]; then
-    add_claude_mcp aws-mcp -- mcp-proxy-for-aws-cli https://aws-mcp.us-east-1.api.aws/mcp
-    return
-  fi
   add_claude_mcp xapi -- npx -y @xdevplatform/xurl mcp https://api.x.com/mcp
 }
 
@@ -506,9 +493,8 @@ add_claude_mcp() {
 # Vendor plugins come straight from their vendors' marketplaces, the sources
 # Codex uses, so both harnesses run the same plugins. The settings file already
 # declares the marketplaces and the plugins; this makes the installed copies
-# match it. Cloudflare is Tractorbeam's account, so the Carlyle devbox gets
-# aws-core instead, which everywhere else only the infra and Constellation
-# repositories enable, along with WorkOS, PostHog, Aikido, and Mobbin.
+# match it. aws-core, WorkOS, PostHog, Aikido, and Mobbin are enabled only by
+# the infra and Constellation repositories.
 configure_claude_plugins() {
   if ! command -v claude &>/dev/null; then
     warn "claude not found; skipping vendor plugins"
@@ -516,17 +502,10 @@ configure_claude_plugins() {
   fi
 
   info "updating Claude Code vendor plugins"
-  if [[ -n "${CARLYLE_EC2:-}" ]]; then
-    claude plugin marketplace add aws/agent-toolkit-for-aws
-    claude plugin marketplace update agent-toolkit-for-aws
-    claude plugin install aws-core@agent-toolkit-for-aws
-    claude plugin update aws-core@agent-toolkit-for-aws
-  else
-    claude plugin marketplace add cloudflare/skills
-    claude plugin marketplace update cloudflare
-    claude plugin install cloudflare@cloudflare
-    claude plugin update cloudflare@cloudflare
-  fi
+  claude plugin marketplace add cloudflare/skills
+  claude plugin marketplace update cloudflare
+  claude plugin install cloudflare@cloudflare
+  claude plugin update cloudflare@cloudflare
   ok "Claude Code vendor plugins"
 }
 
@@ -789,34 +768,9 @@ apply_macos_defaults() {
 }
 
 sync_aws_config() {
-  if [[ " $SKIP_PACKAGES " == *" aws "* ]]; then
-    info "skipping AWS CLI config (aws disabled on this host)"
-    return 0
-  fi
   info "installing AWS CLI config"
   "$DOTFILES/aws/.local/bin/sync-aws-config"
   ok "AWS CLI config"
-}
-
-# Claude Code has no user-scope settings.local.json, so the Carlyle overlay is
-# merged into a real ~/.claude/settings.json in place of the stowed symlink,
-# which would otherwise turn the merge into a git change. Restowing replaces
-# the merged file with the link again, so this runs after every stow.
-apply_carlyle_claude_settings() {
-  local tmp
-
-  [[ -n "${CARLYLE_EC2:-}" ]] || return 0
-
-  info "applying Carlyle EC2 Claude Code overrides"
-  tmp="$(mktemp "$HOME/.claude/settings.json.XXXXXX")"
-  jq -s '.[0] * .[1]' "$DOTFILES/claude/.claude/settings.json" \
-    "$DOTFILES/claude/.claude/settings.carlyle-ec2.json" >"$tmp" || {
-    rm -f "$tmp"
-    fail "merging Carlyle Claude Code settings (is jq installed?)"
-  }
-  chmod 644 "$tmp"
-  mv -f "$tmp" "$HOME/.claude/settings.json"
-  ok "Claude Code settings (Carlyle EC2)"
 }
 
 # Remove symlinks in $HOME that point into this checkout but no longer resolve,
@@ -854,7 +808,6 @@ main() {
   stow_packages
   install_local_entrypoints
   sync_aws_config
-  apply_carlyle_claude_settings
   configure_claude_mcp
   configure_claude_plugins
   install_claude_ssh_host_keys
@@ -894,7 +847,6 @@ deploy() {
   stow_packages
   install_local_entrypoints
   sync_aws_config
-  apply_carlyle_claude_settings
   install_claude_ssh_host_keys
   remove_dangling_links
   reload_nightly_maintenance
