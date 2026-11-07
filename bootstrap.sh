@@ -503,6 +503,26 @@ add_claude_mcp() {
   fi
 }
 
+# The xapi MCP signs in with the default app in ~/.xurl/auth.yml. Its secrets
+# and rotating refresh token are per machine, so they stay out of the repo;
+# without a client ID or OAuth2 user, every agent session opens a browser
+# login that cannot succeed, so this warns instead.
+check_xurl_auth() {
+  local status
+
+  [[ -z "${CARLYLE_EC2:-}" ]] || return 0
+  command -v npx &>/dev/null || return 0
+
+  status=$(npx -y @xdevplatform/xurl auth status 2>/dev/null)
+  # The default app's block starts with "▸" and ends at the next app's name.
+  if awk '/^▸/ { d = 1; next } /^  [^ ]/ { d = 0 } d' <<<"$status" | grep -q 'oauth2: [a-zA-Z0-9_]' &&
+    ! grep -q '^▸.*(no credentials)' <<<"$status"; then
+    ok "xurl auth for the xapi MCP"
+  else
+    warn "xurl's default app lacks a client ID or OAuth2 login; run: npx -y @xdevplatform/xurl auth apps update default --client-id … --client-secret …, then npx -y @xdevplatform/xurl auth oauth2"
+  fi
+}
+
 # Vendor plugins come straight from their vendors' marketplaces, the sources
 # Codex uses, so both harnesses run the same plugins. The settings file already
 # declares the marketplaces and the plugins; this makes the installed copies
@@ -871,6 +891,7 @@ main() {
 
   install_agent_skills
   install_aws_mcp_proxy
+  check_xurl_auth
 
   install_teams_link_handler
   enable_office_tv_relay
@@ -896,6 +917,7 @@ deploy() {
   sync_aws_config
   apply_carlyle_claude_settings
   install_claude_ssh_host_keys
+  check_xurl_auth
   remove_dangling_links
   reload_nightly_maintenance
   reload_display_brightness
