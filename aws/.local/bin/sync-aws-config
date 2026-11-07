@@ -2,8 +2,8 @@
 set -euo pipefail
 
 # Assemble ~/.aws/config from the tracked profiles plus optional host-local
-# overlay. The overlay is where generated Tractorbeam agent profiles live;
-# they must not be symlinked into the repo or a regenerator would dirty git.
+# overlay. The result is a regular file, never a symlink into the repo, so
+# host-local profiles cannot leak into git.
 
 # Stow links this script into ~/.local/bin with a relative target, so resolve
 # the link from its own directory rather than the caller's.
@@ -29,9 +29,14 @@ if [[ -L "$live" ]]; then
   rm "$live"
 fi
 
-if [[ -f "$live" && ! -f "$overlay" ]] && grep -qxF "$marker" "$live"; then
-  awk -v m="$marker" '$0 == m { p = 1 } p' "$live" >"$overlay"
-  chmod 600 "$overlay"
+# A generated agent-profile block in the overlay declares the same profiles as
+# the tracked AGENTS section, and the AWS CLI rejects a config that declares a
+# profile twice. The block runs from its marker to the end of the file. Remove
+# this once no host's config.local carries one.
+if [[ -f "$overlay" ]] && grep -qxF "$marker" "$overlay"; then
+  awk -v m="$marker" '$0 == m { exit } { print }' "$overlay" >"$overlay.tmp"
+  chmod 600 "$overlay.tmp"
+  mv "$overlay.tmp" "$overlay"
 fi
 
 tmp="$(mktemp "$HOME/.aws/config.XXXXXX")"
