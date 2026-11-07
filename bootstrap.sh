@@ -265,12 +265,14 @@ install_deps() {
       fi
     done
 
-    # macOS-only brew formulae. arrakis also runs the office-tv tunnel, which
-    # needs cloudflared 2025.7+ for Workers VPC; Homebrew's is current.
-    formulae=(duti mosh)
+    # macOS-only brew formulae. A tap-qualified name installs from that tap and
+    # provides the command named by its last segment. arrakis also runs the
+    # office-tv tunnel, which needs cloudflared 2025.7+ for Workers VPC;
+    # Homebrew's is current.
+    formulae=(duti mosh rwx-cloud/tap/rwx)
     [[ "$HOST_NAME" == "arrakis" ]] && formulae+=(cloudflared)
     for formula in "${formulae[@]}"; do
-      if command -v "$formula" &>/dev/null; then
+      if command -v "${formula##*/}" &>/dev/null; then
         ok "$formula already installed"
       else
         info "installing $formula"
