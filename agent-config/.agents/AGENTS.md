@@ -10,7 +10,7 @@
 
 ## Skills
 
-- Before writing or reviewing code, load the matching `code-style` skill: `typescript`, `rust`, `frontend`, `terraform`, `github-actions`, or `mise`. Load `code-style:testing` before writing or changing a test. A repository's own skill on the same topic overrides it.
+- Before writing or reviewing code, load the matching `code-style` skill: `typescript`, `rust`, `frontend`, `terraform`, `github-actions`, or `mise`. Load `testing` before writing or changing a test. A repository's own skill on the same topic overrides it.
 - When editing docs, comments, or any prose, load `no-accretive-writing`; when the reader is an agent (`AGENTS.md`, `CLAUDE.md`, a skill), also load `writing-for-agents`.
 - Before committing, pushing, opening or updating a pull request, resolving conflicts, or cleaning up branches, load the Tractorbeam `git` skill.
 - Before reading, filing, or updating Linear issues, projects, initiatives, or milestones, load the Tractorbeam `linear` skill.
