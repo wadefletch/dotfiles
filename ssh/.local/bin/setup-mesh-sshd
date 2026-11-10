@@ -1,6 +1,9 @@
 #!/bin/sh
 # Accept SSH and mosh on this Mac only at its Cloudflare Mesh address:
 #   sudo setup-mesh-sshd
+# Report, without root, whether that setup is already in place (exit 0) or
+# needs the command above (exit 1):
+#   setup-mesh-sshd --check
 #
 # Apple's Remote Login cannot be restricted to one address: launchd owns its
 # socket and listens on every interface, so sshd's ListenAddress never applies.
@@ -22,8 +25,15 @@
 
 set -eu
 
-[ "$(id -u)" -eq 0 ] || { echo "Run with sudo" >&2; exit 1; }
-user=${SUDO_USER:?Run with sudo from your own account}
+check=false
+[ "${1:-}" = --check ] && check=true
+
+if [ "$check" = true ]; then
+  user=$(/usr/bin/id -un)
+else
+  [ "$(id -u)" -eq 0 ] || { echo "Run with sudo" >&2; exit 1; }
+  user=${SUDO_USER:?Run with sudo from your own account}
+fi
 
 LABEL=local.mesh-sshd
 PLIST=/Library/LaunchDaemons/$LABEL.plist
@@ -102,6 +112,27 @@ EOF
 </dict>
 </plist>
 EOF
+
+if [ "$check" = true ]; then
+  /usr/bin/cmp -s "$config_tmp" "$CONFIG" || { echo "$CONFIG differs"; exit 1; }
+  /usr/bin/cmp -s "$plist_tmp" "$PLIST" || { echo "$PLIST differs"; exit 1; }
+  /bin/launchctl print "system/$LABEL" >/dev/null 2>&1 || {
+    echo "$LABEL is not loaded"
+    exit 1
+  }
+  if /bin/launchctl print system/com.openssh.sshd >/dev/null 2>&1; then
+    echo "Remote Login is on"
+    exit 1
+  fi
+  if [ -x "$MOSH_SERVER" ]; then
+    mosh_binary=$(/usr/bin/readlink -f "$MOSH_SERVER")
+    "$FIREWALL" --getappblocked "$mosh_binary" | /usr/bin/grep -q 'is permitted' || {
+      echo "Application firewall does not admit $mosh_binary"
+      exit 1
+    }
+  fi
+  exit 0
+fi
 
 for file in "$config_tmp" "$plist_tmp"; do
   /bin/chmod 644 "$file"

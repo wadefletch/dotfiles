@@ -19,6 +19,7 @@
       "Bash(docker rm *)",
       "Bash(docker run *)",
       "Bash(docker stop *)",
+      "Bash(git pull --ff-only)",
       "Edit(~/.claude/memory/**)",
       "Read(~/.claude/memory/**)",
       "Read(~/.claude/plugins/**)",
@@ -167,6 +168,7 @@
     "enableWeakerNetworkIsolation": true,
     "excludedCommands": [
       "docker *",
+      "git pull --ff-only",
       "rsync *",
       "rwx sandbox *",
       "scp *",

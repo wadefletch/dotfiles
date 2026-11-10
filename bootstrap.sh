@@ -48,6 +48,19 @@ fail() {
   exit 1
 }
 
+# Run a command as root without ever prompting: it runs when sudo is already
+# authorized (cached credentials or NOPASSWD), and otherwise the command to run
+# by hand is printed instead. Callers check drift first, so this only runs when
+# something needs changing.
+as_root() {
+  if sudo -n true 2>/dev/null; then
+    sudo "$@"
+  else
+    warn "needs root; run: sudo $*"
+    return 1
+  fi
+}
+
 # --- Package manager helpers -------------------------------------------------
 
 apt_get() {
@@ -155,6 +168,25 @@ install_gh() {
   ok "gh"
 }
 
+# --- Cloudflare WARP ---------------------------------------------------------
+# The client arrives through device management rather than Homebrew, so this
+# only launches it. Cloudflare Mesh, which the Mesh-only sshd binds to, comes
+# up once it connects.
+
+start_cloudflare_warp() {
+  local app="/Applications/Cloudflare WARP.app"
+
+  if [[ ! -d "$app" ]]; then
+    warn "Cloudflare WARP not installed"
+  elif pgrep -qx "Cloudflare WARP"; then
+    ok "Cloudflare WARP already running"
+  else
+    info "starting Cloudflare WARP"
+    open -g "$app"
+    ok "Cloudflare WARP"
+  fi
+}
+
 # --- Install dependencies ----------------------------------------------------
 
 install_deps() {
@@ -164,6 +196,7 @@ install_deps() {
     # Map package name -> binary name where they differ (e.g. neovim -> nvim).
     case "$pkg" in
     neovim) bin="nvim" ;;
+    ripgrep) bin="rg" ;;
     *) bin="$pkg" ;;
     esac
     if command -v "$bin" &>/dev/null; then
@@ -241,11 +274,11 @@ install_deps() {
   # Linux package installs do not normally change the login shell.
   if command -v zsh &>/dev/null && [[ "${SHELL:-}" != *"/zsh" ]]; then
     zsh_path="$(command -v zsh)"
-    if ! grep -qx "$zsh_path" /etc/shells 2>/dev/null; then
-      echo "$zsh_path" | sudo tee -a /etc/shells >/dev/null
+    if grep -qx "$zsh_path" /etc/shells 2>/dev/null ||
+      echo "$zsh_path" | as_root tee -a /etc/shells >/dev/null; then
+      as_root chsh -s "$zsh_path" "$USER" &&
+        ok "default shell -> zsh (relog to take effect)"
     fi
-    sudo chsh -s "$zsh_path" "$USER"
-    ok "default shell -> zsh (relog to take effect)"
   fi
 
   # macOS GUI apps
@@ -281,11 +314,16 @@ install_deps() {
       fi
     done
 
+    start_cloudflare_warp
+
     # arrakis and corrino accept SSH and mosh over Cloudflare Mesh only.
     if [[ -n "$MESH_HOST" ]]; then
-      info "configuring Mesh-only sshd (sudo)"
-      sudo "$DOTFILES/ssh/.local/bin/setup-mesh-sshd"
-      ok "Mesh-only sshd"
+      if "$DOTFILES/ssh/.local/bin/setup-mesh-sshd" --check >/dev/null; then
+        ok "Mesh-only sshd already configured"
+      else
+        info "configuring Mesh-only sshd"
+        as_root "$DOTFILES/ssh/.local/bin/setup-mesh-sshd" && ok "Mesh-only sshd"
+      fi
     fi
   fi
 
@@ -582,7 +620,7 @@ install_aws_mcp_proxy() {
 
 # Codex reads host-wide defaults only from this fixed path and doesn't check
 # its owner on Unix, so a link into the checkout picks up every pull. Only the
-# first run on a machine needs sudo.
+# first run on a machine needs root.
 install_codex_system_config() {
   local source="$DOTFILES/codex/system/config.toml"
   local target="/etc/codex/config.toml"
@@ -592,10 +630,10 @@ install_codex_system_config() {
     return
   fi
 
-  info "linking codex portable defaults (sudo, once per machine)"
-  sudo install -d -m 0755 /etc/codex
-  sudo ln -sfn "$source" "$target"
-  ok "codex portable defaults"
+  info "linking codex portable defaults (once per machine)"
+  if as_root install -d -m 0755 /etc/codex && as_root ln -sfn "$source" "$target"; then
+    ok "codex portable defaults"
+  fi
 }
 
 reconcile_codex_plugins() {
@@ -877,6 +915,7 @@ deploy() {
   reload_display_brightness
   enable_office_tv_relay
   reload_git_auto_ff
+  [[ "$OS" == "Darwin" ]] && start_cloudflare_warp
   apply_default_apps
   apply_macos_defaults
 
