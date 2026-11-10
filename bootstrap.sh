@@ -30,7 +30,7 @@ SKIP_PACKAGES=""
 # Stow packages whose target directory also holds host-local state, so the
 # tracked files must be linked individually rather than by folding the
 # directory itself into a symlink.
-NO_FOLDING="agent-config aws claude codex cursor gh git-auto-ff office-tv-relay pi rex zed"
+NO_FOLDING="agent-config aws claude codex cursor gh git-auto-ff office-tv-relay pi zed"
 
 # CLI packages to install (must exist in brew + apt/dnf/yum/pacman)
 PACKAGES=(git neovim ripgrep stow zsh eza jq)
@@ -405,8 +405,7 @@ stow_packages() (
       # These packages sit beside mutable host state — agent harnesses under
       # ~/.claude, ~/.codex, ~/.cursor, and ~/.pi, the AWS CLI's SSO token
       # cache and credentials under ~/.aws, Zed's conversations and prompts
-      # beside its settings, the .claude state agents leave in ~/.config/rex
-      # when started there, the timers.target.wants link
+      # beside its settings, the timers.target.wants link
       # that systemctl --user enable writes beside git-auto-ff's units, and
       # other apps' agents in ~/Library/LaunchAgents. Link the tracked files
       # individually so stow never replaces the host-local directory with a
