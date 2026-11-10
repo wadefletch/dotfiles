@@ -36,7 +36,7 @@ NO_FOLDING="agent-config aws claude codex cursor gh git-auto-ff office-tv-relay 
 PACKAGES=(git neovim ripgrep stow zsh eza jq)
 
 # macOS apps and fonts (brew casks)
-CASKS=(betterdisplay cursor ghostty helium-browser linearmouse)
+CASKS=(betterdisplay cursor font-jetbrains-mono-nerd-font ghostty helium-browser linearmouse)
 # adb, which the office TV relay drives
 [[ "$HOST_NAME" == "arrakis" ]] && CASKS+=(android-platform-tools)
 
