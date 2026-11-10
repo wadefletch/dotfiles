@@ -15,7 +15,7 @@ GNU Stow-based dotfiles for macOS. Each top-level directory is a stow package mi
   .aws/config       # aws cli profiles (aws/) — live ~/.aws/config is assembled; credentials, SSO cache, config.local untracked
 .githooks/          # git hooks (core.hooksPath); post-merge updates submodules, pre-commit rejects installer blocks
 .retired/           # reference-only packages (yabai, skhd-zig); dot-dirs aren't stowed
-bootstrap.sh        # installs deps, stows packages, git hooks, WARP SSH host keys, macOS defaults (macOS + Linux)
+bootstrap.sh        # installs deps, stows packages, git hooks, pinned SSH host keys, macOS defaults (macOS + Linux)
 ```
 
 ## Key files
