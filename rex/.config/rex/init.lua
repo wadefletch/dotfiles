@@ -1,0 +1,7 @@
+-- Migrated from Ghostty (~/.config/ghostty/config)
+rex.bind("ctrl+shift+h", "pane.focus", { direction = "left" })
+rex.bind("ctrl+shift+j", "pane.focus", { direction = "down" })
+rex.bind("ctrl+shift+k", "pane.focus", { direction = "up" })
+rex.bind("ctrl+shift+l", "pane.focus", { direction = "right" })
+rex.bind("ctrl+alt+j", "pane.split", { direction = "down" })
+rex.bind("ctrl+alt+l", "pane.split", { direction = "right" })

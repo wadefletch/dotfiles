@@ -26,6 +26,7 @@ GNU Stow-based dotfiles for macOS (with Linux support for the CLI packages). Eac
 | nvim | Neovim config and markdownlint |
 | office-tv-relay | Fire TV relay and Cloudflare Tunnel LaunchAgents for beam's `office_tv` tool (arrakis only) |
 | pi | Pi settings and MCP configuration |
+| rex | Rex terminal key bindings (`init.lua`; font and theme stay in the app's Settings) |
 | ssh | SSH and mosh between the Macs over Cloudflare Mesh: client config, authorized keys, pinned host keys, and port-forwarding and browser helpers (arrakis and corrino only) |
 | starship | Starship prompt |
 | terraform | Terraform CLI config |
