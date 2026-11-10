@@ -10,6 +10,9 @@
   // Zed installs these on first start: Oxc runs Oxlint and Oxfmt, and tsgo runs
   // a TypeScript 7 language server. A project's settings can enable their
   // servers but not install them.
+  "edit_predictions": {
+    "allow_data_collection": "no"
+  },
   "auto_install_extensions": {
     "oxc": true,
     "tsgo": true,
@@ -52,7 +55,11 @@
   "ui_font_weight": 400.0,
   "ui_font_family": ".ZedSans",
   "buffer_font_family": "JetBrains Mono",
-  "icon_theme": "Zed (Default)",
+  "icon_theme": {
+    "mode": "dark",
+    "light": "Zed (Default)",
+    "dark": "Zed (Default)"
+  },
   "agent": {
     "limit_content_width": false,
     "max_content_width": 850.0,
@@ -71,9 +78,9 @@
   "base_keymap": "VSCode",
   "ui_font_size": 16,
   "theme": {
-    "mode": "light",
+    "mode": "dark",
     "light": "Min Light (Blurred)",
-    "dark": "macOS Classic Dark",
+    "dark": "Min Dark (Blurred)",
   },
   "vim_mode": true,
   "diagnostics": {
