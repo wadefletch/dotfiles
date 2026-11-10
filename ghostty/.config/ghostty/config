@@ -5,7 +5,7 @@ auto-update = "off"
 shell-integration = "zsh"
 
 # cross-platform aesthetics
-font-family = "Iosevka NFM"
+font-family = "JetBrainsMono Nerd Font"
 theme = "dark: Xcode Dark hc,light: Xcode Light hc"
 background-opacity = "0.90"
 background-blur-radius = "10"
