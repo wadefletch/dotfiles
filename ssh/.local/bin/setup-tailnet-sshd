@@ -1,17 +1,19 @@
 #!/bin/sh
-# Accept SSH and mosh on this Mac only at its Cloudflare Mesh address:
-#   sudo setup-mesh-sshd
+# Accept SSH and mosh on this Mac only at its Tailscale address:
+#   sudo setup-tailnet-sshd
 # Report, without root, whether that setup is already in place (exit 0) or
 # needs the command above (exit 1):
-#   setup-mesh-sshd --check
+#   setup-tailnet-sshd --check
 #
 # Apple's Remote Login cannot be restricted to one address: launchd owns its
 # socket and listens on every interface, so sshd's ListenAddress never applies.
 # This turns Remote Login off and runs Apple's own /usr/sbin/sshd from a
 # LaunchDaemon instead, where sshd binds the socket itself and ListenAddress
-# holds. Until Cloudflare One brings up the Mesh address the bind fails and
-# launchd retries every ten seconds. Tractorbeam's Fleet policy verifies the
-# result: port 22 on the Mesh address only, and no password or root login.
+# holds. Until Tailscale brings up the address after boot the bind fails and
+# launchd retries every ten seconds. A tailnet address stays with the device,
+# so the configuration needs rewriting only if the Mac rejoins the tailnet as
+# a new device. Tractorbeam's Fleet policy verifies the result: port 22 on an
+# overlay network address only, and no password or root login.
 #
 # sshd authenticates with ~/.ssh/authorized_keys and permits OpenSSH
 # forwarding. Sessions get Homebrew on PATH so non-interactive commands,
@@ -35,23 +37,16 @@ else
   user=${SUDO_USER:?Run with sudo from your own account}
 fi
 
-LABEL=local.mesh-sshd
+LABEL=local.tailnet-sshd
 PLIST=/Library/LaunchDaemons/$LABEL.plist
-CONFIG=/etc/ssh/sshd_config.d/mesh.conf
+CONFIG=/etc/ssh/sshd_config.d/tailnet.conf
 MOSH_SERVER=/opt/homebrew/bin/mosh-server
 FIREWALL=/usr/libexec/ApplicationFirewall/socketfilterfw
+TAILSCALE=/Applications/Tailscale.app/Contents/MacOS/tailscale
 
-mesh_ip=$(/sbin/ifconfig | /usr/bin/awk '
-  $1 == "inet" {
-    split($2, octet, ".")
-    if (octet[1] == 100 && octet[2] >= 96 && octet[2] <= 111) {
-      print $2
-      exit
-    }
-  }
-')
-[ -n "$mesh_ip" ] || {
-  echo "Cloudflare One Client did not report a Mesh IPv4 address" >&2
+tailnet_ip=$("$TAILSCALE" ip -4 2>/dev/null) || tailnet_ip=
+[ -n "$tailnet_ip" ] || {
+  echo "Tailscale did not report an IPv4 address; sign in to the tailnet first" >&2
   exit 1
 }
 
@@ -69,13 +64,13 @@ do
   fi
 done
 
-config_tmp=$(/usr/bin/mktemp /tmp/mesh-sshd.XXXXXX)
-config_backup=$(/usr/bin/mktemp /tmp/mesh-sshd-backup.XXXXXX)
-plist_tmp=$(/usr/bin/mktemp /tmp/mesh-sshd-plist.XXXXXX)
+config_tmp=$(/usr/bin/mktemp /tmp/tailnet-sshd.XXXXXX)
+config_backup=$(/usr/bin/mktemp /tmp/tailnet-sshd-backup.XXXXXX)
+plist_tmp=$(/usr/bin/mktemp /tmp/tailnet-sshd-plist.XXXXXX)
 trap '/bin/rm -f "$config_tmp" "$config_backup" "$plist_tmp"' EXIT HUP INT TERM
 
 /bin/cat >"$config_tmp" <<EOF
-ListenAddress $mesh_ip
+ListenAddress $tailnet_ip
 AuthenticationMethods publickey
 PubkeyAuthentication yes
 AuthorizedKeysFile .ssh/authorized_keys
@@ -162,7 +157,7 @@ if ! /usr/sbin/sshd -t; then
   exit 1
 fi
 
-# Start the Mesh-bound sshd before touching Remote Login. While Remote Login
+# Start the tailnet-bound sshd before touching Remote Login. While Remote Login
 # still holds port 22 the new sshd may fail to bind; launchd retries every ten
 # seconds, so it takes over as soon as Remote Login stops. A new configuration
 # needs only a restart of the running job. A new LaunchDaemon needs the job
@@ -194,7 +189,7 @@ if [ -x "$MOSH_SERVER" ]; then
   echo "Application firewall admits $mosh_binary"
 fi
 
-echo "sshd will listen only on Cloudflare Mesh address $mesh_ip"
+echo "sshd will listen only on Tailscale address $tailnet_ip"
 echo "For remote access to Desktop, Documents, and Downloads, add /usr/sbin/sshd"
 echo "and /usr/libexec/sshd-session under System Settings > Privacy & Security >"
 echo "Full Disk Access (once per Mac)."

@@ -17,15 +17,16 @@ HOST_NAME=""
 [[ "$OS" == "Darwin" ]] && HOST_NAME="$(scutil --get LocalHostName | tr '[:upper:]' '[:lower:]')"
 ARRAKIS_ONLY="office-tv-relay"
 
-# arrakis and corrino reach each other with SSH and mosh over Cloudflare Mesh.
-MESH_HOST=""
-[[ "$HOST_NAME" == "arrakis" || "$HOST_NAME" == "corrino" ]] && MESH_HOST=1
+# arrakis and corrino reach each other with SSH and mosh over the personal
+# tailnet.
+TAILNET_HOST=""
+[[ "$HOST_NAME" == "arrakis" || "$HOST_NAME" == "corrino" ]] && TAILNET_HOST=1
 
-# Packages this host opts out of. The ssh package serves only the Mesh Macs,
+# Packages this host opts out of. The ssh package serves only the tailnet Macs,
 # and its authorized_keys admits only personal keys, so stowing it anywhere
 # else would replace that host's own keys.
 SKIP_PACKAGES=""
-[[ -n "$MESH_HOST" ]] || SKIP_PACKAGES+=" ssh"
+[[ -n "$TAILNET_HOST" ]] || SKIP_PACKAGES+=" ssh"
 
 # Stow packages whose target directory also holds host-local state, so the
 # tracked files must be linked individually rather than by folding the
@@ -170,8 +171,7 @@ install_gh() {
 
 # --- Cloudflare WARP ---------------------------------------------------------
 # The client arrives through device management rather than Homebrew, so this
-# only launches it. Cloudflare Mesh, which the Mesh-only sshd binds to, comes
-# up once it connects.
+# only launches it.
 
 start_cloudflare_warp() {
   local app="/Applications/Cloudflare WARP.app"
@@ -316,13 +316,13 @@ install_deps() {
 
     start_cloudflare_warp
 
-    # arrakis and corrino accept SSH and mosh over Cloudflare Mesh only.
-    if [[ -n "$MESH_HOST" ]]; then
-      if "$DOTFILES/ssh/.local/bin/setup-mesh-sshd" --check >/dev/null; then
-        ok "Mesh-only sshd already configured"
+    # arrakis and corrino accept SSH and mosh over the tailnet only.
+    if [[ -n "$TAILNET_HOST" ]]; then
+      if "$DOTFILES/ssh/.local/bin/setup-tailnet-sshd" --check >/dev/null; then
+        ok "tailnet-only sshd already configured"
       else
-        info "configuring Mesh-only sshd"
-        as_root "$DOTFILES/ssh/.local/bin/setup-mesh-sshd" && ok "Mesh-only sshd"
+        info "configuring tailnet-only sshd"
+        as_root "$DOTFILES/ssh/.local/bin/setup-tailnet-sshd" && ok "tailnet-only sshd"
       fi
     fi
   fi
@@ -390,7 +390,7 @@ stow_packages() (
       continue
     fi
 
-    # skip packages this host opts out of (ssh off the Mesh Macs)
+    # skip packages this host opts out of (ssh off the tailnet Macs)
     if [[ " $SKIP_PACKAGES " == *" $pkg "* ]]; then
       # earlier bootstraps stowed ssh on every host; remove those links
       [[ "$pkg" == "ssh" ]] && stow -t "$HOME" -D "$pkg"
