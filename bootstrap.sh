@@ -827,19 +827,22 @@ apply_macos_defaults() {
   ok "macOS defaults"
 }
 
-# Raycast opens at login; Spotify, Zoom, and Steam never start themselves.
-# System Events edits the Open at Login list. The apps' own launchers (Spotify's
-# login helper, Zoom's updater agents, Steam's cleanup agent) are disabled in
-# launchd, which outlasts reboots and app updates; a label that isn't installed
-# stays inert. The "Allow in the Background" switches have no CLI, so they are
-# left to System Settings.
-LOGIN_APPS=(Raycast)
-NO_LOGIN_APPS=(Spotify zoom.us Steam)
+# Raycast, Cloudflare WARP, Tailscale, and LinearMouse open at login; Spotify,
+# Zoom, Steam, and Logitech's software never start themselves. System Events
+# edits the Open at Login list. The other apps' own launchers (Spotify's login
+# helper, Zoom's updater agents, Steam's cleanup agent, the Logi Options+ and
+# RightSight agents) are disabled in launchd, which outlasts reboots and app
+# updates; a label that isn't installed stays inert. The "Allow in the
+# Background" switches have no CLI, so they are left to System Settings.
+LOGIN_APPS=(Raycast "Cloudflare WARP" Tailscale LinearMouse)
+NO_LOGIN_APPS=(Spotify zoom.us Steam logioptionsplus)
 NO_LOGIN_LABELS=(
   com.spotify.client.startuphelper
   us.zoom.updater
   us.zoom.updater.login.check
   com.valvesoftware.steamclean
+  com.logi.cp-dev-mgr
+  com.logitech.LogiRightSight.Agent
 )
 
 apply_login_items() {
