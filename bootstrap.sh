@@ -820,10 +820,21 @@ apply_default_apps() {
 
 # System-wide macOS preferences. Scroll bars appear only while scrolling, as
 # with a trackpad, even when a mouse is connected; apps pick it up on relaunch.
+# Mission Control's ctrl-left/right space shortcuts (symbolic hotkeys 79 and
+# 81) are off so Raycast's Switch to Previous/Next Space, which skip the slide
+# animation, can take those keys; the Raycast bindings sync with its account.
+# activateSettings applies hotkey changes without a logout.
 apply_macos_defaults() {
   [[ "$OS" == "Darwin" ]] || return 0
   info "applying macOS defaults"
   defaults write -g AppleShowScrollBars -string WhenScrolling
+  local hotkey key
+  for hotkey in 79:123 81:124; do
+    key="${hotkey%%:*}"
+    defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add "$key" \
+      "<dict><key>enabled</key><false/><key>value</key><dict><key>type</key><string>standard</string><key>parameters</key><array><integer>65535</integer><integer>${hotkey#*:}</integer><integer>8650752</integer></array></dict></dict>"
+  done
+  /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
   ok "macOS defaults"
 }
 
