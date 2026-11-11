@@ -827,6 +827,56 @@ apply_macos_defaults() {
   ok "macOS defaults"
 }
 
+# Raycast opens at login; Spotify, Zoom, and Steam never start themselves.
+# System Events edits the Open at Login list. The apps' own launchers (Spotify's
+# login helper, Zoom's updater agents, Steam's cleanup agent) are disabled in
+# launchd, which outlasts reboots and app updates; a label that isn't installed
+# stays inert. The "Allow in the Background" switches have no CLI, so they are
+# left to System Settings.
+LOGIN_APPS=(Raycast)
+NO_LOGIN_APPS=(Spotify zoom.us Steam)
+NO_LOGIN_LABELS=(
+  com.spotify.client.startuphelper
+  us.zoom.updater
+  us.zoom.updater.login.check
+  com.valvesoftware.steamclean
+)
+
+apply_login_items() {
+  [[ "$OS" == "Darwin" ]] || return 0
+  if [[ -n "${DOTFILES_SKIP_SERVICES:-}" ]]; then
+    info "skipping login items (DOTFILES_SKIP_SERVICES)"
+    return 0
+  fi
+  info "applying login items"
+  local app label
+  for label in "${NO_LOGIN_LABELS[@]}"; do
+    launchctl disable "gui/$(id -u)/$label"
+  done
+  for app in "${LOGIN_APPS[@]}"; do
+    [[ -d "/Applications/$app.app" ]] || continue
+    osascript - "$app" >/dev/null <<'EOF' || warn "could not add $app to login items"
+on run {appName}
+  tell application "System Events"
+    if not (exists login item appName) then
+      make login item at end with properties {path:"/Applications/" & appName & ".app", hidden:false}
+    end if
+  end tell
+end run
+EOF
+  done
+  for app in "${NO_LOGIN_APPS[@]}"; do
+    osascript - "$app" >/dev/null <<'EOF' || warn "could not remove $app from login items"
+on run {appName}
+  tell application "System Events"
+    if exists login item appName then delete login item appName
+  end tell
+end run
+EOF
+  done
+  ok "login items"
+}
+
 sync_aws_config() {
   info "installing AWS CLI config"
   "$DOTFILES/aws/.local/bin/sync-aws-config"
@@ -890,6 +940,7 @@ main() {
   enable_office_tv_relay
   apply_default_apps
   apply_macos_defaults
+  apply_login_items
 
   echo ""
   echo "  done"
@@ -918,6 +969,7 @@ deploy() {
   [[ "$OS" == "Darwin" ]] && start_cloudflare_warp
   apply_default_apps
   apply_macos_defaults
+  apply_login_items
 
   echo ""
   echo "  done"
