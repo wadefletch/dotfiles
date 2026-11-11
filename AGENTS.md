@@ -15,7 +15,7 @@ GNU Stow-based dotfiles for macOS. Each top-level directory is a stow package mi
   .aws/config       # aws cli profiles (aws/) — live ~/.aws/config is assembled; credentials, SSO cache, config.local untracked
 .githooks/          # git hooks (core.hooksPath); post-merge updates submodules, pre-commit rejects installer blocks
 .retired/           # reference-only packages (yabai, skhd-zig); dot-dirs aren't stowed
-bootstrap.sh        # installs deps, stows packages, git hooks, pinned SSH host keys, macOS defaults (macOS + Linux)
+bootstrap.sh        # installs deps, stows packages, git hooks, pinned SSH host keys, macOS defaults, login items (macOS + Linux)
 ```
 
 ## Key files
@@ -42,6 +42,6 @@ bootstrap.sh        # installs deps, stows packages, git hooks, pinned SSH host 
 - Deploy merged `main` only, and never leave a machine on another branch: the checkout is the live config.
 - Machines are arrakis and corrino (macOS). Work locally on the one `hostname` names; reach the other with `ssh -o BatchMode=yes <host> '…'`.
 - On each: `cd ~/.dotfiles && git pull --ff-only && ./bootstrap.sh deploy`. Stop and report a dirty tree or a pull that won't fast-forward.
-- `deploy` restows every package, refreshes the machine-local entry points, `~/.aws/config`, and pinned SSH host keys, removes dangling links into the checkout, reloads this host's LaunchAgents (and git-auto-ff where it is enabled), starts Cloudflare WARP if it is not running, and reapplies `duti` and the macOS defaults. It installs nothing and never needs sudo.
+- `deploy` restows every package, refreshes the machine-local entry points, `~/.aws/config`, and pinned SSH host keys, removes dangling links into the checkout, reloads this host's LaunchAgents (and git-auto-ff where it is enabled), starts Cloudflare WARP if it is not running, and reapplies `duti`, the macOS defaults, and the login items. It installs nothing and never needs sudo.
 - Run the full `./bootstrap.sh` instead when its install steps or `agent-config/` change, or a package is added. It never prompts: a step that needs root runs only when sudo is already authorized and otherwise prints the `sudo` command to run.
 - Open Ghostty windows need cmd+shift+, to reload.
