@@ -187,6 +187,29 @@ start_cloudflare_warp() {
   fi
 }
 
+# --- Tailscale ---------------------------------------------------------------
+# WARP owns the system resolver on the tailnet Macs. With "Use Tailscale DNS"
+# on, Tailscale takes over /etc/resolv.conf and forwards everything outside the
+# tailnet to WARP's local proxy, so when WARP reconnects it cannot resolve its
+# own connectivity check and stays down until Tailscale is turned off. The
+# Tailscale Users WARP profile (tractorbeamai/infra) sends ts.net names to
+# MagicDNS at 100.100.100.100 instead.
+
+configure_tailscale_dns() {
+  local tailscale="/Applications/Tailscale.app/Contents/MacOS/tailscale"
+
+  [[ -n "$TAILNET_HOST" ]] || return 0
+  if [[ ! -x "$tailscale" ]]; then
+    warn "Tailscale not installed"
+  elif [[ "$("$tailscale" debug prefs 2>/dev/null | jq -r .CorpDNS)" == "false" ]]; then
+    ok "Tailscale DNS already off"
+  elif "$tailscale" set --accept-dns=false; then
+    ok "Tailscale DNS off"
+  else
+    warn "could not turn off Tailscale DNS; is Tailscale running?"
+  fi
+}
+
 # --- Install dependencies ----------------------------------------------------
 
 install_deps() {
@@ -952,6 +975,7 @@ main() {
 
   install_teams_link_handler
   enable_office_tv_relay
+  configure_tailscale_dns
   apply_default_apps
   apply_macos_defaults
   apply_login_items
@@ -981,6 +1005,7 @@ deploy() {
   enable_office_tv_relay
   reload_git_auto_ff
   [[ "$OS" == "Darwin" ]] && start_cloudflare_warp
+  configure_tailscale_dns
   apply_default_apps
   apply_macos_defaults
   apply_login_items
