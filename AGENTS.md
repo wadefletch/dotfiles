@@ -9,6 +9,7 @@ GNU Stow-based dotfiles for macOS. Each top-level directory is a stow package mi
   .ssh/config       # ssh config (ssh/)
   Library/...       # macOS paths (cursor/, display-brightness/, vscode/, nightly-maintenance/, office-tv-relay/)
   .cursor/          # Cursor CLI config (cursor/; --no-folding so ~/.cursor stays host-local)
+  .linear/          # Linear desktop custom coding tool (linear/; --no-folding so ~/.linear stays host-local)
   .claude/          # Claude Code runtime files (claude/)
   .pi/agent/        # Pi settings and MCP servers (pi/; --no-folding so ~/.pi stays host-local)
   .docker/          # tool config (docker/)

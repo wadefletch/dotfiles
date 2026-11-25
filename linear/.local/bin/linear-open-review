@@ -1,0 +1,66 @@
+#!/bin/bash
+# Linear "Custom script" coding tool (see ~/.linear/coding-tools.json): check
+# out the open pull request for a Linear issue and open it in Zed as a plain
+# editor window, with no agent session.
+#
+# Usage: linear-open-review ISSUE_ID BRANCH_NAME WORK_DIR
+#
+# The PR is checked out into its own worktree under
+# <repo's parent>/.worktrees/<repo>/<branch>, so the main checkout and any
+# uncommitted work there are left alone. A branch that is already checked out
+# in some worktree is fast-forwarded and opened in place.
+set -euo pipefail
+
+# Linear launches this without a login shell, so Homebrew isn't on PATH.
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+
+issue=${1:-}
+branch=${2:-}
+work_dir=${3:-}
+
+log="${TMPDIR:-/tmp}/linear-open-review.log"
+exec >>"$log" 2>&1
+echo "--- $(date) issue=$issue branch=$branch work_dir=$work_dir"
+
+# Linear shows no output, so failures surface as a notification.
+fail() {
+  echo "error: $1"
+  osascript -e "display notification \"$1\" with title \"Open review in Zed\"" || true
+  exit 1
+}
+
+[[ -n "$work_dir" ]] || fail "No working directory selected in Linear"
+repo=$(git -C "$work_dir" rev-parse --path-format=absolute --git-common-dir 2>/dev/null) ||
+  fail "$work_dir is not a git repository"
+repo=$(dirname "$repo")
+cd "$repo"
+
+# Prefer the PR whose head is Linear's branch name; otherwise take the first
+# open PR mentioning the issue identifier in its title, body, or branch.
+pr=""
+[[ -n "$branch" ]] && pr=$(gh pr list --state open --head "$branch" --json number --jq '.[0].number // empty')
+[[ -z "$pr" && -n "$issue" ]] && pr=$(gh pr list --state open --search "$issue" --json number --jq '.[0].number // empty')
+[[ -n "$pr" ]] || fail "No open PR for $issue in $(basename "$repo")"
+
+head=$(gh pr view "$pr" --json headRefName --jq .headRefName)
+
+# Reuse a worktree that already has the branch checked out.
+path=$(git worktree list --porcelain | awk -v ref="refs/heads/$head" '
+  /^worktree / { wt = substr($0, 10) }
+  $0 == "branch " ref { print wt; exit }')
+
+if [[ -z "$path" ]]; then
+  path="$(dirname "$repo")/.worktrees/$(basename "$repo")/${head//\//-}"
+  [[ -d "$path" ]] || git worktree add --detach "$path"
+fi
+
+# gh pr checkout handles fork PRs, sets up tracking, and fast-forwards a branch
+# that is already checked out. If the local branch has diverged it refuses, and
+# the local copy is opened as-is.
+if ! (cd "$path" && gh pr checkout "$pr"); then
+  [[ "$(git -C "$path" branch --show-current)" == "$head" ]] || fail "Could not check out PR #$pr"
+  osascript -e "display notification \"Local $head has diverged from PR #$pr; opened as-is\" with title \"Open review in Zed\"" || true
+fi
+
+echo "opening $path (PR #$pr, $head)"
+zed "$path"

@@ -1,0 +1,6 @@
+{
+  "openIssue": {
+    "path": "/Users/wadefletcher/.local/bin/linear-open-review",
+    "args": ["{{issue.identifier}}", "{{issue.branchName}}", "{{workDir}}"]
+  }
+}
