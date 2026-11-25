@@ -9,7 +9,7 @@ OS="$(uname -s)"
 export PATH="$HOME/.local/bin:$PATH"
 
 # macOS-only stow packages (contain Library/ paths or macOS-only tools)
-MACOS_ONLY="cursor display-brightness duti linearmouse nightly-maintenance teams-link vscode wallpapers"
+MACOS_ONLY="cursor display-brightness duti linear linearmouse nightly-maintenance teams-link vscode wallpapers"
 
 # Packages for one machine, matched on its lowercased LocalHostName (empty on
 # Linux, so none of them apply there).
@@ -31,7 +31,7 @@ SKIP_PACKAGES=""
 # Stow packages whose target directory also holds host-local state, so the
 # tracked files must be linked individually rather than by folding the
 # directory itself into a symlink.
-NO_FOLDING="agent-config aws claude codex cursor gh git-auto-ff office-tv-relay pi zed"
+NO_FOLDING="agent-config aws claude codex cursor gh git-auto-ff linear office-tv-relay pi zed"
 
 # CLI packages to install (must exist in brew + apt/dnf/yum/pacman)
 PACKAGES=(git neovim ripgrep stow zsh eza jq)

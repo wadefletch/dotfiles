@@ -1,0 +1,66 @@
+#!/bin/bash
+# Linear "Custom script" coding tool (see ~/.linear/coding-tools.json): open a
+# Linear review's pull request in a new Zed window as a plain editor, with no
+# agent session.
+#
+# Usage: linear-open-review BRANCH WORK_DIR
+#
+# Opened from a review, Linear passes the pull request's head branch as
+# {{issue.branchName}} and the repository checkout picked in its "Choose a
+# directory" menu as {{workDir}}. The branch is checked out into its own
+# worktree under <repo's parent>/.worktrees/<repo>/<branch>, so the main
+# checkout and any uncommitted work there are left alone. A branch that is
+# already checked out in some worktree is fast-forwarded and opened in place.
+set -euo pipefail
+
+# Linear launches this without Homebrew on PATH.
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+
+branch=${1:-}
+work_dir=${2:-}
+
+log="${TMPDIR:-/tmp}/linear-open-review.log"
+exec >>"$log" 2>&1
+echo "--- $(date) branch=$branch work_dir=$work_dir"
+
+# Linear's terminal window may close as soon as this exits, so failures
+# surface as a notification.
+notify() {
+  echo "$1"
+  osascript -e "display notification \"$1\" with title \"Open review in Zed\"" || true
+}
+fail() {
+  notify "$1"
+  exit 1
+}
+
+[[ -n "$branch" ]] || fail "No branch from Linear; open this from a review"
+[[ -n "$work_dir" ]] || fail "No working directory selected in Linear"
+repo=$(git -C "$work_dir" rev-parse --path-format=absolute --git-common-dir 2>/dev/null) ||
+  fail "$work_dir is not a git repository"
+repo=$(dirname "$repo")
+cd "$repo"
+
+git fetch --quiet origin "$branch" || fail "Could not fetch $branch from origin"
+
+# Reuse a worktree that already has the branch checked out.
+path=$(git worktree list --porcelain | awk -v ref="refs/heads/$branch" '
+  /^worktree / { wt = substr($0, 10) }
+  $0 == "branch " ref { print wt; exit }')
+
+if [[ -z "$path" ]]; then
+  path="$(dirname "$repo")/.worktrees/$(basename "$repo")/${branch//\//-}"
+  # Start at the branch's tree so the switch below rewrites no files. A
+  # directory left behind by an earlier failed run is reused as is.
+  [[ -d "$path" ]] || git worktree add --quiet --detach "$path" "origin/$branch"
+  # Creates the local tracking branch on first use.
+  git -C "$path" switch --quiet "$branch" || fail "Could not check out $branch"
+fi
+
+git -C "$path" merge --quiet --ff-only "origin/$branch" ||
+  notify "Local $branch has diverged from origin; opened as-is"
+
+echo "opening $path"
+# A new window, because adding a folder to an existing window opens Zed's
+# agent threads sidebar.
+zed --new "$path"
