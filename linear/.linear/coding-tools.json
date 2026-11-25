@@ -1,6 +1,12 @@
 {
   "openIssue": {
     "path": "/Users/wadefletcher/.local/bin/linear-open-review",
-    "args": ["{{issue.identifier}}", "{{issue.branchName}}", "{{workDir}}"]
+    "args": ["{{issue.identifier}}", "{{issue.branchName}}", "{{workDir}}"],
+    "env": [
+      "LINEAR_PROMPT",
+      "LINEAR_PROJECT_NAME",
+      "LINEAR_PULL_REQUEST_COMMENT_ID",
+      "LINEAR_TOOL_COMMAND"
+    ]
   }
 }

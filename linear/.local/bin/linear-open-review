@@ -21,6 +21,9 @@ work_dir=${3:-}
 log="${TMPDIR:-/tmp}/linear-open-review.log"
 exec >>"$log" 2>&1
 echo "--- $(date) issue=$issue branch=$branch work_dir=$work_dir"
+for var in LINEAR_PROMPT LINEAR_PROJECT_NAME LINEAR_PULL_REQUEST_COMMENT_ID LINEAR_TOOL_COMMAND; do
+  printf '%s=<<<\n%s\n>>>\n' "$var" "${!var:-}"
+done
 
 # Linear shows no output, so failures surface as a notification.
 fail() {
