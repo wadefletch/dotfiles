@@ -1,69 +1,66 @@
 #!/bin/bash
-# Linear "Custom script" coding tool (see ~/.linear/coding-tools.json): check
-# out the open pull request for a Linear issue and open it in Zed as a plain
-# editor window, with no agent session.
+# Linear "Custom script" coding tool (see ~/.linear/coding-tools.json): open a
+# Linear review's pull request in a new Zed window as a plain editor, with no
+# agent session.
 #
-# Usage: linear-open-review ISSUE_ID BRANCH_NAME WORK_DIR
+# Usage: linear-open-review BRANCH WORK_DIR
 #
-# The PR is checked out into its own worktree under
-# <repo's parent>/.worktrees/<repo>/<branch>, so the main checkout and any
-# uncommitted work there are left alone. A branch that is already checked out
-# in some worktree is fast-forwarded and opened in place.
+# Opened from a review, Linear passes the pull request's head branch as
+# {{issue.branchName}} and the repository checkout picked in its "Choose a
+# directory" menu as {{workDir}}. The branch is checked out into its own
+# worktree under <repo's parent>/.worktrees/<repo>/<branch>, so the main
+# checkout and any uncommitted work there are left alone. A branch that is
+# already checked out in some worktree is fast-forwarded and opened in place.
 set -euo pipefail
 
-# Linear launches this without a login shell, so Homebrew isn't on PATH.
+# Linear launches this without Homebrew on PATH.
 export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
 
-issue=${1:-}
-branch=${2:-}
-work_dir=${3:-}
+branch=${1:-}
+work_dir=${2:-}
 
 log="${TMPDIR:-/tmp}/linear-open-review.log"
 exec >>"$log" 2>&1
-echo "--- $(date) issue=$issue branch=$branch work_dir=$work_dir"
-for var in LINEAR_PROMPT LINEAR_PROJECT_NAME LINEAR_PULL_REQUEST_COMMENT_ID LINEAR_TOOL_COMMAND; do
-  printf '%s=<<<\n%s\n>>>\n' "$var" "${!var:-}"
-done
+echo "--- $(date) branch=$branch work_dir=$work_dir"
 
-# Linear shows no output, so failures surface as a notification.
-fail() {
-  echo "error: $1"
+# Linear's terminal window may close as soon as this exits, so failures
+# surface as a notification.
+notify() {
+  echo "$1"
   osascript -e "display notification \"$1\" with title \"Open review in Zed\"" || true
+}
+fail() {
+  notify "$1"
   exit 1
 }
 
+[[ -n "$branch" ]] || fail "No branch from Linear; open this from a review"
 [[ -n "$work_dir" ]] || fail "No working directory selected in Linear"
 repo=$(git -C "$work_dir" rev-parse --path-format=absolute --git-common-dir 2>/dev/null) ||
   fail "$work_dir is not a git repository"
 repo=$(dirname "$repo")
 cd "$repo"
 
-# Prefer the PR whose head is Linear's branch name; otherwise take the first
-# open PR mentioning the issue identifier in its title, body, or branch.
-pr=""
-[[ -n "$branch" ]] && pr=$(gh pr list --state open --head "$branch" --json number --jq '.[0].number // empty')
-[[ -z "$pr" && -n "$issue" ]] && pr=$(gh pr list --state open --search "$issue" --json number --jq '.[0].number // empty')
-[[ -n "$pr" ]] || fail "No open PR for $issue in $(basename "$repo")"
-
-head=$(gh pr view "$pr" --json headRefName --jq .headRefName)
+git fetch --quiet origin "$branch" || fail "Could not fetch $branch from origin"
 
 # Reuse a worktree that already has the branch checked out.
-path=$(git worktree list --porcelain | awk -v ref="refs/heads/$head" '
+path=$(git worktree list --porcelain | awk -v ref="refs/heads/$branch" '
   /^worktree / { wt = substr($0, 10) }
   $0 == "branch " ref { print wt; exit }')
 
 if [[ -z "$path" ]]; then
-  path="$(dirname "$repo")/.worktrees/$(basename "$repo")/${head//\//-}"
-  [[ -d "$path" ]] || git worktree add --detach "$path"
+  path="$(dirname "$repo")/.worktrees/$(basename "$repo")/${branch//\//-}"
+  # Start at the branch's tree so the switch below rewrites no files. A
+  # directory left behind by an earlier failed run is reused as is.
+  [[ -d "$path" ]] || git worktree add --quiet --detach "$path" "origin/$branch"
+  # Creates the local tracking branch on first use.
+  git -C "$path" switch --quiet "$branch" || fail "Could not check out $branch"
 fi
 
-# gh pr checkout handles fork PRs, sets up tracking, and fast-forwards a branch
-# that is already checked out. If the local branch has diverged it refuses, and
-# the local copy is opened as-is.
-if ! (cd "$path" && gh pr checkout "$pr"); then
-  [[ "$(git -C "$path" branch --show-current)" == "$head" ]] || fail "Could not check out PR #$pr"
-  osascript -e "display notification \"Local $head has diverged from PR #$pr; opened as-is\" with title \"Open review in Zed\"" || true
-fi
+git -C "$path" merge --quiet --ff-only "origin/$branch" ||
+  notify "Local $branch has diverged from origin; opened as-is"
 
-echo "opening $path (PR #$pr, $head)"
-zed "$path"
+echo "opening $path"
+# A new window, because adding a folder to an existing window opens Zed's
+# agent threads sidebar.
+zed --new "$path"
